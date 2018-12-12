@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html>
+  <head><meta name="generator" content="Hexo 3.8.0">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="yanm1ng&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      NSObject本质 | KK
+    
+  </title>
+  <link href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdn.bootcss.com/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdn.bootcss.com/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/plugins/gitment.css">
+  <script src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdn.bootcss.com/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdn.bootcss.com/nprogress/0.2.0/nprogress.min.js"></script>
+  <script src="/js/qrious.js"></script>
+<script src="/js/gitment.js"></script>
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+</head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png">
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>KK</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>NSObject本质</h2>
+  <p class="post-date">2018-12-12</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><h4 id="1-Objective-C的底层实现是：C-C-实现的"><a href="#1-Objective-C的底层实现是：C-C-实现的" class="headerlink" title="1 Objective-C的底层实现是：C/C++实现的"></a>1 Objective-C的底层实现是：C/C++实现的</h4><p>OC—————&gt;C/C++—————&gt;汇编语言—————&gt;机器语言</p>
+<p>将OC代码转换成C/C++代码：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xcrun -sdk iphoneos clang -arch arm64 -rewrite-objc 源文件 -o 输出的cpp文件</span><br></pre></td></tr></table></figure>
+<p>如果需要链接到其他框架，使用 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#### 2 OC的对象、类：基于C/C++的结构体实现</span><br><span class="line"></span><br><span class="line">例： NSObject</span><br><span class="line"></span><br><span class="line">```objective-c</span><br><span class="line">// oc语言</span><br><span class="line">@interface NSObject &#123;</span><br><span class="line">	Class isa;</span><br><span class="line">&#125;</span><br><span class="line">@end</span><br><span class="line"></span><br><span class="line">// c/c++</span><br><span class="line">struct NSObject_IMPL &#123;</span><br><span class="line">	Class isa;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">typedef struct object_class *Class;// 对象指针</span><br></pre></td></tr></table></figure></p>
+<p>例：student</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">// oc</span><br><span class="line">@interface Student: NSObject &#123;</span><br><span class="line">    @public</span><br><span class="line">	int _age;</span><br><span class="line">    int _no;</span><br><span class="line">&#125;</span><br><span class="line">@end</span><br><span class="line">    </span><br><span class="line">// c/c**</span><br><span class="line">struct Student_IMPL &#123;</span><br><span class="line">    struct NSObject_IMPL NSObject_IVAR;</span><br><span class="line">    int _age;</span><br><span class="line">    int _no;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 由于 struct NSObject_IMPL结构体中只有一个isa指针，因此可以简写成</span><br><span class="line">struct Student_IMPL &#123;</span><br><span class="line">	Class isa;</span><br><span class="line">    int _age;</span><br><span class="line">    int _no;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 可以检验下：</span><br><span class="line">Student *stu = [[Student alloc] init];</span><br><span class="line">stu-&gt;_age = 4;</span><br><span class="line">stu-&gt;_no = 5;</span><br><span class="line"></span><br><span class="line">// 可以将stu对象转换成结构体</span><br><span class="line"></span><br><span class="line">struct Student_IMPL stu_impl = (__ bridge struct Student_IMPL)stu;</span><br><span class="line">stu_impl-&gt;_age, stu_impl_no；// 这里获取的信息和stu获取的信息一样</span><br></pre></td></tr></table></figure>
+<p>列：Person、Student</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">// OC</span><br><span class="line">@interface Person: NSObject &#123;</span><br><span class="line">	int _age;</span><br><span class="line">&#125;</span><br><span class="line">@end</span><br><span class="line"></span><br><span class="line">@interface Student: Person &#123;</span><br><span class="line">	int _no;</span><br><span class="line">&#125;</span><br><span class="line">@end</span><br><span class="line"></span><br><span class="line">// C/C++</span><br><span class="line">struct Person_IMPL &#123;</span><br><span class="line">	struct NSObject_IMPL NSObject_IVAR;</span><br><span class="line">    int _age;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">struct Student_IMPL &#123;</span><br><span class="line">	struct Person_IMPL Person_IVAR;</span><br><span class="line">    int _no;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="3-一个NSObject对象内存分配16个字节的地址："><a href="#3-一个NSObject对象内存分配16个字节的地址：" class="headerlink" title="3 一个NSObject对象内存分配16个字节的地址："></a>3 一个NSObject对象内存分配16个字节的地址：</h4><p>内存分配了16个地址，即占用了16个字节的地址，但实际上只使用了8个字节的地址，isa指针使用的。</p>
+<p>获取实例对象的内存大小：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">#import &lt;objc/runtime.h&gt;</span><br><span class="line">class_getInstanceSize([NSObject class]); // 获取的是对象在内存中真正使用了多少内存</span><br><span class="line"></span><br><span class="line">#import &lt;malloc/malloc.h&gt;</span><br><span class="line">malloc_size((__bridge const void *)obj); // 获取的是对象在内存中实际被分配了多少内存</span><br></pre></td></tr></table></figure>
+<p><strong>补充：</strong></p>
+<ul>
+<li>内存对齐，结构体内存的大小必须是最大成员变量大小的倍数</li>
+<li>系统内存分配对齐，内存在给数据类型进行存储空间分配时，也是要对齐的，即16的倍数（iOS系统中，会提前准备好内存块，有16、32、48、64…最大256，在分配时会从这里拿一块去给与）</li>
+</ul>
+<h4 id="4-OC对象的分类"><a href="#4-OC对象的分类" class="headerlink" title="4 OC对象的分类"></a>4 OC对象的分类</h4><ul>
+<li><p><strong>实例对象</strong>：</p>
+<p>通过类alloc出来的对象，每次调用alloc都会产生新的实例对象</p>
+<p>实例对象内存储的信息包括：</p>
+<ul>
+<li>isa指针</li>
+<li>其他成员变量</li>
+</ul>
+</li>
+<li><p><strong>类对象</strong></p>
+<p>每一个类对象在内存中只有一个class对象</p>
+<p>类对象在内存中的存储信息主要包括：</p>
+<ul>
+<li>isa指针</li>
+<li>superclass指针</li>
+<li>类的属性信息（@property）</li>
+<li>类的对象方法（instance method）</li>
+<li>类的协议信息（protocol）</li>
+<li>类的成员变量信息（ivar）</li>
+<li>·······</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">NSObject *bj = [[NSObject alloc] init]; // bj实例对象</span><br><span class="line">Class obClass1 = [bj class]; // 类对象</span><br><span class="line">Class obClass2 = [NSObject class];// 类对象</span><br><span class="line">Class obClass3 = object_getClass(bj);// 类对象 runtime API</span><br><span class="line">Class metaClass1 = object_getClass(obClass3); // 元类对象，runtime API</span><br><span class="line">Class obClass4 = [[NSObject class] class]; // 获取的还是类对象</span><br><span class="line">// 获取元类对象只有用runtime的api进行获取</span><br><span class="line">Class metaClass2 = object_getClass([NSObject class]);</span><br><span class="line"></span><br><span class="line">// 判断某个类对象是不是元类对象</span><br><span class="line"># import &lt;objc/runtime.h&gt;</span><br><span class="line">BOOL result = class_isMetaClass([NSObject class]);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>元类对象</strong></p>
+<p>每一个类在内存中有且只有一个元类对象（meta-class）</p>
+<p>元类对象在内存中的存储信息包括：</p>
+<ul>
+<li>isa指针</li>
+<li>superclass指针</li>
+<li>类的类方法信息（class method）</li>
+<li>······</li>
+</ul>
+</li>
+</ul>
+<h4 id="5-isa-SuperClass"><a href="#5-isa-SuperClass" class="headerlink" title="5 isa SuperClass"></a>5 isa SuperClass</h4><ul>
+<li><p><strong>isa指针</strong>：</p>
+<ul>
+<li><p>实例对象的isa指针指向类（class）</p>
+<p>当调用实例对象的对象方法时，通过isa指针找到class，然后找到里面的对象方法</p>
+</li>
+<li><p>Class 的isa指针指向meta-class（元类）</p>
+<p>当调用类方法是，通过isa指针找到meta-class，然后从其中找到类方法</p>
+</li>
+</ul>
+</li>
+<li><p><strong>superClass：</strong></p>
+<p>类对象、元类对象才有superClass指针</p>
+<ul>
+<li><p>对象方法调用时</p>
+<p>先通过对象的isa指针，找到其class，查看其class中是否有对应的对象方法，如果有就调用其对象方法，如果没有，通过类的superclass指针找到其父类并查看其是否有对应的对象方法，以此类推，直到找到基类，如果基类也没有，就抛出方法找不到异常。</p>
+</li>
+<li><p>类方法调用时</p>
+<p>先通过类对象的isa指针，找到其元类对象meta-class，查看其class中是否有对应的类方法，如果有就实现，如果没有，就通过meta-class的superclass指针找到其父类并查看其是否有对应的类方法，以此类推，直到基类元类，如果基类元类也没有，再通过基类元类的suerclass指针找到基类，查看其对象方法中有没有同名的对象方法，如果有就调用对象方法；如果到这一步还没有，就抛出方法找不到异常。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>备注</strong>：</p>
+<ul>
+<li>isa指针指向的并不是类的地址，而是需要位运算下才能得到真正需要指向的地址，@ ISA_MASK</li>
+<li>superclass指向的就是其父类的地址</li>
+</ul>
+</li>
+</ul>
+</section>
+    <!-- Tags START -->
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/2018/12/12/OC底层/">
+        <span class="nav-arrow">← </span>
+        
+          OC底层
+        
+      </a>
+    
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+      <div class="money-like">
+        <div class="reward-btn">
+          赏
+          <span class="money-code">
+            <span class="alipay-code">
+              <div class="code-image"></div>
+              <b>使用支付宝打赏</b>
+            </span>
+            <span class="wechat-code">
+              <div class="code-image"></div>
+              <b>使用微信打赏</b>
+            </span>
+          </span>
+        </div>
+        <p class="notice">若你觉得我的文章对你有帮助，欢迎点击上方按钮对我打赏</p>
+      </div>
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+      <div class="qrcode">
+        <canvas id="share-qrcode"></canvas>
+        <p class="notice">扫描二维码，分享此文章</p>
+      </div>
+    
+    <!-- 二维码 END -->
+    
+      <!-- Gitment START -->
+      <div id="comments"></div>
+      <!-- Gitment END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#1-Objective-C的底层实现是：C-C-实现的"><span class="toc-nav-text">1 Objective-C的底层实现是：C/C++实现的</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#3-一个NSObject对象内存分配16个字节的地址："><span class="toc-nav-text">3 一个NSObject对象内存分配16个字节的地址：</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#4-OC对象的分类"><span class="toc-nav-text">4 OC对象的分类</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#5-isa-SuperClass"><span class="toc-nav-text">5 isa SuperClass</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://yoursite.com/2018/12/12/NSObject本质/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+     // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+        
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+
+    // qrcode
+    var qr = new QRious({
+      element: document.getElementById('share-qrcode'),
+      value: document.location.href
+    });
+
+    // gitment
+    var gitmentConfig = "yanm1ng";
+    if (gitmentConfig !== 'undefined') {
+      var gitment = new Gitment({
+        id: "NSObject本质",
+        owner: "yanm1ng",
+        repo: "yanm1ng.github.io",
+        oauth: {
+          client_id: "0f87e490e00ee3fd87ef",
+          client_secret: "4a9d2b148e7971c2201ad12131ce8bf8159ccd2e"
+        },
+        theme: {
+          render(state, instance) {
+            const container = document.createElement('div')
+            container.lang = "en-US"
+            container.className = 'gitment-container gitment-root-container'
+            container.appendChild(instance.renderHeader(state, instance))
+            container.appendChild(instance.renderEditor(state, instance))
+            container.appendChild(instance.renderComments(state, instance))
+            container.appendChild(instance.renderFooter(state, instance))
+            return container;
+          }
+        }
+      })
+      gitment.render(document.getElementById('comments'))
+    }
+  })();
+</script>
+
+<script>
+  var disqus_shortname = '';
+  
+  var disqus_url = 'http://yoursite.com/2018/12/12/NSObject本质/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//go.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2018 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a href="https://github.com/yanm1ng">yanm1ng</a>
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+<script src="/js/script.js"></script>
+  </body>
+</html>
