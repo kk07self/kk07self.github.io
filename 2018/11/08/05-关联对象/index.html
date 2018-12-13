@@ -10,7 +10,7 @@
   
   <title>
     
-      博客间接 | KK
+      KK
     
   </title>
   <link href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
@@ -138,8 +138,8 @@
 </header>
 
     <div id="article-banner">
-  <h2>博客间接</h2>
-  <p class="post-date">2018-10-01</p>
+  <h2></h2>
+  <p class="post-date">2018-11-08</p>
   <div class="arrow-down">
     <a href="javascript:;"></a>
   </div>
@@ -147,7 +147,74 @@
 <main class="app-body flex-box">
   <!-- Article START -->
   <article class="post-article">
-    <section class="markdown-content"><p>欢迎来到我的个人博客。</p>
+    <section class="markdown-content"><h1 id="关联对象"><a href="#关联对象" class="headerlink" title="关联对象"></a>关联对象</h1><h4 id="关联对象API"><a href="#关联对象API" class="headerlink" title="关联对象API"></a>关联对象API</h4><ul>
+<li><p>添加关联对象</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">void objc_setAssociatedObject(id object, const void *key, id value, pbjc_AssociationPolicy poicy)</span><br><span class="line"></span><br><span class="line">// object 需要关联的对象</span><br><span class="line">// key 要关联的键</span><br><span class="line">// value 要关联的值</span><br><span class="line">// policy 关联政策：</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>获得关联对象</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">id objc_getAssociatedObject(id object, const void *key)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>移除所有关联对象</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">void objc_removeAssociatedObjects(id object)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h4 id="关联对象的参数"><a href="#关联对象的参数" class="headerlink" title="关联对象的参数"></a>关联对象的参数</h4><ul>
+<li><p><strong>object</strong>:  要关联的对象</p>
+</li>
+<li><p><strong>value</strong>：要关联的值</p>
+</li>
+<li><p><strong>policy</strong>：关联政策</p>
+<ul>
+<li>OBJC_ASSOCIATION_ASSIGN：对应的修饰符：assign</li>
+<li>OBJC_ASSOCIATION_RETAIN_NONATOMIC：对应的修饰符 strong,nonatomic</li>
+<li>OBJC_ASSOCIATION_COPY_NONATOMIC：copy,nonatomic</li>
+<li>OBJC_ASSOCIATION_RETAIN: strong, atomic</li>
+<li>OBJC_ASSOCIATION_COPY：copy, atomic</li>
+</ul>
+</li>
+<li><p><strong>key</strong>：要关联的key值：</p>
+<p>常见用法：</p>
+<ul>
+<li><p>定义一个key，并将key的内存地址赋值给key</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">static void *MyKey = &amp;MyKey;</span><br><span class="line">objc_setAssociatedObject(obj, MyKey, value, policy);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>定义一个char类型的key，直接用这个key的内存地址</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">static void *MyKey;</span><br><span class="line">objc_setAssociatedObject(obj, &amp;MyKey, value, policy);</span><br><span class="line">objc_getAssociatedObject(obj, &amp;MyKey)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用属性名作为key</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">objc_setAssociatedObject(obj, @&quot;property&quot;, value, policy);</span><br><span class="line">objc_getAssociatedObject(obj, @&quot;property&quot;);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用get方法的@selector作为key</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">objc_setAssociatedObject(obj, @selector(getter), value, policy);</span><br><span class="line">objc_getAssociatedObject(obj, @selector(getter));</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="关联对象的原理"><a href="#关联对象的原理" class="headerlink" title="关联对象的原理"></a>关联对象的原理</h4><p>关联对象并不是被存储在关联对象本身的内存中</p>
+<p>关联对象存储在全局的统一的一个AssociationsManager中</p>
+<ul>
+<li><p>实现关联对象技术的核心对象有</p>
+<ul>
+<li>AssociationsManager</li>
+<li>AssociationsHashMap</li>
+<li>ObjectAssociationMap</li>
+<li>ObjcAssociation</li>
+</ul>
+</li>
+<li><p>原理：</p>
+<ul>
+<li><p>AssociationsManager对象中有AssociationsHashMap</p>
+<figure class="highlight plain"><figcaption><span>*_map;```</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">- AssociationsHashMap存放着所有的关联对象和其对应的ObjectAssociationMap</span><br><span class="line"></span><br><span class="line">  ```objective-c</span><br><span class="line">  // disguised_ptr_t----&gt;obj的内存地址经过位运算后的值，相当于obj</span><br><span class="line">  disguised_ptr_t: ObjectAssociationMap // 一个对象代表着这样一个键值对</span><br><span class="line">  disguised_ptr_t: ObjectAssociationMap </span><br><span class="line">  disguised_ptr_t: ObjectAssociationMap</span><br><span class="line">  ······</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>ObjectAssociationMap存放着这个对象下面所有的关联信息（key: ObjcAssociation）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">// void *-----&gt; Key</span><br><span class="line">void * : ObjcAssociation  // 对象下面的每一个属性对应着这样一个键值对</span><br><span class="line">void * : ObjcAssociation  </span><br><span class="line">void * : ObjcAssociation</span><br><span class="line">······</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>ObjcAssociation里面存放着值（value）和关联政策（policy）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">uintptr_t _policy; // policy</span><br><span class="line">id _value;		   // value</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
 </section>
     <!-- Tags START -->
     
@@ -157,8 +224,15 @@
   <div class="nav-container">
     <!-- reverse left and right to put prev and next in a more logic postition -->
     
+      <a class="nav-left" href="/2018/11/07/04-category_load_initialize/">
+        <span class="nav-arrow">← </span>
+        
+          (untitled)
+        
+      </a>
     
-      <a class="nav-right" href="/2018/11/07/02-KVO/">
+    
+      <a class="nav-right" href="/2018/11/08/06-block/">
         
           (untitled)
         
@@ -209,7 +283,7 @@
   <div class="toc-main">
     <strong class="toc-title">Catalog</strong>
     
-      <ol class="nav">none</ol>
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#关联对象"><span class="toc-nav-text">关联对象</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#关联对象API"><span class="toc-nav-text">关联对象API</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#关联对象的参数"><span class="toc-nav-text">关联对象的参数</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#关联对象的原理"><span class="toc-nav-text">关联对象的原理</span></a></li></ol></li></ol>
     
   </div>
 </aside>
@@ -219,7 +293,7 @@
 
 <script>
   (function () {
-    var url = 'http://ikirk.cn/2018/10/01/top/';
+    var url = 'http://ikirk.cn/2018/11/08/05-关联对象/';
     var banner = ''
     if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
       $('#article-banner').css({
@@ -275,7 +349,7 @@
     var gitmentConfig = "yanm1ng";
     if (gitmentConfig !== 'undefined') {
       var gitment = new Gitment({
-        id: "博客间接",
+        id: "",
         owner: "yanm1ng",
         repo: "yanm1ng.github.io",
         oauth: {
@@ -303,7 +377,7 @@
 <script>
   var disqus_shortname = '';
   
-  var disqus_url = 'http://ikirk.cn/2018/10/01/top/';
+  var disqus_url = 'http://ikirk.cn/2018/11/08/05-关联对象/';
   
   (function(){
     var dsq = document.createElement('script');

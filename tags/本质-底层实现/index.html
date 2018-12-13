@@ -138,44 +138,133 @@
 </header>
 
     <div id="article-banner">
-  <h2>Tags</h2>
-  <p class="post-date">标签检索</p>
+  <h2>Archives</h2>
+  <p class="post-date">文章归档</p>
 </div>
-<main class="app-body">
-  <div id="tag-cloud">
+<main class="app-body" id="archives">
+  
+  
+  
+    <section class="time-section">
+  <h1 class="section-year">
+    2018
+  </h1>
+  <div class="section-list">
     
-      <a class="tag2" data-name="tag-本质 底层实现">本质 底层实现</a>
+    
+      <div class="section-list-item">
+        <a href="/2018/12/12/NSObject本质/" class="archive-title">NSObject本质</a>
+        <p class="archive-date">12-12</p>
+      </div>
+    
+      <div class="section-list-item">
+        <a href="/2018/11/30/本地数据存储/" class="archive-title"></a>
+        <p class="archive-date">11-30</p>
+      </div>
+    
+      <div class="section-list-item">
+        <a href="/2018/11/21/13-内存管理/" class="archive-title"></a>
+        <p class="archive-date">11-21</p>
+      </div>
+    
+      <div class="section-list-item">
+        <a href="/2018/11/20/设计模式与架构设计/" class="archive-title"></a>
+        <p class="archive-date">11-20</p>
+      </div>
+    
+      <div class="section-list-item">
+        <a href="/2018/11/20/LLVM/" class="archive-title"></a>
+        <p class="archive-date">11-20</p>
+      </div>
+    
+      <div class="section-list-item">
+        <a href="/2018/11/20/iOS性能优化/" class="archive-title"></a>
+        <p class="archive-date">11-20</p>
+      </div>
+    
+      <div class="section-list-item">
+        <a href="/2018/11/20/iOS应用启动及启动时间优化/" class="archive-title"></a>
+        <p class="archive-date">11-20</p>
+      </div>
+    
+      <div class="section-list-item">
+        <a href="/2018/11/16/12-多线程/" class="archive-title"></a>
+        <p class="archive-date">11-16</p>
+      </div>
+    
+      <div class="section-list-item">
+        <a href="/2018/11/16/LLDB/" class="archive-title"></a>
+        <p class="archive-date">11-16</p>
+      </div>
+    
+      <div class="section-list-item">
+        <a href="/2018/11/15/11-RunLoop/" class="archive-title"></a>
+        <p class="archive-date">11-15</p>
+      </div>
+    
+      <div class="section-list-item">
+        <a href="/2018/11/14/09-runtimeAPI/" class="archive-title"></a>
+        <p class="archive-date">11-14</p>
+      </div>
+    
+      <div class="section-list-item">
+        <a href="/2018/11/14/10-关键字/" class="archive-title"></a>
+        <p class="archive-date">11-14</p>
+      </div>
+    
+      <div class="section-list-item">
+        <a href="/2018/11/09/07-Class底层结构/" class="archive-title"></a>
+        <p class="archive-date">11-09</p>
+      </div>
+    
+      <div class="section-list-item">
+        <a href="/2018/11/09/08-objc_msgSend/" class="archive-title"></a>
+        <p class="archive-date">11-09</p>
+      </div>
+    
+      <div class="section-list-item">
+        <a href="/2018/11/08/06-block/" class="archive-title"></a>
+        <p class="archive-date">11-08</p>
+      </div>
+    
+      <div class="section-list-item">
+        <a href="/2018/11/08/05-关联对象/" class="archive-title"></a>
+        <p class="archive-date">11-08</p>
+      </div>
+    
+      <div class="section-list-item">
+        <a href="/2018/11/07/04-category_load_initialize/" class="archive-title"></a>
+        <p class="archive-date">11-07</p>
+      </div>
+    
+      <div class="section-list-item">
+        <a href="/2018/11/07/03-KVC/" class="archive-title"></a>
+        <p class="archive-date">11-07</p>
+      </div>
+    
+      <div class="section-list-item">
+        <a href="/2018/11/07/02-KVO/" class="archive-title"></a>
+        <p class="archive-date">11-07</p>
+      </div>
+    
+      <div class="section-list-item">
+        <a href="/2018/10/01/top/" class="archive-title">博客间接</a>
+        <p class="archive-date">10-01</p>
+      </div>
     
   </div>
+</section>
   
-    <div class="tag-list">
-      <h3 class="tag-name" id="tag-本质 底层实现">本质 底层实现</h3>
-      
-        <ul class="tag-preview">
-          <li>
-            <a href="/2018/12/12/NSObject本质/">NSObject本质</a>
-          </li>
-        </ul>
-        
-    </div>
-    
 </main>
 
 <script>
   (function () {
-    var url = 'http://ikirk.cn/tags/本质-底层实现/index.html'
-    $('#article-banner').geopattern(url)
-    $('.header').removeClass('fixed-header')
-
-    var tag = location.hash.replace('#', '')
-    if (tag) {
-      var tagId = "#tag-" + tag;
-      $("html, body").animate({
-        scrollTop: $(tagId).offset().top 
-      }, 400)
-    }
+    var url = 'http://ikirk.cn/tags/本质-底层实现/index.html';
+    $('#article-banner').geopattern(url);
+    $('.header').removeClass('fixed-header');
   })();
 </script>
+
     <div class="scroll-top">
   <span class="arrow-icon"></span>
 </div>

@@ -10,7 +10,7 @@
   
   <title>
     
-      博客间接 | KK
+      KK
     
   </title>
   <link href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
@@ -138,8 +138,8 @@
 </header>
 
     <div id="article-banner">
-  <h2>博客间接</h2>
-  <p class="post-date">2018-10-01</p>
+  <h2></h2>
+  <p class="post-date">2018-11-07</p>
   <div class="arrow-down">
     <a href="javascript:;"></a>
   </div>
@@ -147,7 +147,35 @@
 <main class="app-body flex-box">
   <!-- Article START -->
   <article class="post-article">
-    <section class="markdown-content"><p>欢迎来到我的个人博客。</p>
+    <section class="markdown-content"><h1 id="KVO"><a href="#KVO" class="headerlink" title="KVO"></a>KVO</h1><p>Key-Value Observing</p>
+<h4 id="实现原理"><a href="#实现原理" class="headerlink" title="实现原理"></a>实现原理</h4><ul>
+<li>利用runtime API动态生成一个子类，并让实例对象的isa指针，从原来的类指向这个子类</li>
+<li>这个子类会重写监听属性的set方法，在set方法中完成对属性修改的监听，调用监听的方法</li>
+<li>这个子类的superclass属性指向其父类，方便调用不需要重写的方法，比如属性的get方法</li>
+<li>实现流程：<ul>
+<li>修改实例对象的属性值时，会通过isa指针找到新的子类</li>
+<li>在新的子类中找到其对应的属性set方法</li>
+<li>在set方法中会调用Foundation的c语言函数（_NSSetXXXValueAndNotify），这个函数会实现属性的赋值、监听器的触发<ul>
+<li>_NSSetXXXValueAndNotify()函数中会调用：willChangeValueForKey:方法</li>
+<li>调用父类的set方法，让其属性完成赋值</li>
+<li>再调用didChangeValueForKey：方法，这个方法内部会触发监听器的监听方法</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>其他：<ul>
+<li>会重写class方法：返回原始类，让开发者忽略子类的存在，隐藏kvo的内部实现</li>
+<li>会重写delloc方法：需要在销毁时做些额外处理</li>
+<li>会重新_isKVOA方法</li>
+</ul>
+</li>
+</ul>
+<h4 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h4><ul>
+<li><p>手动触发KVO：手动调用willChangeValueForKey:方法，didChangeValueForKey:方法</p>
+</li>
+<li><p>直接修改成员变量会不会触发KVO：不会触发，因为没有调用其属性的set方法</p>
+</li>
+</ul>
 </section>
     <!-- Tags START -->
     
@@ -157,8 +185,15 @@
   <div class="nav-container">
     <!-- reverse left and right to put prev and next in a more logic postition -->
     
+      <a class="nav-left" href="/2018/10/01/top/">
+        <span class="nav-arrow">← </span>
+        
+          博客间接
+        
+      </a>
     
-      <a class="nav-right" href="/2018/11/07/02-KVO/">
+    
+      <a class="nav-right" href="/2018/11/07/03-KVC/">
         
           (untitled)
         
@@ -209,7 +244,7 @@
   <div class="toc-main">
     <strong class="toc-title">Catalog</strong>
     
-      <ol class="nav">none</ol>
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#KVO"><span class="toc-nav-text">KVO</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#实现原理"><span class="toc-nav-text">实现原理</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#其他"><span class="toc-nav-text">其他</span></a></li></ol></li></ol>
     
   </div>
 </aside>
@@ -219,7 +254,7 @@
 
 <script>
   (function () {
-    var url = 'http://ikirk.cn/2018/10/01/top/';
+    var url = 'http://ikirk.cn/2018/11/07/02-KVO/';
     var banner = ''
     if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
       $('#article-banner').css({
@@ -275,7 +310,7 @@
     var gitmentConfig = "yanm1ng";
     if (gitmentConfig !== 'undefined') {
       var gitment = new Gitment({
-        id: "博客间接",
+        id: "",
         owner: "yanm1ng",
         repo: "yanm1ng.github.io",
         oauth: {
@@ -303,7 +338,7 @@
 <script>
   var disqus_shortname = '';
   
-  var disqus_url = 'http://ikirk.cn/2018/10/01/top/';
+  var disqus_url = 'http://ikirk.cn/2018/11/07/02-KVO/';
   
   (function(){
     var dsq = document.createElement('script');

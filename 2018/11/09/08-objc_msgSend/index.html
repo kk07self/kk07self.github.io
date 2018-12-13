@@ -10,7 +10,7 @@
   
   <title>
     
-      博客间接 | KK
+      KK
     
   </title>
   <link href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
@@ -138,8 +138,8 @@
 </header>
 
     <div id="article-banner">
-  <h2>博客间接</h2>
-  <p class="post-date">2018-10-01</p>
+  <h2></h2>
+  <p class="post-date">2018-11-09</p>
   <div class="arrow-down">
     <a href="javascript:;"></a>
   </div>
@@ -147,7 +147,34 @@
 <main class="app-body flex-box">
   <!-- Article START -->
   <article class="post-article">
-    <section class="markdown-content"><p>欢迎来到我的个人博客。</p>
+    <section class="markdown-content"><h1 id="objc-msgSend-消息机制"><a href="#objc-msgSend-消息机制" class="headerlink" title="objc_msgSend-消息机制"></a>objc_msgSend-消息机制</h1><p>OC中方法的调用，其实都是转为objc_msgSend()函数的调用</p>
+<p>Objc_msgSend()函数的执行分为三个阶段</p>
+<ul>
+<li>消息发送阶段</li>
+<li>动态方法解析阶段</li>
+<li>消息转发阶段</li>
+</ul>
+<h4 id="流程1：消息发送阶段"><a href="#流程1：消息发送阶段" class="headerlink" title="流程1：消息发送阶段"></a>流程1：消息发送阶段</h4><ul>
+<li>消息接收者receiver是否为nil，如果receiver为nil直接退出</li>
+<li>从receiver的Class的cache中查找方法，找到了就调用方法查找结束</li>
+<li>从receiver的Class的class_rw_t中查找方法，找到了就调用方法并将其缓存在Class的cache_t中，结束查找</li>
+<li>判断上层是否有superClass，如果有则继续以下查找，往复，如果没有就进行到下一阶段（动态方法解析）</li>
+<li>从receiver的superClass得cache中查找方法，找到了就调用方法查找结束</li>
+<li>从receiver的superClass的class_rw_t方法列表中查找方法，找到了就调用方法并将其缓存在Class的cache_t中，结束查找</li>
+</ul>
+<h4 id="流程2：动态方法解析"><a href="#流程2：动态方法解析" class="headerlink" title="流程2：动态方法解析"></a>流程2：动态方法解析</h4><ul>
+<li>是否曾经有动态解析，如果有，则进入到下一阶段（消息转发阶段）</li>
+<li>如果没有，调用<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">- 将动态解析的方法放到class_method_t中，并标记为已经动态解析过了，然后走流程1消息发送阶段</span><br><span class="line"></span><br><span class="line">开发者可以实现以下方法，来动态添加方法实现</span><br><span class="line"></span><br><span class="line">- +resolveInstanceMethod:</span><br><span class="line"></span><br><span class="line">- +resolveClassMethod:</span><br><span class="line"></span><br><span class="line">动态解析过后，会重新走“消息发送”的流程，“从receiverClass的cache中查找方法”这一步开始执行</span><br><span class="line"></span><br><span class="line">**动态添加方法**</span><br><span class="line"></span><br><span class="line">```objective-c</span><br><span class="line">void c_other(id self, SEL _cmd)</span><br><span class="line">&#123;</span><br><span class="line">    NSLog(@&quot;c_other - %@ - %@&quot;, self, NSStringFromSelector(_cmd));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">+ (BOOL)resolveClassMethod:(SEL)sel</span><br><span class="line">&#123;</span><br><span class="line">    if (sel == @selector(test)) &#123;</span><br><span class="line">        // 第一个参数是object_getClass(self)</span><br><span class="line">        class_addMethod(object_getClass(self), sel, (IMP)c_other, &quot;v16@0:8&quot;);</span><br><span class="line">        return YES;</span><br><span class="line">    &#125;</span><br><span class="line">    return [super resolveClassMethod:sel];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">+ (BOOL)resolveInstanceMethod:(SEL)sel</span><br><span class="line">&#123;</span><br><span class="line">    if (sel == @selector(test)) &#123;</span><br><span class="line">        // 动态添加test方法的实现</span><br><span class="line">        class_addMethod(self, sel, (IMP)c_other, &quot;v16@0:8&quot;);</span><br><span class="line"></span><br><span class="line">        // 返回YES代表有动态添加方法</span><br><span class="line">        return YES;</span><br><span class="line">    &#125;</span><br><span class="line">    return [super resolveInstanceMethod:sel];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p><strong>流程3：消息转发</strong></p>
+<ul>
+<li>调用forwardingTargetForSelector：方法，如果返回值不为nil，则向返回值发送消息objc_msgSend(返回值，方法)</li>
+<li>如果返回值为nil，则调用methodSignatureForSelector:方法，返回值不为nil，则调用forwardInvocation:方法</li>
+<li>如果返回值为nil，则调用doesNotRecognizeSelector：方法</li>
+</ul>
+<p>开发者可以在forwardInvocation:方法中自定义任何逻辑</p>
+<p>以上方法都有对象方法、类方法2个版本（前面可以是加号+，也可以是减号-）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">@implementation MJPerson</span><br><span class="line"></span><br><span class="line">+ (id)forwardingTargetForSelector:(SEL)aSelector</span><br><span class="line">&#123;</span><br><span class="line">    // objc_msgSend([[MJCat alloc] init], @selector(test))</span><br><span class="line">    // [[[MJCat alloc] init] test]</span><br><span class="line">    if (aSelector == @selector(test)) return [[MJCat alloc] init];</span><br><span class="line"></span><br><span class="line">    return [super forwardingTargetForSelector:aSelector];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//+ (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector</span><br><span class="line">//&#123;</span><br><span class="line">//    if (aSelector == @selector(test)) return [NSMethodSignature signatureWithObjCTypes:&quot;v@:&quot;];</span><br><span class="line">//    </span><br><span class="line">//    return [super methodSignatureForSelector:aSelector];</span><br><span class="line">//&#125;</span><br><span class="line">//</span><br><span class="line">//+ (void)forwardInvocation:(NSInvocation *)anInvocation</span><br><span class="line">//&#123;</span><br><span class="line">//    NSLog(@&quot;1123&quot;);</span><br><span class="line">//&#125;</span><br><span class="line"></span><br><span class="line">@end</span><br><span class="line">    </span><br><span class="line">+ (void)test</span><br><span class="line">&#123;</span><br><span class="line">    NSLog(@&quot;%s&quot;, __func__);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (void)test</span><br><span class="line">&#123;</span><br><span class="line">    NSLog(@&quot;%s&quot;, __func__);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 </section>
     <!-- Tags START -->
     
@@ -157,8 +184,15 @@
   <div class="nav-container">
     <!-- reverse left and right to put prev and next in a more logic postition -->
     
+      <a class="nav-left" href="/2018/11/08/06-block/">
+        <span class="nav-arrow">← </span>
+        
+          (untitled)
+        
+      </a>
     
-      <a class="nav-right" href="/2018/11/07/02-KVO/">
+    
+      <a class="nav-right" href="/2018/11/09/07-Class底层结构/">
         
           (untitled)
         
@@ -209,7 +243,7 @@
   <div class="toc-main">
     <strong class="toc-title">Catalog</strong>
     
-      <ol class="nav">none</ol>
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#objc-msgSend-消息机制"><span class="toc-nav-text">objc_msgSend-消息机制</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#流程1：消息发送阶段"><span class="toc-nav-text">流程1：消息发送阶段</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#流程2：动态方法解析"><span class="toc-nav-text">流程2：动态方法解析</span></a></li></ol></li></ol>
     
   </div>
 </aside>
@@ -219,7 +253,7 @@
 
 <script>
   (function () {
-    var url = 'http://ikirk.cn/2018/10/01/top/';
+    var url = 'http://ikirk.cn/2018/11/09/08-objc_msgSend/';
     var banner = ''
     if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
       $('#article-banner').css({
@@ -275,7 +309,7 @@
     var gitmentConfig = "yanm1ng";
     if (gitmentConfig !== 'undefined') {
       var gitment = new Gitment({
-        id: "博客间接",
+        id: "",
         owner: "yanm1ng",
         repo: "yanm1ng.github.io",
         oauth: {
@@ -303,7 +337,7 @@
 <script>
   var disqus_shortname = '';
   
-  var disqus_url = 'http://ikirk.cn/2018/10/01/top/';
+  var disqus_url = 'http://ikirk.cn/2018/11/09/08-objc_msgSend/';
   
   (function(){
     var dsq = document.createElement('script');
