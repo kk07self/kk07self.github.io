@@ -10,7 +10,7 @@
   
   <title>
     
-      KK
+      KVC的内部实现 | KK
     
   </title>
   <link href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
@@ -138,8 +138,8 @@
 </header>
 
     <div id="article-banner">
-  <h2></h2>
-  <p class="post-date">2018-11-07</p>
+  <h2>KVC的内部实现</h2>
+  <p class="post-date">2018-10-12</p>
   <div class="arrow-down">
     <a href="javascript:;"></a>
   </div>
@@ -147,7 +147,7 @@
 <main class="app-body flex-box">
   <!-- Article START -->
   <article class="post-article">
-    <section class="markdown-content"><h1 id="KVC"><a href="#KVC" class="headerlink" title="KVC"></a>KVC</h1><p>KVC的全称是Key-Value Coding，俗称“键值编码”，可以通过一个key来访问某个属性.</p>
+    <section class="markdown-content"><p>KVC的全称是Key-Value Coding，俗称“键值编码”，可以通过一个key来访问某个属性.</p>
 <h4 id="API"><a href="#API" class="headerlink" title="API"></a>API</h4><ul>
 <li><p>常见API</p>
 <ul>
@@ -170,15 +170,29 @@
 </ul>
 <h4 id="setVaule-forKey-原理"><a href="#setVaule-forKey-原理" class="headerlink" title="setVaule: forKey: 原理"></a>setVaule: forKey: 原理</h4><p>当调用此方法时：</p>
 <ul>
-<li><p>先查找<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">- 如果上面两个set方法都没找到，查看```accessInstanceVariablesDirectly```方法的返回值（默认是YES）</span><br><span class="line">- 如果上个步骤返回为NO，则调用```setValue:forUndefinedKey:```并抛出异常```NSUnknownKeyException</span><br></pre></td></tr></table></figure></p>
-</li>
-<li><p>如果上个步骤的返回值是YES，按照<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#### valueForKey:的原理</span><br><span class="line"></span><br><span class="line">当调用此方法时：</span><br><span class="line"></span><br><span class="line">- 按照```getKey、key、isKey、_key```顺序查找get方法，找到了，调用方法返回值</span><br><span class="line">- 若以上都没有找到，则调用```accessInstanceVariablesDirectly```方法，查看其返回值</span><br><span class="line">- 如果上一步返回时NO,则调用```setValue:forUndefinedKey:```并抛出异常```NSUnknownKeyException</span><br></pre></td></tr></table></figure></p>
-</li>
-<li><p>如果上个步骤的返回值是YES，按照<code>_key、_isKey、key、isKey</code>的顺序查找成员变量，找到成员变量取值返回，找不到抛出异常</p>
-</li>
+<li>先查找<strong>setKey:</strong>方法，如果没有查找<strong>_setKey:</strong>方法，如果找到了，传递参数调用方法</li>
+<li>如果上面两个set方法都没找到，查看<strong>accessInstanceVariablesDirectly</strong>方法的返回值（默认是YES）</li>
+<li>如果上个步骤返回为NO，则调用<strong>setValue:forUndefinedKey:</strong>并抛出异常<strong>NSUnknownKeyException</strong></li>
+<li>如果上个步骤的返回值是YES，按照<strong>_key、_isKey、key、isKey</strong>的顺序查找成员变量，找到成员变量进行复制，找不到抛出异常</li>
+</ul>
+<h4 id="valueForKey-的原理"><a href="#valueForKey-的原理" class="headerlink" title="valueForKey:的原理"></a>valueForKey:的原理</h4><p>当调用此方法时：</p>
+<ul>
+<li>按照<strong>getKey、key、isKey、_key</strong>顺序查找get方法，找到了，调用方法返回值</li>
+<li>若以上都没有找到，则调用<strong>accessInstanceVariablesDirectly</strong>方法，查看其返回值</li>
+<li>如果上一步返回时NO,则调用<strong>setValue:forUndefinedKey:</strong>并抛出异常<strong>NSUnknownKeyException</strong></li>
+<li>如果上个步骤的返回值是YES，按照<strong>_key、_isKey、key、isKey</strong>的顺序查找成员变量，找到成员变量取值返回，找不到抛出异常</li>
 </ul>
 </section>
     <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#KVC">
+    <span class="tag-code">KVC</span>
+  </a>
+
+      </div>
     
     <!-- Tags END -->
     <!-- NAV START -->
@@ -186,17 +200,17 @@
   <div class="nav-container">
     <!-- reverse left and right to put prev and next in a more logic postition -->
     
-      <a class="nav-left" href="/2018/11/07/02-KVO/">
+      <a class="nav-left" href="/2018/10/11/02-KVO/">
         <span class="nav-arrow">← </span>
         
-          (untitled)
+          KVO-观察者模式
         
       </a>
     
     
-      <a class="nav-right" href="/2018/11/07/04-category_load_initialize/">
+      <a class="nav-right" href="/2018/10/12/04-category_load_initialize/">
         
-          (untitled)
+          Load_Initialize_Category
         
         <span class="nav-arrow"> →</span>
       </a>
@@ -243,9 +257,10 @@
   
     <aside class="catalog-container">
   <div class="toc-main">
-    <strong class="toc-title">Catalog</strong>
     
-      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#KVC"><span class="toc-nav-text">KVC</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#API"><span class="toc-nav-text">API</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#setVaule-forKey-原理"><span class="toc-nav-text">setVaule: forKey: 原理</span></a></li></ol></li></ol>
+    <div class="toc-catalog">Catalog</div>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#API"><span class="toc-nav-text">API</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#setVaule-forKey-原理"><span class="toc-nav-text">setVaule: forKey: 原理</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#valueForKey-的原理"><span class="toc-nav-text">valueForKey:的原理</span></a></li></ol>
     
   </div>
 </aside>
@@ -255,7 +270,7 @@
 
 <script>
   (function () {
-    var url = 'http://ikirk.cn/2018/11/07/03-KVC/';
+    var url = 'http://ikirk.cn/2018/10/12/03-KVC/';
     var banner = ''
     if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
       $('#article-banner').css({
@@ -311,7 +326,7 @@
     var gitmentConfig = "yanm1ng";
     if (gitmentConfig !== 'undefined') {
       var gitment = new Gitment({
-        id: "",
+        id: "KVC的内部实现",
         owner: "yanm1ng",
         repo: "yanm1ng.github.io",
         oauth: {
@@ -339,7 +354,7 @@
 <script>
   var disqus_shortname = '';
   
-  var disqus_url = 'http://ikirk.cn/2018/11/07/03-KVC/';
+  var disqus_url = 'http://ikirk.cn/2018/10/12/03-KVC/';
   
   (function(){
     var dsq = document.createElement('script');

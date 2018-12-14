@@ -10,7 +10,7 @@
   
   <title>
     
-      KK
+      KVO-观察者模式 | KK
     
   </title>
   <link href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
@@ -138,8 +138,8 @@
 </header>
 
     <div id="article-banner">
-  <h2></h2>
-  <p class="post-date">2018-11-07</p>
+  <h2>KVO-观察者模式</h2>
+  <p class="post-date">2018-10-11</p>
   <div class="arrow-down">
     <a href="javascript:;"></a>
   </div>
@@ -147,7 +147,7 @@
 <main class="app-body flex-box">
   <!-- Article START -->
   <article class="post-article">
-    <section class="markdown-content"><h1 id="KVO"><a href="#KVO" class="headerlink" title="KVO"></a>KVO</h1><p>Key-Value Observing</p>
+    <section class="markdown-content"><p>Key-Value Observing</p>
 <h4 id="实现原理"><a href="#实现原理" class="headerlink" title="实现原理"></a>实现原理</h4><ul>
 <li>利用runtime API动态生成一个子类，并让实例对象的isa指针，从原来的类指向这个子类</li>
 <li>这个子类会重写监听属性的set方法，在set方法中完成对属性修改的监听，调用监听的方法</li>
@@ -179,6 +179,15 @@
 </section>
     <!-- Tags START -->
     
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#KVO 观察者模式">
+    <span class="tag-code">KVO 观察者模式</span>
+  </a>
+
+      </div>
+    
     <!-- Tags END -->
     <!-- NAV START -->
     
@@ -193,9 +202,9 @@
       </a>
     
     
-      <a class="nav-right" href="/2018/11/07/03-KVC/">
+      <a class="nav-right" href="/2018/10/12/03-KVC/">
         
-          (untitled)
+          KVC的内部实现
         
         <span class="nav-arrow"> →</span>
       </a>
@@ -242,9 +251,10 @@
   
     <aside class="catalog-container">
   <div class="toc-main">
-    <strong class="toc-title">Catalog</strong>
     
-      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#KVO"><span class="toc-nav-text">KVO</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#实现原理"><span class="toc-nav-text">实现原理</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#其他"><span class="toc-nav-text">其他</span></a></li></ol></li></ol>
+    <div class="toc-catalog">Catalog</div>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#实现原理"><span class="toc-nav-text">实现原理</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#其他"><span class="toc-nav-text">其他</span></a></li></ol>
     
   </div>
 </aside>
@@ -254,7 +264,7 @@
 
 <script>
   (function () {
-    var url = 'http://ikirk.cn/2018/11/07/02-KVO/';
+    var url = 'http://ikirk.cn/2018/10/11/02-KVO/';
     var banner = ''
     if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
       $('#article-banner').css({
@@ -310,7 +320,7 @@
     var gitmentConfig = "yanm1ng";
     if (gitmentConfig !== 'undefined') {
       var gitment = new Gitment({
-        id: "",
+        id: "KVO-观察者模式",
         owner: "yanm1ng",
         repo: "yanm1ng.github.io",
         oauth: {
@@ -338,7 +348,7 @@
 <script>
   var disqus_shortname = '';
   
-  var disqus_url = 'http://ikirk.cn/2018/11/07/02-KVO/';
+  var disqus_url = 'http://ikirk.cn/2018/10/11/02-KVO/';
   
   (function(){
     var dsq = document.createElement('script');

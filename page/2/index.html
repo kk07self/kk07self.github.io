@@ -270,58 +270,76 @@ block底层结构：
   
     <article class="article-card">
       <h2 class="article-head">
-        <a href="/2018/11/07/04-category_load_initialize/"></a>
+        <a href="/2018/10/12/04-category_load_initialize/">Load_Initialize_Category</a>
       </h2>
-      <p class="article-date">2018-11-07</p>
+      <p class="article-date">2018-10-12</p>
+      
+        
+  <a href="/tags#load initialize category">
+    <span class="tag-code">load initialize category</span>
+  </a>
+
       
       <div class="article-summary">
         
-          Category_Load_InitializeCategory
-category实现原理
+          
+本篇文章将阐述OC类在初始化时候的两个方法，load 和 initialize。其调用的时间，调用的机制以及相关联类调用的顺序。同时在最后，也顺便阐述下分类category的内部实现原理。
 
-category在编译时，会被编程成结构体struct category_t，里面存储着原类名、对象方法、类方法、属性、协议信息
-
-在程序运行的时候，runtime会将category中的数据，合并 ...
+load方法加载
++load 方法会在类、分类被加载到内存的时候调用
+每个类、分类的+load在程 ...
         
       </div>
-      <a class="more" href="/2018/11/07/04-category_load_initialize/">read more</a>
+      <a class="more" href="/2018/10/12/04-category_load_initialize/">read more</a>
     </article>
   
     <article class="article-card">
       <h2 class="article-head">
-        <a href="/2018/11/07/03-KVC/"></a>
+        <a href="/2018/10/12/03-KVC/">KVC的内部实现</a>
       </h2>
-      <p class="article-date">2018-11-07</p>
+      <p class="article-date">2018-10-12</p>
+      
+        
+  <a href="/tags#KVC">
+    <span class="tag-code">KVC</span>
+  </a>
+
       
       <div class="article-summary">
         
-          KVCKVC的全称是Key-Value Coding，俗称“键值编码”，可以通过一个key来访问某个属性.
+          KVC的全称是Key-Value Coding，俗称“键值编码”，可以通过一个key来访问某个属性.
 API
 常见API
 
 -(void)setValue:(id)value forKeyPath:(NSString *)keyPath;
--(void)setValue:(id)val ...
+-(void)setValue:(id)value  ...
         
       </div>
-      <a class="more" href="/2018/11/07/03-KVC/">read more</a>
+      <a class="more" href="/2018/10/12/03-KVC/">read more</a>
     </article>
   
     <article class="article-card">
       <h2 class="article-head">
-        <a href="/2018/11/07/02-KVO/"></a>
+        <a href="/2018/10/11/02-KVO/">KVO-观察者模式</a>
       </h2>
-      <p class="article-date">2018-11-07</p>
+      <p class="article-date">2018-10-11</p>
+      
+        
+  <a href="/tags#KVO 观察者模式">
+    <span class="tag-code">KVO 观察者模式</span>
+  </a>
+
       
       <div class="article-summary">
         
-          KVOKey-Value Observing
+          Key-Value Observing
 实现原理
 利用runtime API动态生成一个子类，并让实例对象的isa指针，从原来的类指向这个子类
 这个子类会重写监听属性的set方法，在set方法中完成对属性修改的监听，调用监听的方法
-这个子类的superclass属性指向其父类，方便调用 ...
+这个子类的superclass属性指向其父类，方便调用不需要 ...
         
       </div>
-      <a class="more" href="/2018/11/07/02-KVO/">read more</a>
+      <a class="more" href="/2018/10/11/02-KVO/">read more</a>
     </article>
   
 
