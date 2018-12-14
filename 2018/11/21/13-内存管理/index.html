@@ -1,146 +1,153 @@
 <!DOCTYPE html>
 <html>
-<head><meta name="generator" content="Hexo 3.8.0">
-    <!-- so meta -->
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="HandheldFriendly" content="True">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <meta name="description" content="内存管理1、内存布局iOS程序的内存管理，从低到高分为了6部分，地址由低到高：保留（一部分）、代码段（__TEXT）、数据段（__DATA）、堆（heap）、栈（stack）、内核。和我们开发相关的有中间四部分：  代码段：存储编译之后的代码 数据段： 字符串常量：比如NSString *str = @”123” 已初始化的数据：已初始化的全局变量、静态变量等 未初始化的数据：未初始化的全局变量、">
-<meta property="og:type" content="article">
-<meta property="og:title" content="KK">
-<meta property="og:url" content="http://ikirk.cn/2018/11/21/13-内存管理/index.html">
-<meta property="og:site_name" content="KK">
-<meta property="og:description" content="内存管理1、内存布局iOS程序的内存管理，从低到高分为了6部分，地址由低到高：保留（一部分）、代码段（__TEXT）、数据段（__DATA）、堆（heap）、栈（stack）、内核。和我们开发相关的有中间四部分：  代码段：存储编译之后的代码 数据段： 字符串常量：比如NSString *str = @”123” 已初始化的数据：已初始化的全局变量、静态变量等 未初始化的数据：未初始化的全局变量、">
-<meta property="og:locale" content="default">
-<meta property="og:image" content="http://ikirk.cn/2018/11/21/资源/autorelease_01.png">
-<meta property="og:updated_time" content="2018-11-22T15:03:06.193Z">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="KK">
-<meta name="twitter:description" content="内存管理1、内存布局iOS程序的内存管理，从低到高分为了6部分，地址由低到高：保留（一部分）、代码段（__TEXT）、数据段（__DATA）、堆（heap）、栈（stack）、内核。和我们开发相关的有中间四部分：  代码段：存储编译之后的代码 数据段： 字符串常量：比如NSString *str = @”123” 已初始化的数据：已初始化的全局变量、静态变量等 未初始化的数据：未初始化的全局变量、">
-<meta name="twitter:image" content="http://ikirk.cn/2018/11/21/资源/autorelease_01.png">
+  <head><meta name="generator" content="Hexo 3.8.0">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="yanm1ng&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
     
+      KK
     
-        
-          
-              <link rel="shortcut icon" href="/images/favicon.ico">
-          
-        
-        
-          
-            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
-          
-        
-        
-          
-            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
-          
-        
-    
-    <!-- title -->
-    <title>KK</title>
-    <!-- styles -->
-    <link rel="stylesheet" href="/css/style.css">
-    <!-- persian styles -->
-    
-      <link rel="stylesheet" href="/css/rtl.css">
-    
-    <!-- rss -->
-    
-    
-</head>
+  </title>
+  <link href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdn.bootcss.com/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdn.bootcss.com/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/plugins/gitment.css">
+  <script src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdn.bootcss.com/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdn.bootcss.com/nprogress/0.2.0/nprogress.min.js"></script>
+  <script src="/js/qrious.js"></script>
+<script src="/js/gitment.js"></script>
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
 
-<body class="max-width mx-auto px3 ltr">
-    
-      <div id="header-post">
-  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
-  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
-  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
-  <span id="menu">
-    <span id="nav">
-      <ul>
-         
-          <li><a href="/">Home</a></li>
-         
-          <li><a href="/about/">About</a></li>
-         
-          <li><a href="/archives/">Writing</a></li>
-         
-          <li><a href="/projects_url">Projects</a></li>
-        
-      </ul>
-    </span>
-    <br>
-    <span id="actions">
-      <ul>
-        
-        <li><a class="icon" href="/2018/11/30/本地数据存储/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
-        
-        
-        <li><a class="icon" href="/2018/11/20/设计模式与架构设计/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
-        
-        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
-        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
-      </ul>
-      <span id="i-prev" class="info" style="display:none;">Previous post</span>
-      <span id="i-next" class="info" style="display:none;">Next post</span>
-      <span id="i-top" class="info" style="display:none;">Back to top</span>
-      <span id="i-share" class="info" style="display:none;">Share post</span>
-    </span>
-    <br>
-    <div id="share" style="display: none">
-      <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://ikirk.cn/2018/11/21/13-内存管理/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://ikirk.cn/2018/11/21/13-内存管理/&text="><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://ikirk.cn/2018/11/21/13-内存管理/&title="><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://ikirk.cn/2018/11/21/13-内存管理/&is_video=false&description="><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=&body=Check out this article: http://ikirk.cn/2018/11/21/13-内存管理/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://ikirk.cn/2018/11/21/13-内存管理/&title="><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://ikirk.cn/2018/11/21/13-内存管理/&title="><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://ikirk.cn/2018/11/21/13-内存管理/&title="><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://ikirk.cn/2018/11/21/13-内存管理/&title="><i class="fab fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://ikirk.cn/2018/11/21/13-内存管理/&name=&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
-</ul>
-
-    </div>
-    <div id="toc">
-      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#内存管理"><span class="toc-number">1.</span> <span class="toc-text">内存管理</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1、内存布局"><span class="toc-number">1.0.0.1.</span> <span class="toc-text">1、内存布局</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2、TagPoint"><span class="toc-number">1.0.0.2.</span> <span class="toc-text">2、TagPoint</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3、OC对象的内存管理"><span class="toc-number">1.0.0.3.</span> <span class="toc-text">3、OC对象的内存管理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4、Copy、MutableCopy"><span class="toc-number">1.0.0.4.</span> <span class="toc-text">4、Copy、MutableCopy</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5、自动释放池"><span class="toc-number">1.0.0.5.</span> <span class="toc-text">5、自动释放池</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6、Timer定时器"><span class="toc-number">1.0.0.6.</span> <span class="toc-text">6、Timer定时器</span></a></li></ol></li></ol>
-    </div>
-  </span>
-</div>
-
-    
-    <div class="content index py4">
-        
-        <article class="post" itemscope="" itemtype="http://schema.org/BlogPosting">
-  <header>
-    
-    <h1 class="posttitle" itemprop="name headline">
-        
-    </h1>
-
-
-
-    <div class="meta">
-      <span class="author" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-        <span itemprop="name">KK</span>
-      </span>
-      
-    <div class="postdate">
-        <time datetime="2018-11-21T01:29:11.000Z" itemprop="datePublished">2018-11-21</time>
-    </div>
-
-
-      
-
-      
-
-    </div>
-  </header>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
   
 
-  <div class="content" itemprop="articleBody">
-    <h1 id="内存管理"><a href="#内存管理" class="headerlink" title="内存管理"></a>内存管理</h1><h4 id="1、内存布局"><a href="#1、内存布局" class="headerlink" title="1、内存布局"></a>1、内存布局</h4><p>iOS程序的内存管理，从低到高分为了6部分，地址由低到高：保留（一部分）、代码段（__TEXT）、数据段（__DATA）、堆（heap）、栈（stack）、内核。和我们开发相关的有中间四部分：</p>
+
+</head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png">
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>KK</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">首页</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">标签</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">归档</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">项目</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">关于</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">首页</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">标签</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">归档</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">项目</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">关于</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2></h2>
+  <p class="post-date">2018-11-21</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><h1 id="内存管理"><a href="#内存管理" class="headerlink" title="内存管理"></a>内存管理</h1><h4 id="1、内存布局"><a href="#1、内存布局" class="headerlink" title="1、内存布局"></a>1、内存布局</h4><p>iOS程序的内存管理，从低到高分为了6部分，地址由低到高：保留（一部分）、代码段（__TEXT）、数据段（__DATA）、堆（heap）、栈（stack）、内核。和我们开发相关的有中间四部分：</p>
 <ul>
 <li><strong>代码段</strong>：存储编译之后的代码</li>
 <li><strong>数据段</strong>：<ul>
@@ -329,99 +336,229 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br></pre></td><td class="code"><pre><span class="line">// .h</span><br><span class="line">#import &lt;Foundation/Foundation.h&gt;</span><br><span class="line">@interface KKTimer : NSObject</span><br><span class="line"></span><br><span class="line">    </span><br><span class="line"> /**</span><br><span class="line"> 创建定时器</span><br><span class="line"></span><br><span class="line"> @param task 任务block</span><br><span class="line"> @param start 开始时间</span><br><span class="line"> @param interval 时间间隔</span><br><span class="line"> @param repeats 是否重复</span><br><span class="line"> @param async 同步、异步</span><br><span class="line"> @return 返回定时器标识</span><br><span class="line"> */</span><br><span class="line"></span><br><span class="line">+ (NSString *)execTask:(void(^)(void))task</span><br><span class="line">           start:(NSTimeInterval)start</span><br><span class="line">        interval:(NSTimeInterval)interval</span><br><span class="line">         repeats:(BOOL)repeats</span><br><span class="line">           async:(BOOL)async;</span><br><span class="line"></span><br><span class="line">+ (NSString *)execTask:(id)target</span><br><span class="line">              selector:(SEL)selector</span><br><span class="line">                 start:(NSTimeInterval)start</span><br><span class="line">              interval:(NSTimeInterval)interval</span><br><span class="line">               repeats:(BOOL)repeats</span><br><span class="line">                 async:(BOOL)async;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> 销毁定时器</span><br><span class="line"> @param name 定时器标识</span><br><span class="line"> */</span><br><span class="line">+ (void)cancelTask:(NSString *)name;</span><br><span class="line"></span><br><span class="line">@end</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">// .m</span><br><span class="line">#import &quot;KKTimer.h&quot;</span><br><span class="line"></span><br><span class="line">@implementation KKTimer</span><br><span class="line"></span><br><span class="line">static NSMutableDictionary *timers_;</span><br><span class="line">dispatch_semaphore_t semaphore_;</span><br><span class="line">+ (void)initialize</span><br><span class="line">&#123;</span><br><span class="line">    static dispatch_once_t onceToken;</span><br><span class="line">    dispatch_once(&amp;onceToken, ^&#123;</span><br><span class="line">        timers_ = [NSMutableDictionary dictionary];</span><br><span class="line">        semaphore_ = dispatch_semaphore_create(1);</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">+ (NSString *)execTask:(void (^)(void))task start:(NSTimeInterval)start interval:(NSTimeInterval)interval repeats:(BOOL)repeats async:(BOOL)async</span><br><span class="line">&#123;</span><br><span class="line">    if (!task || start &lt; 0 || (interval &lt;= 0 &amp;&amp; repeats)) return nil;</span><br><span class="line">    </span><br><span class="line">    // 队列</span><br><span class="line">    dispatch_queue_t queue = async ? dispatch_get_global_queue(0, 0) : dispatch_get_main_queue();</span><br><span class="line">    </span><br><span class="line">    // 创建定时器</span><br><span class="line">    dispatch_source_t timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, queue);</span><br><span class="line">    </span><br><span class="line">    // 设置时间</span><br><span class="line">    dispatch_source_set_timer(timer,</span><br><span class="line">                              dispatch_time(DISPATCH_TIME_NOW, start * NSEC_PER_SEC),</span><br><span class="line">                              interval * NSEC_PER_SEC, 0);</span><br><span class="line">    </span><br><span class="line">    // 信号锁，保证其安全，可以多线程同时使用定时器</span><br><span class="line">    dispatch_semaphore_wait(semaphore_, DISPATCH_TIME_FOREVER);</span><br><span class="line">    // 定时器的唯一标识</span><br><span class="line">    NSString *name = [NSString stringWithFormat:@&quot;%zd&quot;, timers_.count];</span><br><span class="line">    // 存放到字典中</span><br><span class="line">    timers_[name] = timer;</span><br><span class="line">    dispatch_semaphore_signal(semaphore_);</span><br><span class="line">    </span><br><span class="line">    // 设置回调</span><br><span class="line">    dispatch_source_set_event_handler(timer, ^&#123;</span><br><span class="line">        task();</span><br><span class="line">        </span><br><span class="line">        if (!repeats) &#123; // 不重复的任务</span><br><span class="line">            [self cancelTask:name];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">    </span><br><span class="line">    // 启动定时器</span><br><span class="line">    dispatch_resume(timer);</span><br><span class="line">    </span><br><span class="line">    return name;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">+ (NSString *)execTask:(id)target selector:(SEL)selector start:(NSTimeInterval)start interval:(NSTimeInterval)interval repeats:(BOOL)repeats async:(BOOL)async</span><br><span class="line">&#123;</span><br><span class="line">    if (!target || !selector) return nil;</span><br><span class="line">    </span><br><span class="line">    return [self execTask:^&#123;</span><br><span class="line">        if ([target respondsToSelector:selector]) &#123;</span><br><span class="line">#pragma clang diagnostic push</span><br><span class="line">#pragma clang diagnostic ignored &quot;-Warc-performSelector-leaks&quot;</span><br><span class="line">            [target performSelector:selector];</span><br><span class="line">#pragma clang diagnostic pop</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; start:start interval:interval repeats:repeats async:async];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">+ (void)cancelTask:(NSString *)name</span><br><span class="line">&#123;</span><br><span class="line">    if (name.length == 0) return;</span><br><span class="line">    </span><br><span class="line">    dispatch_semaphore_wait(semaphore_, DISPATCH_TIME_FOREVER);</span><br><span class="line">    </span><br><span class="line">    dispatch_source_t timer = timers_[name];</span><br><span class="line">    if (timer) &#123;</span><br><span class="line">        dispatch_source_cancel(timer);</span><br><span class="line">        [timers_ removeObjectForKey:name];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    dispatch_semaphore_signal(semaphore_);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">@end</span><br></pre></td></tr></table></figure>
 </li>
 </ul>
-
-  </div>
-</article>
-
-
-
+</section>
+    <!-- Tags START -->
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/2018/11/20/设计模式与架构设计/">
+        <span class="nav-arrow">← </span>
         
-          <div id="footer-post-container">
-  <div id="footer-post">
-
-    <div id="nav-footer" style="display: none">
-      <ul>
-         
-          <li><a href="/">Home</a></li>
-         
-          <li><a href="/about/">About</a></li>
-         
-          <li><a href="/archives/">Writing</a></li>
-         
-          <li><a href="/projects_url">Projects</a></li>
+          (untitled)
         
-      </ul>
-    </div>
-
-    <div id="toc-footer" style="display: none">
-      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#内存管理"><span class="toc-number">1.</span> <span class="toc-text">内存管理</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1、内存布局"><span class="toc-number">1.0.0.1.</span> <span class="toc-text">1、内存布局</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2、TagPoint"><span class="toc-number">1.0.0.2.</span> <span class="toc-text">2、TagPoint</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3、OC对象的内存管理"><span class="toc-number">1.0.0.3.</span> <span class="toc-text">3、OC对象的内存管理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4、Copy、MutableCopy"><span class="toc-number">1.0.0.4.</span> <span class="toc-text">4、Copy、MutableCopy</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5、自动释放池"><span class="toc-number">1.0.0.5.</span> <span class="toc-text">5、自动释放池</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6、Timer定时器"><span class="toc-number">1.0.0.6.</span> <span class="toc-text">6、Timer定时器</span></a></li></ol></li></ol>
-    </div>
-
-    <div id="share-footer" style="display: none">
-      <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://ikirk.cn/2018/11/21/13-内存管理/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://ikirk.cn/2018/11/21/13-内存管理/&text="><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://ikirk.cn/2018/11/21/13-内存管理/&title="><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://ikirk.cn/2018/11/21/13-内存管理/&is_video=false&description="><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=&body=Check out this article: http://ikirk.cn/2018/11/21/13-内存管理/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://ikirk.cn/2018/11/21/13-内存管理/&title="><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://ikirk.cn/2018/11/21/13-内存管理/&title="><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://ikirk.cn/2018/11/21/13-内存管理/&title="><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://ikirk.cn/2018/11/21/13-内存管理/&title="><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://ikirk.cn/2018/11/21/13-内存管理/&name=&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
-</ul>
-
-    </div>
-
-    <div id="actions-footer">
-        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
-        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
-        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
-        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
-    </div>
-
+      </a>
+    
+    
+      <a class="nav-right" href="/2018/11/30/本地数据存储/">
+        
+          (untitled)
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
   </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+      <div class="money-like">
+        <div class="reward-btn">
+          赏
+          <span class="money-code">
+            <span class="alipay-code">
+              <div class="code-image"></div>
+              <b>使用支付宝打赏</b>
+            </span>
+            <span class="wechat-code">
+              <div class="code-image"></div>
+              <b>使用微信打赏</b>
+            </span>
+          </span>
+        </div>
+        <p class="notice">若你觉得我的文章对你有帮助，欢迎点击上方按钮对我打赏</p>
+      </div>
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+      <div class="qrcode">
+        <canvas id="share-qrcode"></canvas>
+        <p class="notice">扫描二维码，分享此文章</p>
+      </div>
+    
+    <!-- 二维码 END -->
+    
+      <!-- Gitment START -->
+      <div id="comments"></div>
+      <!-- Gitment END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#内存管理"><span class="toc-nav-text">内存管理</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#1、内存布局"><span class="toc-nav-text">1、内存布局</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#2、TagPoint"><span class="toc-nav-text">2、TagPoint</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#3、OC对象的内存管理"><span class="toc-nav-text">3、OC对象的内存管理</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#4、Copy、MutableCopy"><span class="toc-nav-text">4、Copy、MutableCopy</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#5、自动释放池"><span class="toc-nav-text">5、自动释放池</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#6、Timer定时器"><span class="toc-nav-text">6、Timer定时器</span></a></li></ol></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://ikirk.cn/2018/11/21/13-内存管理/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+     // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+        
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+
+    // qrcode
+    var qr = new QRious({
+      element: document.getElementById('share-qrcode'),
+      value: document.location.href
+    });
+
+    // gitment
+    var gitmentConfig = "yanm1ng";
+    if (gitmentConfig !== 'undefined') {
+      var gitment = new Gitment({
+        id: "",
+        owner: "yanm1ng",
+        repo: "yanm1ng.github.io",
+        oauth: {
+          client_id: "0f87e490e00ee3fd87ef",
+          client_secret: "4a9d2b148e7971c2201ad12131ce8bf8159ccd2e"
+        },
+        theme: {
+          render(state, instance) {
+            const container = document.createElement('div')
+            container.lang = "en-US"
+            container.className = 'gitment-container gitment-root-container'
+            container.appendChild(instance.renderHeader(state, instance))
+            container.appendChild(instance.renderEditor(state, instance))
+            container.appendChild(instance.renderComments(state, instance))
+            container.appendChild(instance.renderFooter(state, instance))
+            return container;
+          }
+        }
+      })
+      gitment.render(document.getElementById('comments'))
+    }
+  })();
+</script>
+
+<script>
+  var disqus_shortname = '';
+  
+  var disqus_url = 'http://ikirk.cn/2018/11/21/13-内存管理/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//go.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
 </div>
+    <footer class="app-footer">
+  <p class="copyright">
+    <!-- &copy; 2018 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a> -->
+    &copy; 2018 | ikirk.cn
+    <br>
+    <!-- Theme by <a href="https://github.com/yanm1ng">yanm1ng</a> -->
 
-        
-        <footer id="footer">
-  <div class="footer-left">
-    Copyright &copy; 2018 Kirk
-  </div>
-  <div class="footer-right">
-    <nav>
-      <ul>
-         
-          <li><a href="/">Home</a></li>
-         
-          <li><a href="/about/">About</a></li>
-         
-          <li><a href="/archives/">Writing</a></li>
-         
-          <li><a href="/projects_url">Projects</a></li>
-        
-      </ul>
-    </nav>
-  </div>
+  </p>
 </footer>
 
-    </div>
-</body>
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+<script src="/js/script.js"></script>
+  </body>
 </html>
-<!-- styles -->
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
-<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
-
-<!-- jquery -->
-<script src="/lib/jquery/jquery.min.js"></script>
-<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
-<script src="/js/main.js"></script>
-<!-- search -->
-
-<!-- Google Analytics -->
-
-<!-- Baidu Analytics -->
-
-<!-- Disqus Comments -->
-
-
