@@ -1,27 +1,393 @@
-extends ./_partial/layout.pug
-block content
-  include ./_partial/page_header.pug
-  ul.post-list(style='max-width:'+ theme.content_width +'px')
-    each post in page.posts.data
-      li 
-        p.date #{time(post.date, 'LL')}
-        if post.title
-          h4.title
-            a(href=url_for(post.path)) #{post.title}
-          .excerpt !{post.excerpt}
-        else
-          .no-title !{post.content}
-        if post.photos && post.photos.length
-          a(href=url_for(post.path))
-            img.photo(src=post.photos[0])
-        ul.meta
-          li
-            i.icon.icon-author
-            | #{config.author}
-          li
-            i.icon.icon-clock
-            | #{parseInt(post.content ? post.content.length/900 : 0)} Minutes
-          li
-            i.icon.icon-category
-            | !{list_categories(post.categories)}
-  include ./_partial/pagination.pug
+<!DOCTYPE html>
+<html>
+  <head><meta name="generator" content="Hexo 3.8.0">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="yanm1ng&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      KK
+    
+  </title>
+  <link href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdn.bootcss.com/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdn.bootcss.com/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/plugins/gitment.css">
+  <script src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdn.bootcss.com/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdn.bootcss.com/nprogress/0.2.0/nprogress.min.js"></script>
+  <script src="/js/qrious.js"></script>
+<script src="/js/gitment.js"></script>
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+</head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png">
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>KK</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link active">首页</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">标签</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">归档</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">项目</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">关于</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link mobile-active">首页</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">标签</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">归档</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">项目</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">关于</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <main class="app-body">
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/2018/11/15/11-RunLoop/"></a>
+      </h2>
+      <p class="article-date">2018-11-15</p>
+      
+      <div class="article-summary">
+        
+          RunLoop简介运行循环，在程序运行过程中循环做些事情
+
+作用
+保持程序的持续运行
+处理APP中的各种事务（比如触摸事件、定时器）
+节省CPU，提高性能：该做事时做事，该休息时休息
+
+
+
+RunLoop与线程
+每条线程都有唯一的一个与之对应的RunLoop对象
+RunLoop保存在一个全局 ...
+        
+      </div>
+      <a class="more" href="/2018/11/15/11-RunLoop/">查看详情</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/2018/11/14/09-runtimeAPI/"></a>
+      </h2>
+      <p class="article-date">2018-11-14</p>
+      
+      <div class="article-summary">
+        
+          runtime API类1234567891011121314151617181920212223// 动态创建一个类（参数：父类，类名，额外的内存空间）Class objc_allocateClassPair(Class superclass, const char *name, size ...
+        
+      </div>
+      <a class="more" href="/2018/11/14/09-runtimeAPI/">查看详情</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/2018/11/14/10-关键字/"></a>
+      </h2>
+      <p class="article-date">2018-11-14</p>
+      
+      <div class="article-summary">
+        
+          关键字OC@dynamic 告诉编译器不用生成getter和setter方法的实现，等运行时再添加方法实现
+@synthesize 告诉编译器生成getter和setter方法的实现
+Swift
+final
+final关键字在大多数的编程语言中都存在，表示不允许对其修饰的内容进行继承或者重新 ...
+        
+      </div>
+      <a class="more" href="/2018/11/14/10-关键字/">查看详情</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/2018/11/09/07-Class底层结构/"></a>
+      </h2>
+      <p class="article-date">2018-11-09</p>
+      
+      <div class="article-summary">
+        
+          Class底层结构Class的结构123456789101112131415161718192021222324252627282930313233343536373839404142434445464748// 类的结构体信息struct objc_class &#123;    Clas ...
+        
+      </div>
+      <a class="more" href="/2018/11/09/07-Class底层结构/">查看详情</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/2018/11/09/08-objc_msgSend/"></a>
+      </h2>
+      <p class="article-date">2018-11-09</p>
+      
+      <div class="article-summary">
+        
+          objc_msgSend-消息机制OC中方法的调用，其实都是转为objc_msgSend()函数的调用
+Objc_msgSend()函数的执行分为三个阶段
+
+消息发送阶段
+动态方法解析阶段
+消息转发阶段
+
+流程1：消息发送阶段
+消息接收者receiver是否为nil，如果receiver为n ...
+        
+      </div>
+      <a class="more" href="/2018/11/09/08-objc_msgSend/">查看详情</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/2018/11/08/06-block/"></a>
+      </h2>
+      <p class="article-date">2018-11-08</p>
+      
+      <div class="article-summary">
+        
+          blockblock底层数据结构
+block本质上也是一个OC对象，它内部含有isa指针
+
+block是封装了函数调用以及函数调用环境的OC对象
+
+block底层结构：
+123456789101112131415161718192021222324252627// 例如这样的一个blocki ...
+        
+      </div>
+      <a class="more" href="/2018/11/08/06-block/">查看详情</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/2018/11/08/05-关联对象/"></a>
+      </h2>
+      <p class="article-date">2018-11-08</p>
+      
+      <div class="article-summary">
+        
+          关联对象关联对象API
+添加关联对象
+123456void objc_setAssociatedObject(id object, const void *key, id value, pbjc_AssociationPolicy poicy)// object 需要关联的对象// key  ...
+        
+      </div>
+      <a class="more" href="/2018/11/08/05-关联对象/">查看详情</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/2018/11/07/04-category_load_initialize/"></a>
+      </h2>
+      <p class="article-date">2018-11-07</p>
+      
+      <div class="article-summary">
+        
+          Category_Load_InitializeCategory
+category实现原理
+
+category在编译时，会被编程成结构体struct category_t，里面存储着原类名、对象方法、类方法、属性、协议信息
+
+在程序运行的时候，runtime会将category中的数据，合并 ...
+        
+      </div>
+      <a class="more" href="/2018/11/07/04-category_load_initialize/">查看详情</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/2018/11/07/03-KVC/"></a>
+      </h2>
+      <p class="article-date">2018-11-07</p>
+      
+      <div class="article-summary">
+        
+          KVCKVC的全称是Key-Value Coding，俗称“键值编码”，可以通过一个key来访问某个属性.
+API
+常见API
+
+-(void)setValue:(id)value forKeyPath:(NSString *)keyPath;
+-(void)setValue:(id)val ...
+        
+      </div>
+      <a class="more" href="/2018/11/07/03-KVC/">查看详情</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/2018/11/07/02-KVO/"></a>
+      </h2>
+      <p class="article-date">2018-11-07</p>
+      
+      <div class="article-summary">
+        
+          KVOKey-Value Observing
+实现原理
+利用runtime API动态生成一个子类，并让实例对象的isa指针，从原来的类指向这个子类
+这个子类会重写监听属性的set方法，在set方法中完成对属性修改的监听，调用监听的方法
+这个子类的superclass属性指向其父类，方便调用 ...
+        
+      </div>
+      <a class="more" href="/2018/11/07/02-KVO/">查看详情</a>
+    </article>
+  
+
+  
+    <div class="guide-pager">
+  
+    <a href="/"><span class="page-arrow">← </span>Prev</a>
+  
+  
+    <a class="unvisible" href="/">Next <span class="page-arrow">→</span></a>
+  
+</div>
+  
+</main>
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    <!-- &copy; 2018 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a> -->
+    &copy; 2018 | ikirk.cn
+    <br>
+    <!-- Theme by <a href="https://github.com/yanm1ng">yanm1ng</a> -->
+
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+<script src="/js/script.js"></script>
+  </body>
+</html>

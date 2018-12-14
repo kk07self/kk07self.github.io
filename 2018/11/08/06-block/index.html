@@ -1,45 +1,444 @@
-extends ./_partial/layout.pug
-block content
-  include ./_partial/post_header.pug
-  .article-content(style='max-width:'+ theme.content_width +'px')
-    if page.photos && page.photos.length
-      div
-        each photo in page.photos
-          a.article-gallery-img.fancybox(href=photo)
-            img(src=photo)
-    | !{page.content}
-  .article-meta(style='max-width:'+ theme.content_width +'px')
-    if page.tags && page.tags.length
-      .tags
-        i.icon.icon-tag
-        | !{list_tags(page.tags)}
-    if page.tags && page.categories.length
-      .categories
-        i.icon.icon-category
-        | !{list_categories(page.categories)}
-  if theme.duoshuo.enable
-    .article-comment(style='max-width:'+ theme.content_width +'px')
-      #ds-thread.ds-thread(data-thread-key=page._id, data-title=page.title, data-url=config.url + url_for(page.path), site-name=theme.duoshuo.siteName)
-      script.
-        var siteName = document.getElementById('ds-thread').getAttribute('site-name');
-        var duoshuoQuery = {short_name: siteName};
-        (function() {
-          var ds = document.createElement('script');
-          ds.type = 'text/javascript';ds.async = true;
-          ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
-          ds.charset = 'UTF-8';
-          (document.getElementsByTagName('head')[0] 
-          || document.getElementsByTagName('body')[0]).appendChild(ds);
-        })();
-  ul.navication
-    li.home
-      a(href="/")
-        i.icon.icon-home
-    if page.prev && page.prev.path
-      li
-        a(href=url_for(page.prev.path))
-          i.icon.icon-arror-left
-    if page.next && page.next.path
-      li
-        a(href=url_for(page.next.path))
-          i.icon.icon-arror-right
+<!DOCTYPE html>
+<html>
+  <head><meta name="generator" content="Hexo 3.8.0">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="yanm1ng&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      KK
+    
+  </title>
+  <link href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdn.bootcss.com/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdn.bootcss.com/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/plugins/gitment.css">
+  <script src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdn.bootcss.com/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdn.bootcss.com/nprogress/0.2.0/nprogress.min.js"></script>
+  <script src="/js/qrious.js"></script>
+<script src="/js/gitment.js"></script>
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+</head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png">
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>KK</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">首页</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">标签</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">归档</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">项目</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">关于</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">首页</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">标签</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">归档</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">项目</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">关于</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2></h2>
+  <p class="post-date">2018-11-08</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><h1 id="block"><a href="#block" class="headerlink" title="block"></a>block</h1><h4 id="block底层数据结构"><a href="#block底层数据结构" class="headerlink" title="block底层数据结构"></a>block底层数据结构</h4><ul>
+<li><p>block本质上也是一个OC对象，它内部含有isa指针</p>
+</li>
+<li><p>block是封装了函数调用以及函数调用环境的OC对象</p>
+</li>
+<li><p>block底层结构：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">// 例如这样的一个block</span><br><span class="line">int age = 10;</span><br><span class="line">void(^block)(void) = ^&#123;</span><br><span class="line">	NSLog(@&quot;age is %d&quot;,age);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 底层结构是</span><br><span class="line">// 包含三部分：block的内部实现，block的描述信息，引用(捕捉的)成员信息</span><br><span class="line">struct __main_block_impl_0 &#123;</span><br><span class="line">	struct __block_impl impl; // block的内部实现信息</span><br><span class="line">    struct __main_block_desc_0 *Desc; // block的描述信息</span><br><span class="line">	int age; // 引用的属性列表</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// block的实现部分</span><br><span class="line">struct __block_impl &#123;</span><br><span class="line">    void *isa; // isa指针</span><br><span class="line">    int Flags;</span><br><span class="line">    int Reserved;</span><br><span class="line">    void *FuncPtr; // 方法地址，用例调用block封装的方法</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// block的描述信息，注意，如果block捕捉的属性是对象信息，那这里会有block对对象的引用函数(即是强引用还是弱引用，以及如何进行内存管理)</span><br><span class="line">struc __main_block_desc_0 &#123;</span><br><span class="line">    size_t reserved;</span><br><span class="line">    size_t Block_size; // block的大小</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>block的类型</strong></p>
+<p>block有3种类型，可以通过调用class方法或者isa指针查看具体类型，最终都是继承自NSBlock类型</p>
+<ul>
+<li><strong>NSGlobalBlock</strong>（NSConcreteGlobalBlock）：数据区域</li>
+<li><strong>NSStackBlock</strong>（NSConcreteStackBlock）：栈区</li>
+<li><strong>NSMallocBlock</strong>（NSConcreteMallocBlock）：堆区</li>
+</ul>
+<p>应用程序的内存分配：程序区域（.text）、数据区域（.data）、堆、栈</p>
+<p><strong>block类型的转变</strong>：</p>
+<ul>
+<li>没有访问auto变量——&gt;NSGlobalBlock</li>
+<li>访问了auto变量——&gt;NSStackBlock</li>
+<li>NSStackBlock调用了copy——&gt;NSMallockBlock</li>
+</ul>
+<p><strong>每一种block调用copy后</strong></p>
+<p>| Block类型      | 副本源的配置存储域 | copy后的效果 |<br>| ————– | —————— | ———— |<br>| NSGlobalBlock  | 程序的数据区       | 什么也不做   |<br>| NSStackBlock   | 栈区               | 从栈复制到堆 |<br>| NSMallockBlock | 堆区               | 引用计数加一 |</p>
+</li>
+<li><p><strong>MRC下block属性建议写法：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">@property(copy, nonatomic) void(^block)(void);</span><br></pre></td></tr></table></figure>
+<p>即用属性修饰词<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">  因为用了```copy```会将block从栈区复制到堆区进行操作，防止获取错误信息。如果block在栈区，且引用的auto成员变量也在栈区，系统会自动销毁收回成员变量，这时候再访问就容易获取错误信息，而复制到堆上就不会，堆上的信息需要程序员自己销毁。</span><br><span class="line"></span><br><span class="line">- **ARC环境下的block:**</span><br><span class="line"></span><br><span class="line">  - 建议写法：</span><br><span class="line"></span><br><span class="line">    ```objective-c</span><br><span class="line">    // 以下两中写法都可以，但为了同步MRC，建议用copy</span><br><span class="line">    @property (strong, nonatomic) void (^block)(void);</span><br><span class="line">    @property (copy, nonatomic) void (^block)(void);</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><p>编译器会根据以下情况自动将栈上的block复制到堆上</p>
+<ul>
+<li><p>block作为函数返回值时</p>
+</li>
+<li><p>将block赋值给__strong指针时，即强引用时</p>
+</li>
+<li><p>block作为Cocoa API中方法名含有usingBlock的方法参数时</p>
+</li>
+<li><p>block作为GCD API的方法参数时</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>block引用对象类型的auto变量</strong></p>
+<ul>
+<li><p>如果block在栈上，将不会对auto变量产生强引用</p>
+</li>
+<li><p>如果block被拷贝到堆上：</p>
+<p>会调用block内部的copy函数，copy函数内部会调用<figure class="highlight plain"><figcaption><span>__weak __unsafe_unretained**)作出相应的操作，形成强引用或弱引用</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">  - block从堆上移除：</span><br><span class="line"></span><br><span class="line">    会调用block内部的dispose函数，dispose函数内部会调用```_Block_object_dispose```，```_Block_object_dispose```函数会自动释放引用的auto变量</span><br><span class="line"></span><br><span class="line">- **__block修饰符**</span><br><span class="line"></span><br><span class="line">  - __block可以解决block内部无法修改auto变量的问题</span><br><span class="line"></span><br><span class="line">  - __block不能修饰全局变量、静态变量（static）</span><br><span class="line"></span><br><span class="line">  - block在栈上时，并不会对__block变量产生强引用</span><br><span class="line"></span><br><span class="line">  - 内部原理：</span><br><span class="line"></span><br><span class="line">    编译器会将__block变量包装成一个对象，然后进行操作</span><br><span class="line"></span><br><span class="line">    ```objective-c</span><br><span class="line">    // 简单的block</span><br><span class="line">    __block int age = 10;</span><br><span class="line">    ^&#123;</span><br><span class="line">    	NSLog(@&quot;age is %d&quot;, age);</span><br><span class="line">    &#125;()</span><br><span class="line">    </span><br><span class="line">    // 编译器编译后的block对象，将age包装成了__Block_byref_age_0的对象</span><br><span class="line">    struct __main_block_impl_0 &#123;</span><br><span class="line">    	struct __block_impl impl;</span><br><span class="line">        struct __main_block_desc_0 *Desc;</span><br><span class="line">        __Block_byref_age_0 *age; // by ref</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    // __Block_byref_age_0：age包装后的对象</span><br><span class="line">    struct __Block_byref_age_0 &#123;</span><br><span class="line">        void *isa;</span><br><span class="line">        __Block_byref_age_0 *__forwarding; // 指向自己的指针</span><br><span class="line">        int __flags;</span><br><span class="line">        int __size;</span><br><span class="line">        int age; // 使用的值，真实值</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<p>内部修改block变量：拿到block对象的age，找到age中的<strong>forwarding，再通过forwarding找到变量包装后的对象来修改里面的变量值：age-&gt;</strong>forwarding-&gt;age = XXX.</p>
+<p><strong>注意：</strong>当block被复制到堆上时，栈上的block里面的__forwarding指针指向堆上的block对象</p>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="block的循环引用"><a href="#block的循环引用" class="headerlink" title="block的循环引用"></a>block的循环引用</h4><ul>
+<li><p>用__weak</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">__weak typeof(self)weakSelf = self;</span><br><span class="line">self.block = ^&#123;</span><br><span class="line">	printf(&quot;%p&quot;,weakSelf);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>用__unsafe_unretained解决</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">__unsafe_unretained id weakSelf = self;</span><br><span class="line">self.block = ^&#123;</span><br><span class="line">	printf(&quot;%p&quot;,weakSelf);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>用__block解决（必须要调用block）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">__block id weakSelf = self;</span><br><span class="line">self.block = ^&#123;</span><br><span class="line">	printf(&quot;%p&quot;,weakSelf);</span><br><span class="line">    weakSelf = nil;</span><br><span class="line">&#125;</span><br><span class="line">self.block();</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>注意：</p>
+</li>
+</ul>
+<p>建议用<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#### Tips</span><br><span class="line"></span><br><span class="line">- **clang将oc转换成c\c++时，__weak问题解决**</span><br><span class="line"></span><br><span class="line">  需要支持ARC、指定运行时系统版本</span><br><span class="line"></span><br><span class="line">  ```shell</span><br><span class="line">  xcrun -sdk iphoneos clang -arch arm64 -rewrite-objc -fobjc-arc -fobjc-runtime=ios-8.0.0 main.m</span><br><span class="line">  # 不加对比：</span><br><span class="line">  xcrun -sdk iphoneos clang -arch arm64 -rewrite-objc main.m</span><br></pre></td></tr></table></figure></p>
+</section>
+    <!-- Tags START -->
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/2018/11/08/05-关联对象/">
+        <span class="nav-arrow">← </span>
+        
+          (untitled)
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/2018/11/09/08-objc_msgSend/">
+        
+          (untitled)
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+      <div class="money-like">
+        <div class="reward-btn">
+          赏
+          <span class="money-code">
+            <span class="alipay-code">
+              <div class="code-image"></div>
+              <b>使用支付宝打赏</b>
+            </span>
+            <span class="wechat-code">
+              <div class="code-image"></div>
+              <b>使用微信打赏</b>
+            </span>
+          </span>
+        </div>
+        <p class="notice">若你觉得我的文章对你有帮助，欢迎点击上方按钮对我打赏</p>
+      </div>
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+      <div class="qrcode">
+        <canvas id="share-qrcode"></canvas>
+        <p class="notice">扫描二维码，分享此文章</p>
+      </div>
+    
+    <!-- 二维码 END -->
+    
+      <!-- Gitment START -->
+      <div id="comments"></div>
+      <!-- Gitment END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#block"><span class="toc-nav-text">block</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#block底层数据结构"><span class="toc-nav-text">block底层数据结构</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#block的循环引用"><span class="toc-nav-text">block的循环引用</span></a></li></ol></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://ikirk.cn/2018/11/08/06-block/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+     // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+        
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+
+    // qrcode
+    var qr = new QRious({
+      element: document.getElementById('share-qrcode'),
+      value: document.location.href
+    });
+
+    // gitment
+    var gitmentConfig = "yanm1ng";
+    if (gitmentConfig !== 'undefined') {
+      var gitment = new Gitment({
+        id: "",
+        owner: "yanm1ng",
+        repo: "yanm1ng.github.io",
+        oauth: {
+          client_id: "0f87e490e00ee3fd87ef",
+          client_secret: "4a9d2b148e7971c2201ad12131ce8bf8159ccd2e"
+        },
+        theme: {
+          render(state, instance) {
+            const container = document.createElement('div')
+            container.lang = "en-US"
+            container.className = 'gitment-container gitment-root-container'
+            container.appendChild(instance.renderHeader(state, instance))
+            container.appendChild(instance.renderEditor(state, instance))
+            container.appendChild(instance.renderComments(state, instance))
+            container.appendChild(instance.renderFooter(state, instance))
+            return container;
+          }
+        }
+      })
+      gitment.render(document.getElementById('comments'))
+    }
+  })();
+</script>
+
+<script>
+  var disqus_shortname = '';
+  
+  var disqus_url = 'http://ikirk.cn/2018/11/08/06-block/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//go.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    <!-- &copy; 2018 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a> -->
+    &copy; 2018 | ikirk.cn
+    <br>
+    <!-- Theme by <a href="https://github.com/yanm1ng">yanm1ng</a> -->
+
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+<script src="/js/script.js"></script>
+  </body>
+</html>

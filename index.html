@@ -1,27 +1,385 @@
-extends ./_partial/layout.pug
-block content
-  include ./_partial/page_header.pug
-  ul.post-list(style='max-width:'+ theme.content_width +'px')
-    each post in page.posts.data
-      li 
-        p.date #{time(post.date, 'LL')}
-        if post.title
-          h4.title
-            a(href=url_for(post.path)) #{post.title}
-          .excerpt !{post.excerpt}
-        else
-          .no-title !{post.content}
-        if post.photos && post.photos.length
-          a(href=url_for(post.path))
-            img.photo(src=post.photos[0])
-        ul.meta
-          li
-            i.icon.icon-author
-            | #{config.author}
-          li
-            i.icon.icon-clock
-            | #{parseInt(post.content ? post.content.length/900 : 0)} Minutes
-          li
-            i.icon.icon-category
-            | !{list_categories(post.categories)}
-  include ./_partial/pagination.pug
+<!DOCTYPE html>
+<html>
+  <head><meta name="generator" content="Hexo 3.8.0">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="yanm1ng&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      KK
+    
+  </title>
+  <link href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdn.bootcss.com/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdn.bootcss.com/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/plugins/gitment.css">
+  <script src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdn.bootcss.com/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdn.bootcss.com/nprogress/0.2.0/nprogress.min.js"></script>
+  <script src="/js/qrious.js"></script>
+<script src="/js/gitment.js"></script>
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+</head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png">
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>KK</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link active">首页</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">标签</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">归档</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">项目</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">关于</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link mobile-active">首页</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">标签</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">归档</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">项目</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">关于</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <main class="app-body">
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/2018/10/01/top/">博客间接</a>
+      </h2>
+      <p class="article-date">2018-10-01</p>
+      
+      <div class="article-summary">
+        
+          欢迎来到我的个人博客。
+
+        
+      </div>
+      <a class="more" href="/2018/10/01/top/">查看详情</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/2018/12/12/NSObject本质/">NSObject本质</a>
+      </h2>
+      <p class="article-date">2018-12-12</p>
+      
+        
+  <a href="/tags#本质 底层实现">
+    <span class="tag-code">本质 底层实现</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          1 Objective-C的底层实现是：C/C++实现的OC—————&gt;C/C++—————&gt;汇编语言—————&gt;机器语言
+将OC代码转换成C/C++代码：
+1xcrun -sdk iphoneos clang -arch arm64 -rewrite-objc 源文件 - ...
+        
+      </div>
+      <a class="more" href="/2018/12/12/NSObject本质/">查看详情</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/2018/11/30/本地数据存储/"></a>
+      </h2>
+      <p class="article-date">2018-11-30</p>
+      
+      <div class="article-summary">
+        
+          本地数据存储沙盒路径说明每一个iOS应用都有自己的应用沙盒（应用沙盒就是应用中的文件系统目录），与其他应用隔离。
+
+路径特点说明：
+
+document：适合存储重要的数据， iTunes同步应用时会同步该文件下的内容。
+
+Library/Caches：适合存储体积大，不需要备份的非重要数据， ...
+        
+      </div>
+      <a class="more" href="/2018/11/30/本地数据存储/">查看详情</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/2018/11/21/13-内存管理/"></a>
+      </h2>
+      <p class="article-date">2018-11-21</p>
+      
+      <div class="article-summary">
+        
+          内存管理1、内存布局iOS程序的内存管理，从低到高分为了6部分，地址由低到高：保留（一部分）、代码段（__TEXT）、数据段（__DATA）、堆（heap）、栈（stack）、内核。和我们开发相关的有中间四部分：
+
+代码段：存储编译之后的代码
+数据段：
+字符串常量：比如NSString *s ...
+        
+      </div>
+      <a class="more" href="/2018/11/21/13-内存管理/">查看详情</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/2018/11/20/设计模式与架构设计/"></a>
+      </h2>
+      <p class="article-date">2018-11-20</p>
+      
+      <div class="article-summary">
+        
+          设计模式与架构设计、组件化
+        
+      </div>
+      <a class="more" href="/2018/11/20/设计模式与架构设计/">查看详情</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/2018/11/20/LLVM/"></a>
+      </h2>
+      <p class="article-date">2018-11-20</p>
+      
+      <div class="article-summary">
+        
+          
+        
+      </div>
+      <a class="more" href="/2018/11/20/LLVM/">查看详情</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/2018/11/20/iOS性能优化/"></a>
+      </h2>
+      <p class="article-date">2018-11-20</p>
+      
+      <div class="article-summary">
+        
+          iOS性能优化这篇性能优化主要从四个方面来谈：应用启动时间；页面刷新滚动流畅度；耗电量；安装包的大小
+1、 应用启动时间这里的应用时间指，应用启动到显示第一个页面展示时的时间。
+应用启动有冷启动和热启动，热启动是指应用在后台活着，然后再启动应用。这里只谈冷启动。
+启动流程和启动优化请阅读另一 ...
+        
+      </div>
+      <a class="more" href="/2018/11/20/iOS性能优化/">查看详情</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/2018/11/20/iOS应用启动及启动时间优化/"></a>
+      </h2>
+      <p class="article-date">2018-11-20</p>
+      
+      <div class="article-summary">
+        
+          iOS应用启动时做了哪些工作&amp;启动时间优化先来看看Xcode9新加的神器，如下图
+通过添加环境变量可以打印出APP的启动时间分析（Edit scheme -&gt; Run -&gt; Arguments），DYLD_PRINT_STATISTICS设置为1，如果查看更详细的信息可以 ...
+        
+      </div>
+      <a class="more" href="/2018/11/20/iOS应用启动及启动时间优化/">查看详情</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/2018/11/16/12-多线程/"></a>
+      </h2>
+      <p class="article-date">2018-11-16</p>
+      
+      <div class="article-summary">
+        
+          多线程多线程实现方案
+pthread
+C语言，跨平台的，线程生命周期需要程序员自己写
+
+NSThread
+OC语言，使用更加面向对象，对pthread面向对象的封装
+
+GCD
+C语言，旨在替代NSThread等线程技术，充分利用设备的多核，生命周期自动管理
+
+NSOperation
+OC语言 ...
+        
+      </div>
+      <a class="more" href="/2018/11/16/12-多线程/">查看详情</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/2018/11/16/LLDB/"></a>
+      </h2>
+      <p class="article-date">2018-11-16</p>
+      
+      <div class="article-summary">
+        
+          LLDB指令的格式是12&lt;command&gt; [&lt;subcommand&gt; [&lt;subcommand&gt;...]] &lt;action&gt; [-options [option-value]] [argument [argument...]]
+
+命令名称：
+ ...
+        
+      </div>
+      <a class="more" href="/2018/11/16/LLDB/">查看详情</a>
+    </article>
+  
+
+  
+    <div class="guide-pager">
+  
+    <a class="unvisible" href="/"><span class="page-arrow">←</span> Prev</a>
+  
+  
+    <a href="/page/2/">Next<span class="page-arrow"> →</span></a>
+  
+</div>
+  
+</main>
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    <!-- &copy; 2018 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a> -->
+    &copy; 2018 | ikirk.cn
+    <br>
+    <!-- Theme by <a href="https://github.com/yanm1ng">yanm1ng</a> -->
+
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+<script src="/js/script.js"></script>
+  </body>
+</html>
