@@ -117,7 +117,7 @@ h2.article-head {
   transition: all 0.3s;
 }
 .more:hover {
-  transform: scale(1.2);
+  border-bottom: 2px solid #42b983;
 }
 #article-banner {
   width: 100%;
