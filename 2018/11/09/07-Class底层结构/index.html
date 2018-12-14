@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="Class底层结构Class的结构123456789101112131415161718192021222324252627282930313233343536373839404142434445464748// 类的结构体信息struct objc_class &amp;#123;    Class isa; // 内部信息参考下面的**isa**    Class superclass;    cac">
+<meta property="og:type" content="article">
+<meta property="og:title" content="KK">
+<meta property="og:url" content="http://ikirk.cn/2018/11/09/07-Class底层结构/index.html">
+<meta property="og:site_name" content="KK">
+<meta property="og:description" content="Class底层结构Class的结构123456789101112131415161718192021222324252627282930313233343536373839404142434445464748// 类的结构体信息struct objc_class &amp;#123;    Class isa; // 内部信息参考下面的**isa**    Class superclass;    cac">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-11-14T08:12:10.453Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="KK">
+<meta name="twitter:description" content="Class底层结构Class的结构123456789101112131415161718192021222324252627282930313233343536373839404142434445464748// 类的结构体信息struct objc_class &amp;#123;    Class isa; // 内部信息参考下面的**isa**    Class superclass;    cac">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>KK</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/projects_url">Projects</a></li>
+        
+      </ul>
+    </span>
+    <br>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2018/11/14/10-关键字/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2018/11/09/08-objc_msgSend/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://ikirk.cn/2018/11/09/07-Class底层结构/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://ikirk.cn/2018/11/09/07-Class底层结构/&text="><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://ikirk.cn/2018/11/09/07-Class底层结构/&title="><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://ikirk.cn/2018/11/09/07-Class底层结构/&is_video=false&description="><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=&body=Check out this article: http://ikirk.cn/2018/11/09/07-Class底层结构/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://ikirk.cn/2018/11/09/07-Class底层结构/&title="><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://ikirk.cn/2018/11/09/07-Class底层结构/&title="><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://ikirk.cn/2018/11/09/07-Class底层结构/&title="><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://ikirk.cn/2018/11/09/07-Class底层结构/&title="><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://ikirk.cn/2018/11/09/07-Class底层结构/&name=&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Class底层结构"><span class="toc-number">1.</span> <span class="toc-text">Class底层结构</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Class的结构"><span class="toc-number">1.0.0.1.</span> <span class="toc-text">Class的结构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#方法缓存"><span class="toc-number">1.0.0.2.</span> <span class="toc-text">方法缓存</span></a></li></ol></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope="" itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+        <span itemprop="name">KK</span>
+      </span>
+      
+    <div class="postdate">
+        <time datetime="2018-11-09T09:15:20.015Z" itemprop="datePublished">2018-11-09</time>
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h1 id="Class底层结构"><a href="#Class底层结构" class="headerlink" title="Class底层结构"></a>Class底层结构</h1><h4 id="Class的结构"><a href="#Class的结构" class="headerlink" title="Class的结构"></a>Class的结构</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 类的结构体信息</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">objc_class</span> &#123;</span></span><br><span class="line">    Class isa; <span class="comment">// 内部信息参考下面的**isa**</span></span><br><span class="line">    Class superclass;</span><br><span class="line">    <span class="keyword">cache_t</span> cache; <span class="comment">// 方法缓存</span></span><br><span class="line">    <span class="keyword">class_data_bits_t</span> bits; <span class="comment">// 用于获取具体的类信息</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// class_data_bits_t bits 经过位运算&amp;FAST_DATA_MASK可获得以下数据</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">class_rw_t</span> &#123;</span></span><br><span class="line">    <span class="keyword">uint32_t</span> flags;</span><br><span class="line">    <span class="keyword">uint32_t</span> versions;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">class_ro_t</span> *ro; 		<span class="comment">// 类的原始信息</span></span><br><span class="line">    <span class="keyword">methon_list_t</span> *methods; 	<span class="comment">//方法列表，二维数组</span></span><br><span class="line">    <span class="keyword">property_list_t</span> *properties;<span class="comment">// 属性列表</span></span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">protocol_list_t</span> *protocols; <span class="comment">//属性列表</span></span><br><span class="line">    Class fiestSubclass;</span><br><span class="line">    Class nextSiblingClass;</span><br><span class="line">    <span class="keyword">char</span> *demangledName;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 类的原始信息</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">class_ro_t</span> &#123;</span></span><br><span class="line">    <span class="keyword">uint32_t</span> flags;</span><br><span class="line">    <span class="keyword">uint32_t</span> instanceStart;</span><br><span class="line">    <span class="keyword">uint32_t</span> instanceSize; <span class="comment">// instance对象占用多少存储空间</span></span><br><span class="line"> <span class="meta">#<span class="meta-keyword">ifdef</span> __LP64__</span></span><br><span class="line">    <span class="keyword">uint32_t</span> reserved;</span><br><span class="line"> <span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">uint8_t</span> *ivarLayout;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span> * name; <span class="comment">// 类名</span></span><br><span class="line">    <span class="keyword">method_list_t</span> *baseMethodList;</span><br><span class="line">    <span class="keyword">protocol_list_t</span> *baseProtocols;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">ivar_list_t</span> *ivars; <span class="comment">// 成员变量列表</span></span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">uint8_t</span> *wearIvarLayout;</span><br><span class="line">    <span class="keyword">property_list_t</span> *baseProperties;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// 方法结构体</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">method_t</span> &#123;</span></span><br><span class="line">    SEL name; <span class="comment">// 函数名</span></span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span> *types; <span class="comment">// 编码(返回值、参数类型)</span></span><br><span class="line">    IMP imp; <span class="comment">// 指向函数的指针(函数地址)</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> id _Nullable (*IMP) (id _Nonnull, SEL _Nonnull, ...);</span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">objc_selector</span> *<span class="title">SEL</span>;</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>class_rw_t里面的methods、properties、protocols是二维数组，是可读可写的，包含了类的初始内容、分类的内容</li>
+<li>class_ro_t里面的baseMethodList、baseProtocols、ivars、baseProperties是一维数组，是只读的，包含了类的初始内容</li>
+<li>method_t是对方法\函数的封装（在methods中）<ul>
+<li>IMP代表函数的具体实现</li>
+<li>SEL代表方法\函数名，一般叫做选择器，底层结构跟char *类似<ul>
+<li>可以通过@selector()和sel_registerName()获得</li>
+<li>可以通过sel_getName()和NSStringFromSelector()转成字符串</li>
+<li>不同类中相同名字的方法，所对应的方法选择器是相同的</li>
+</ul>
+</li>
+<li>types包含了函数返回值、参数编码的字符串</li>
+</ul>
+</li>
+</ul>
+<h4 id="方法缓存"><a href="#方法缓存" class="headerlink" title="方法缓存"></a>方法缓存</h4><p>Class内部结构中有个方法缓存（cache_t），用<strong>散列表（哈希表）</strong>来缓存曾经调用过的方法，可以提高方法的查找速度</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">cache_t</span> &#123;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">bucket_t</span> *_<span class="title">buckets</span>;</span> <span class="comment">// 散列表</span></span><br><span class="line">    <span class="keyword">mask_t</span> _mask; <span class="comment">// 散列表长度-1</span></span><br><span class="line">    <span class="keyword">mask_t</span> _occupied; <span class="comment">// 已经缓存的方法数量</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">bucket_t</span> &#123;</span></span><br><span class="line">    <span class="keyword">cache_key_t</span> _key; <span class="comment">// SEL作为key，在查找时，也就是拿SEL来进行查找</span></span><br><span class="line">    IMP _imp; <span class="comment">// 函数的内存地址</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>散列表查找说明：</strong></p>
+<ul>
+<li><p>拿空间换时间</p>
+</li>
+<li><p>散列表中的每个元素都有一个key和要查询的值value</p>
+</li>
+<li>散列表存储：<ul>
+<li>先开辟一定大小的存储空间给散列表，如一开始给开辟4个单元的大小，设定需要与之计算的mask（一般是散列表长度-1，因为列表重0开始计算，3）</li>
+<li>存储方法<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">  - 如果根据```index```找到的位置不为空，取出对应位置的值，比较两个值的key是否相同，如果相同就不在进行缓存，如果不相同然后将```index```加1进行下标下移，直到找到空位子为止</span><br><span class="line">  - 如果缓存的数量即将等于或大于散列表的长度，会将散列表的历史元素清除，然后再将散列值的大小扩大至两倍</span><br><span class="line">- 散列表取值：</span><br><span class="line">  - 根据元素特定的值与散列表的mask值进行计算，得出```index```下标值</span><br><span class="line">  - 根据下标值找到对应位置的元素，比较元素中的key值，如果key值相同，则取出里面的值</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#### isa</span><br><span class="line"></span><br><span class="line">每一个实例对象或者类对象的底层都有isa指针，在arm64之前，isa只是一个普通的指针，指着它的类或者元类；在arm64之后，对isa进行了优化，变成了一个共用体（union）结构，并使用位域来存储更多的信息</span><br><span class="line"></span><br><span class="line">arm64之后，isa是一个共用体了</span><br><span class="line"></span><br><span class="line">```objective-c</span><br><span class="line">union isa_t &#123;</span><br><span class="line">    Class cls; // 存储着类的地址</span><br><span class="line">    unitptr_t bits; // 利用位域存储更多的信息</span><br><span class="line">    struct &#123;</span><br><span class="line">        unitptr_t nonpointer			: 1; // 0代表普通指针，存储着class或meta-class,1代码优化过的，使用位域存储更多的信息</span><br><span class="line">        unitptr_t has_assoc				: 1; // 是否有设置关联对象，如果没有，释放时会更快</span><br><span class="line">        unitptr_t has_cxx_dtor			: 1; // 是否有c++的析构函数</span><br><span class="line">        unitptr_t shiftcls				: 3; // 存储着Class、Meta-Class对象的内存地址信息</span><br><span class="line">        unitptr_t magic					: 6; // 用于在调试时分辨对象是否未完成初始化</span><br><span class="line">        unitptr_t weakly_referenced		: 1; // 是否有被弱引用指向过，如果没有，释放时会更快</span><br><span class="line">        unitptr_t deallocating			: 1; // 对象是否正在释放</span><br><span class="line">        unitptr_t has_sidetable_rc		: 1; // 引用计数器是否过大无法存储在isa中,如果为1，那么引用计数会存储在一个叫SideTable的类的属性中</span><br><span class="line">        unitpyr_t extra_rc				: 1; // 里面存储的值是引用计数器减1</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/projects_url">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Class底层结构"><span class="toc-number">1.</span> <span class="toc-text">Class底层结构</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Class的结构"><span class="toc-number">1.0.0.1.</span> <span class="toc-text">Class的结构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#方法缓存"><span class="toc-number">1.0.0.2.</span> <span class="toc-text">方法缓存</span></a></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://ikirk.cn/2018/11/09/07-Class底层结构/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://ikirk.cn/2018/11/09/07-Class底层结构/&text="><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://ikirk.cn/2018/11/09/07-Class底层结构/&title="><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://ikirk.cn/2018/11/09/07-Class底层结构/&is_video=false&description="><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=&body=Check out this article: http://ikirk.cn/2018/11/09/07-Class底层结构/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://ikirk.cn/2018/11/09/07-Class底层结构/&title="><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://ikirk.cn/2018/11/09/07-Class底层结构/&title="><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://ikirk.cn/2018/11/09/07-Class底层结构/&title="><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://ikirk.cn/2018/11/09/07-Class底层结构/&title="><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://ikirk.cn/2018/11/09/07-Class底层结构/&name=&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2018 Kirk
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/projects_url">Projects</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+</body>
+</html>
+<!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+<!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+

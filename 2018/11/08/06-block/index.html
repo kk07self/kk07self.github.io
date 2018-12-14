@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="blockblock底层数据结构 block本质上也是一个OC对象，它内部含有isa指针  block是封装了函数调用以及函数调用环境的OC对象  block底层结构： 123456789101112131415161718192021222324252627// 例如这样的一个blockint age = 10;void(^block)(void) = ^&amp;#123;	NSLog(@&amp;quot;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="KK">
+<meta property="og:url" content="http://ikirk.cn/2018/11/08/06-block/index.html">
+<meta property="og:site_name" content="KK">
+<meta property="og:description" content="blockblock底层数据结构 block本质上也是一个OC对象，它内部含有isa指针  block是封装了函数调用以及函数调用环境的OC对象  block底层结构： 123456789101112131415161718192021222324252627// 例如这样的一个blockint age = 10;void(^block)(void) = ^&amp;#123;	NSLog(@&amp;quot;">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-11-09T03:21:25.466Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="KK">
+<meta name="twitter:description" content="blockblock底层数据结构 block本质上也是一个OC对象，它内部含有isa指针  block是封装了函数调用以及函数调用环境的OC对象  block底层结构： 123456789101112131415161718192021222324252627// 例如这样的一个blockint age = 10;void(^block)(void) = ^&amp;#123;	NSLog(@&amp;quot;">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>KK</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/projects_url">Projects</a></li>
+        
+      </ul>
+    </span>
+    <br>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2018/11/09/08-objc_msgSend/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2018/11/08/05-关联对象/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://ikirk.cn/2018/11/08/06-block/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://ikirk.cn/2018/11/08/06-block/&text="><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://ikirk.cn/2018/11/08/06-block/&title="><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://ikirk.cn/2018/11/08/06-block/&is_video=false&description="><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=&body=Check out this article: http://ikirk.cn/2018/11/08/06-block/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://ikirk.cn/2018/11/08/06-block/&title="><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://ikirk.cn/2018/11/08/06-block/&title="><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://ikirk.cn/2018/11/08/06-block/&title="><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://ikirk.cn/2018/11/08/06-block/&title="><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://ikirk.cn/2018/11/08/06-block/&name=&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#block"><span class="toc-number">1.</span> <span class="toc-text">block</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#block底层数据结构"><span class="toc-number">1.0.0.1.</span> <span class="toc-text">block底层数据结构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#block的循环引用"><span class="toc-number">1.0.0.2.</span> <span class="toc-text">block的循环引用</span></a></li></ol></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope="" itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+        <span itemprop="name">KK</span>
+      </span>
+      
+    <div class="postdate">
+        <time datetime="2018-11-08T05:12:45.969Z" itemprop="datePublished">2018-11-08</time>
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h1 id="block"><a href="#block" class="headerlink" title="block"></a>block</h1><h4 id="block底层数据结构"><a href="#block底层数据结构" class="headerlink" title="block底层数据结构"></a>block底层数据结构</h4><ul>
+<li><p>block本质上也是一个OC对象，它内部含有isa指针</p>
+</li>
+<li><p>block是封装了函数调用以及函数调用环境的OC对象</p>
+</li>
+<li><p>block底层结构：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">// 例如这样的一个block</span><br><span class="line">int age = 10;</span><br><span class="line">void(^block)(void) = ^&#123;</span><br><span class="line">	NSLog(@&quot;age is %d&quot;,age);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 底层结构是</span><br><span class="line">// 包含三部分：block的内部实现，block的描述信息，引用(捕捉的)成员信息</span><br><span class="line">struct __main_block_impl_0 &#123;</span><br><span class="line">	struct __block_impl impl; // block的内部实现信息</span><br><span class="line">    struct __main_block_desc_0 *Desc; // block的描述信息</span><br><span class="line">	int age; // 引用的属性列表</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// block的实现部分</span><br><span class="line">struct __block_impl &#123;</span><br><span class="line">    void *isa; // isa指针</span><br><span class="line">    int Flags;</span><br><span class="line">    int Reserved;</span><br><span class="line">    void *FuncPtr; // 方法地址，用例调用block封装的方法</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// block的描述信息，注意，如果block捕捉的属性是对象信息，那这里会有block对对象的引用函数(即是强引用还是弱引用，以及如何进行内存管理)</span><br><span class="line">struc __main_block_desc_0 &#123;</span><br><span class="line">    size_t reserved;</span><br><span class="line">    size_t Block_size; // block的大小</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>block的类型</strong></p>
+<p>block有3种类型，可以通过调用class方法或者isa指针查看具体类型，最终都是继承自NSBlock类型</p>
+<ul>
+<li><strong>NSGlobalBlock</strong>（NSConcreteGlobalBlock）：数据区域</li>
+<li><strong>NSStackBlock</strong>（NSConcreteStackBlock）：栈区</li>
+<li><strong>NSMallocBlock</strong>（NSConcreteMallocBlock）：堆区</li>
+</ul>
+<p>应用程序的内存分配：程序区域（.text）、数据区域（.data）、堆、栈</p>
+<p><strong>block类型的转变</strong>：</p>
+<ul>
+<li>没有访问auto变量——&gt;NSGlobalBlock</li>
+<li>访问了auto变量——&gt;NSStackBlock</li>
+<li>NSStackBlock调用了copy——&gt;NSMallockBlock</li>
+</ul>
+<p><strong>每一种block调用copy后</strong></p>
+<p>| Block类型      | 副本源的配置存储域 | copy后的效果 |<br>| ————– | —————— | ———— |<br>| NSGlobalBlock  | 程序的数据区       | 什么也不做   |<br>| NSStackBlock   | 栈区               | 从栈复制到堆 |<br>| NSMallockBlock | 堆区               | 引用计数加一 |</p>
+</li>
+<li><p><strong>MRC下block属性建议写法：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">@property(copy, nonatomic) void(^block)(void);</span><br></pre></td></tr></table></figure>
+<p>即用属性修饰词<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">  因为用了```copy```会将block从栈区复制到堆区进行操作，防止获取错误信息。如果block在栈区，且引用的auto成员变量也在栈区，系统会自动销毁收回成员变量，这时候再访问就容易获取错误信息，而复制到堆上就不会，堆上的信息需要程序员自己销毁。</span><br><span class="line"></span><br><span class="line">- **ARC环境下的block:**</span><br><span class="line"></span><br><span class="line">  - 建议写法：</span><br><span class="line"></span><br><span class="line">    ```objective-c</span><br><span class="line">    // 以下两中写法都可以，但为了同步MRC，建议用copy</span><br><span class="line">    @property (strong, nonatomic) void (^block)(void);</span><br><span class="line">    @property (copy, nonatomic) void (^block)(void);</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><p>编译器会根据以下情况自动将栈上的block复制到堆上</p>
+<ul>
+<li><p>block作为函数返回值时</p>
+</li>
+<li><p>将block赋值给__strong指针时，即强引用时</p>
+</li>
+<li><p>block作为Cocoa API中方法名含有usingBlock的方法参数时</p>
+</li>
+<li><p>block作为GCD API的方法参数时</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>block引用对象类型的auto变量</strong></p>
+<ul>
+<li><p>如果block在栈上，将不会对auto变量产生强引用</p>
+</li>
+<li><p>如果block被拷贝到堆上：</p>
+<p>会调用block内部的copy函数，copy函数内部会调用<figure class="highlight plain"><figcaption><span>__weak __unsafe_unretained**)作出相应的操作，形成强引用或弱引用</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">  - block从堆上移除：</span><br><span class="line"></span><br><span class="line">    会调用block内部的dispose函数，dispose函数内部会调用```_Block_object_dispose```，```_Block_object_dispose```函数会自动释放引用的auto变量</span><br><span class="line"></span><br><span class="line">- **__block修饰符**</span><br><span class="line"></span><br><span class="line">  - __block可以解决block内部无法修改auto变量的问题</span><br><span class="line"></span><br><span class="line">  - __block不能修饰全局变量、静态变量（static）</span><br><span class="line"></span><br><span class="line">  - block在栈上时，并不会对__block变量产生强引用</span><br><span class="line"></span><br><span class="line">  - 内部原理：</span><br><span class="line"></span><br><span class="line">    编译器会将__block变量包装成一个对象，然后进行操作</span><br><span class="line"></span><br><span class="line">    ```objective-c</span><br><span class="line">    // 简单的block</span><br><span class="line">    __block int age = 10;</span><br><span class="line">    ^&#123;</span><br><span class="line">    	NSLog(@&quot;age is %d&quot;, age);</span><br><span class="line">    &#125;()</span><br><span class="line">    </span><br><span class="line">    // 编译器编译后的block对象，将age包装成了__Block_byref_age_0的对象</span><br><span class="line">    struct __main_block_impl_0 &#123;</span><br><span class="line">    	struct __block_impl impl;</span><br><span class="line">        struct __main_block_desc_0 *Desc;</span><br><span class="line">        __Block_byref_age_0 *age; // by ref</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    // __Block_byref_age_0：age包装后的对象</span><br><span class="line">    struct __Block_byref_age_0 &#123;</span><br><span class="line">        void *isa;</span><br><span class="line">        __Block_byref_age_0 *__forwarding; // 指向自己的指针</span><br><span class="line">        int __flags;</span><br><span class="line">        int __size;</span><br><span class="line">        int age; // 使用的值，真实值</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<p>内部修改block变量：拿到block对象的age，找到age中的<strong>forwarding，再通过forwarding找到变量包装后的对象来修改里面的变量值：age-&gt;</strong>forwarding-&gt;age = XXX.</p>
+<p><strong>注意：</strong>当block被复制到堆上时，栈上的block里面的__forwarding指针指向堆上的block对象</p>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="block的循环引用"><a href="#block的循环引用" class="headerlink" title="block的循环引用"></a>block的循环引用</h4><ul>
+<li><p>用__weak</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">__weak typeof(self)weakSelf = self;</span><br><span class="line">self.block = ^&#123;</span><br><span class="line">	printf(&quot;%p&quot;,weakSelf);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>用__unsafe_unretained解决</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">__unsafe_unretained id weakSelf = self;</span><br><span class="line">self.block = ^&#123;</span><br><span class="line">	printf(&quot;%p&quot;,weakSelf);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>用__block解决（必须要调用block）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">__block id weakSelf = self;</span><br><span class="line">self.block = ^&#123;</span><br><span class="line">	printf(&quot;%p&quot;,weakSelf);</span><br><span class="line">    weakSelf = nil;</span><br><span class="line">&#125;</span><br><span class="line">self.block();</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>注意：</p>
+</li>
+</ul>
+<p>建议用<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#### Tips</span><br><span class="line"></span><br><span class="line">- **clang将oc转换成c\c++时，__weak问题解决**</span><br><span class="line"></span><br><span class="line">  需要支持ARC、指定运行时系统版本</span><br><span class="line"></span><br><span class="line">  ```shell</span><br><span class="line">  xcrun -sdk iphoneos clang -arch arm64 -rewrite-objc -fobjc-arc -fobjc-runtime=ios-8.0.0 main.m</span><br><span class="line">  # 不加对比：</span><br><span class="line">  xcrun -sdk iphoneos clang -arch arm64 -rewrite-objc main.m</span><br></pre></td></tr></table></figure></p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/projects_url">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#block"><span class="toc-number">1.</span> <span class="toc-text">block</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#block底层数据结构"><span class="toc-number">1.0.0.1.</span> <span class="toc-text">block底层数据结构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#block的循环引用"><span class="toc-number">1.0.0.2.</span> <span class="toc-text">block的循环引用</span></a></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://ikirk.cn/2018/11/08/06-block/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://ikirk.cn/2018/11/08/06-block/&text="><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://ikirk.cn/2018/11/08/06-block/&title="><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://ikirk.cn/2018/11/08/06-block/&is_video=false&description="><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=&body=Check out this article: http://ikirk.cn/2018/11/08/06-block/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://ikirk.cn/2018/11/08/06-block/&title="><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://ikirk.cn/2018/11/08/06-block/&title="><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://ikirk.cn/2018/11/08/06-block/&title="><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://ikirk.cn/2018/11/08/06-block/&title="><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://ikirk.cn/2018/11/08/06-block/&name=&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2018 Kirk
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/projects_url">Projects</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+</body>
+</html>
+<!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+<!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+

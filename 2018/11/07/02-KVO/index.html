@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="KVOKey-Value Observing 实现原理 利用runtime API动态生成一个子类，并让实例对象的isa指针，从原来的类指向这个子类 这个子类会重写监听属性的set方法，在set方法中完成对属性修改的监听，调用监听的方法 这个子类的superclass属性指向其父类，方便调用不需要重写的方法，比如属性的get方法 实现流程： 修改实例对象的属性值时，会通过isa指针找到新的子类 在">
+<meta property="og:type" content="article">
+<meta property="og:title" content="KK">
+<meta property="og:url" content="http://ikirk.cn/2018/11/07/02-KVO/index.html">
+<meta property="og:site_name" content="KK">
+<meta property="og:description" content="KVOKey-Value Observing 实现原理 利用runtime API动态生成一个子类，并让实例对象的isa指针，从原来的类指向这个子类 这个子类会重写监听属性的set方法，在set方法中完成对属性修改的监听，调用监听的方法 这个子类的superclass属性指向其父类，方便调用不需要重写的方法，比如属性的get方法 实现流程： 修改实例对象的属性值时，会通过isa指针找到新的子类 在">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-11-08T05:12:12.059Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="KK">
+<meta name="twitter:description" content="KVOKey-Value Observing 实现原理 利用runtime API动态生成一个子类，并让实例对象的isa指针，从原来的类指向这个子类 这个子类会重写监听属性的set方法，在set方法中完成对属性修改的监听，调用监听的方法 这个子类的superclass属性指向其父类，方便调用不需要重写的方法，比如属性的get方法 实现流程： 修改实例对象的属性值时，会通过isa指针找到新的子类 在">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>KK</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/projects_url">Projects</a></li>
+        
+      </ul>
+    </span>
+    <br>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2018/11/07/03-KVC/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2018/10/01/top/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://ikirk.cn/2018/11/07/02-KVO/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://ikirk.cn/2018/11/07/02-KVO/&text="><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://ikirk.cn/2018/11/07/02-KVO/&title="><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://ikirk.cn/2018/11/07/02-KVO/&is_video=false&description="><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=&body=Check out this article: http://ikirk.cn/2018/11/07/02-KVO/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://ikirk.cn/2018/11/07/02-KVO/&title="><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://ikirk.cn/2018/11/07/02-KVO/&title="><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://ikirk.cn/2018/11/07/02-KVO/&title="><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://ikirk.cn/2018/11/07/02-KVO/&title="><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://ikirk.cn/2018/11/07/02-KVO/&name=&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#KVO"><span class="toc-number">1.</span> <span class="toc-text">KVO</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#实现原理"><span class="toc-number">1.0.0.1.</span> <span class="toc-text">实现原理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#其他"><span class="toc-number">1.0.0.2.</span> <span class="toc-text">其他</span></a></li></ol></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope="" itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+        <span itemprop="name">KK</span>
+      </span>
+      
+    <div class="postdate">
+        <time datetime="2018-11-07T02:22:07.886Z" itemprop="datePublished">2018-11-07</time>
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h1 id="KVO"><a href="#KVO" class="headerlink" title="KVO"></a>KVO</h1><p>Key-Value Observing</p>
+<h4 id="实现原理"><a href="#实现原理" class="headerlink" title="实现原理"></a>实现原理</h4><ul>
+<li>利用runtime API动态生成一个子类，并让实例对象的isa指针，从原来的类指向这个子类</li>
+<li>这个子类会重写监听属性的set方法，在set方法中完成对属性修改的监听，调用监听的方法</li>
+<li>这个子类的superclass属性指向其父类，方便调用不需要重写的方法，比如属性的get方法</li>
+<li>实现流程：<ul>
+<li>修改实例对象的属性值时，会通过isa指针找到新的子类</li>
+<li>在新的子类中找到其对应的属性set方法</li>
+<li>在set方法中会调用Foundation的c语言函数（_NSSetXXXValueAndNotify），这个函数会实现属性的赋值、监听器的触发<ul>
+<li>_NSSetXXXValueAndNotify()函数中会调用：willChangeValueForKey:方法</li>
+<li>调用父类的set方法，让其属性完成赋值</li>
+<li>再调用didChangeValueForKey：方法，这个方法内部会触发监听器的监听方法</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>其他：<ul>
+<li>会重写class方法：返回原始类，让开发者忽略子类的存在，隐藏kvo的内部实现</li>
+<li>会重写delloc方法：需要在销毁时做些额外处理</li>
+<li>会重新_isKVOA方法</li>
+</ul>
+</li>
+</ul>
+<h4 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h4><ul>
+<li><p>手动触发KVO：手动调用willChangeValueForKey:方法，didChangeValueForKey:方法</p>
+</li>
+<li><p>直接修改成员变量会不会触发KVO：不会触发，因为没有调用其属性的set方法</p>
+</li>
+</ul>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/projects_url">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#KVO"><span class="toc-number">1.</span> <span class="toc-text">KVO</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#实现原理"><span class="toc-number">1.0.0.1.</span> <span class="toc-text">实现原理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#其他"><span class="toc-number">1.0.0.2.</span> <span class="toc-text">其他</span></a></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://ikirk.cn/2018/11/07/02-KVO/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://ikirk.cn/2018/11/07/02-KVO/&text="><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://ikirk.cn/2018/11/07/02-KVO/&title="><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://ikirk.cn/2018/11/07/02-KVO/&is_video=false&description="><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=&body=Check out this article: http://ikirk.cn/2018/11/07/02-KVO/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://ikirk.cn/2018/11/07/02-KVO/&title="><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://ikirk.cn/2018/11/07/02-KVO/&title="><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://ikirk.cn/2018/11/07/02-KVO/&title="><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://ikirk.cn/2018/11/07/02-KVO/&title="><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://ikirk.cn/2018/11/07/02-KVO/&name=&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2018 Kirk
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/projects_url">Projects</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+</body>
+</html>
+<!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+<!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+

@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="iOS应用启动时做了哪些工作&amp;amp;启动时间优化先来看看Xcode9新加的神器，如下图 通过添加环境变量可以打印出APP的启动时间分析（Edit scheme -&amp;gt; Run -&amp;gt; Arguments），DYLD_PRINT_STATISTICS设置为1，如果查看更详细的信息可以DYLD_PRINT_STATISTICS_DETAILS设置为1。  然后启动应用，即可查看到以下信息 1">
+<meta property="og:type" content="article">
+<meta property="og:title" content="KK">
+<meta property="og:url" content="http://ikirk.cn/2018/11/20/iOS应用启动及启动时间优化/index.html">
+<meta property="og:site_name" content="KK">
+<meta property="og:description" content="iOS应用启动时做了哪些工作&amp;amp;启动时间优化先来看看Xcode9新加的神器，如下图 通过添加环境变量可以打印出APP的启动时间分析（Edit scheme -&amp;gt; Run -&amp;gt; Arguments），DYLD_PRINT_STATISTICS设置为1，如果查看更详细的信息可以DYLD_PRINT_STATISTICS_DETAILS设置为1。  然后启动应用，即可查看到以下信息 1">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://ikirk.cn/2018/11/20/资源/luanch.png">
+<meta property="og:updated_time" content="2018-11-20T07:45:32.212Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="KK">
+<meta name="twitter:description" content="iOS应用启动时做了哪些工作&amp;amp;启动时间优化先来看看Xcode9新加的神器，如下图 通过添加环境变量可以打印出APP的启动时间分析（Edit scheme -&amp;gt; Run -&amp;gt; Arguments），DYLD_PRINT_STATISTICS设置为1，如果查看更详细的信息可以DYLD_PRINT_STATISTICS_DETAILS设置为1。  然后启动应用，即可查看到以下信息 1">
+<meta name="twitter:image" content="http://ikirk.cn/2018/11/20/资源/luanch.png">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>KK</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/projects_url">Projects</a></li>
+        
+      </ul>
+    </span>
+    <br>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2018/11/20/iOS性能优化/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2018/11/16/12-多线程/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://ikirk.cn/2018/11/20/iOS应用启动及启动时间优化/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://ikirk.cn/2018/11/20/iOS应用启动及启动时间优化/&text="><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://ikirk.cn/2018/11/20/iOS应用启动及启动时间优化/&title="><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://ikirk.cn/2018/11/20/iOS应用启动及启动时间优化/&is_video=false&description="><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=&body=Check out this article: http://ikirk.cn/2018/11/20/iOS应用启动及启动时间优化/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://ikirk.cn/2018/11/20/iOS应用启动及启动时间优化/&title="><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://ikirk.cn/2018/11/20/iOS应用启动及启动时间优化/&title="><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://ikirk.cn/2018/11/20/iOS应用启动及启动时间优化/&title="><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://ikirk.cn/2018/11/20/iOS应用启动及启动时间优化/&title="><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://ikirk.cn/2018/11/20/iOS应用启动及启动时间优化/&name=&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#iOS应用启动时做了哪些工作-amp-启动时间优化"><span class="toc-number">1.</span> <span class="toc-text">iOS应用启动时做了哪些工作&amp;启动时间优化</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#启动工作"><span class="toc-number">1.0.0.1.</span> <span class="toc-text">启动工作</span></a></li></ol></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope="" itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+        <span itemprop="name">KK</span>
+      </span>
+      
+    <div class="postdate">
+        <time datetime="2018-11-20T03:11:20.456Z" itemprop="datePublished">2018-11-20</time>
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h1 id="iOS应用启动时做了哪些工作-amp-启动时间优化"><a href="#iOS应用启动时做了哪些工作-amp-启动时间优化" class="headerlink" title="iOS应用启动时做了哪些工作&amp;启动时间优化"></a>iOS应用启动时做了哪些工作&amp;启动时间优化</h1><p>先来看看Xcode9新加的神器，如下图</p>
+<p>通过添加环境变量可以打印出APP的启动时间分析（Edit scheme -&gt; Run -&gt; Arguments），DYLD_PRINT_STATISTICS设置为1，如果查看更详细的信息可以DYLD_PRINT_STATISTICS_DETAILS设置为1。</p>
+<p><img src="../资源/luanch.png" alt="image-20181120152509590"></p>
+<p>然后启动应用，即可查看到以下信息</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Total pre-main time: 588.23 milliseconds (100.0%)</span><br><span class="line">         dylib loading time: 264.36 milliseconds (44.9%)</span><br><span class="line">        rebase/binding time:  56.19 milliseconds (9.5%)</span><br><span class="line">            ObjC setup time:  49.84 milliseconds (8.4%)</span><br><span class="line">           initializer time: 217.71 milliseconds (37.0%)</span><br><span class="line">           slowest intializers :</span><br><span class="line">             libSystem.B.dylib :   9.18 milliseconds (1.5%)</span><br><span class="line">    libMainThreadChecker.dylib :  36.42 milliseconds (6.1%)</span><br><span class="line">          libglInterpose.dylib :  82.35 milliseconds (14.0%)</span><br><span class="line">         libMTLInterpose.dylib :  32.51 milliseconds (5.5%)</span><br><span class="line">                         MeeYi :  24.89 milliseconds (4.2%)</span><br></pre></td></tr></table></figure>
+<p>可以看到，在执行main函数前，应用准备了4个方面：<strong>dylib loading</strong>、<strong>rebase/binding</strong>、<strong>ObjC setup</strong>、<strong>initializer</strong>，下面我们将好好分析这几个方面。</p>
+<h4 id="启动工作"><a href="#启动工作" class="headerlink" title="启动工作"></a>启动工作</h4><ul>
+<li><strong>load dylibs</strong>：加载动态库，包括系统的、自己添加的（第三方的），递归一层一层加载所依赖的库。</li>
+<li><strong>Rebase&amp;Bind</strong>：修复指针，mach-o内部的存储逻辑是，信息的存储地址是虚拟内存，不是直接对应物理内存；每一次应用启动的时候，内存的开始地址又是随机的，因此需要对接虚拟内存和物理内存地址。为了安全，防止黑客攻击。</li>
+<li><strong>Objc</strong>：注册类信息到全局Table中</li>
+<li><strong>Initializers</strong>：初始化部分，+load方法初始化，C/C++静态初始化对象和标记<code>__attribute__(constructor)</code>的方法</li>
+<li><strong>Main()</strong>：执行main函数，执行APPDelegate的方法</li>
+<li><strong>加载Window+加载RootViewController+初始化操作</strong>：主要在<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#### 启动时间优化</span><br><span class="line"></span><br><span class="line">- **启动时间了解**</span><br><span class="line"></span><br><span class="line">启动时间是用户点击App图标，到第一个界面展示的时间。</span><br><span class="line"></span><br><span class="line">启动时间在小于400ms是最佳的，因为从点击图标到显示Launch Screen，到Launch Screen消失这段时间是400ms。启动时间不可以大于20s，否则会被系统杀掉。</span><br><span class="line"></span><br><span class="line">查看启动时间</span><br><span class="line"></span><br><span class="line">在Xcode中，可以通过设置环境变量来查看App的启动时间，这里查看的主要是main函数之前的，`DYLD_PRINT_STATISTICS`和`DYLD_PRINT_STATISTICS_DETAILS`。</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>Total pre-main time: 560.65 milliseconds (100.0%)<br>         dylib loading time: 266.19 milliseconds (47.4%)<br>        rebase/binding time:  37.60 milliseconds (6.7%)<br>            ObjC setup time:  48.74 milliseconds (8.6%)<br>           initializer time: 207.98 milliseconds (37.0%)<br>           slowest intializers :<br>             libSystem.B.dylib :   8.47 milliseconds (1.5%)<br>    libMainThreadChecker.dylib :  36.20 milliseconds (6.4%)<br>          libglInterpose.dylib :  76.54 milliseconds (13.6%)<br>         libMTLInterpose.dylib :  31.91 milliseconds (5.6%)<br>                         MeeYi :  23.31 milliseconds (4.1%)<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">- **启动时间优化**</span><br><span class="line"></span><br><span class="line">  - **main()函数之前：**</span><br><span class="line"></span><br><span class="line">    - #### dylibs：加载动态库 </span><br><span class="line"></span><br><span class="line">      启动的第一步是加载动态库，加载系统的动态库使很快的，因为可以缓存，而加载内嵌的动态库速度较慢。所以，提高这一步的效率的关键是：减少动态库的数量。</span><br><span class="line"></span><br><span class="line">      ```合并动态库，比如公司内部由私有Pod建立了如下动态库：XXTableView, XXHUD, XXLabel，强烈建议合并成一个XXUIKit来提高加载速度。</span><br></pre></td></tr></table></figure></p>
+<pre><code>- #### Rebase &amp; Bind &amp; Objective C Runtime
+
+  Rebase和Bind都是为了解决指针引用的问题。对于Objective C开发来说，主要的时间消耗在Class/Method的符号加载上，所以常见的优化方案是：
+
+  - 减少__DATA段中的指针数量。
+  - 合并Category和功能类似的类。比如：UIView+Frame,UIView+AutoLayout…合并为一个
+    删除无用的方法和类。
+  - 多用Swift Structs，因为Swfit Structs是静态分发的。
+
+- #### Initializers
+
+  通常，我们会在+load方法中进行method-swizzling，这也是Nshipster推荐的方式。
+
+  - 用initialize替代load。不少同学喜欢用method-swizzling来实现AOP去做日志统计等内容，强烈建议改为在initialize进行初始化。
+  - 减少__atribute__((constructor))的使用，而是在第一次访问的时候才用dispatch_once等方式初始化。
+  - 不要创建线程
+
+  - 使用Swfit重写代码。
+</code></pre><ul>
+<li><p><strong>main()函数之后：</strong></p>
+<p><strong>优化的核心思想：能延迟初始化的尽量延迟初始化，不能延迟初始化的尽量放到后台初始化。</strong></p>
+<p>我们首先来分析下，从main函数开始执行，到你的第一个界面显示，这期间一般会做哪些事情。</p>
+<ul>
+<li>执行AppDelegate的代理方法，主要是<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">- 初始化第三方skd</span><br><span class="line">- 初始化Window，初始化基础的ViewController</span><br><span class="line">- 获取数据(Local DB／Network)，展示给用户。</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">接下来借助工具来查找优化</span><br><span class="line"></span><br><span class="line">- 知道这个过程后，可以借助**Time Profiler**工具查找具体的耗时模块</span><br><span class="line"></span><br><span class="line">  几点要注意：</span><br><span class="line"></span><br><span class="line">  - 分析启动时间，一般只关心主线程</span><br><span class="line">  - 选择Hide System Libraries和Invert Call Tree，这样我们能专注于自己的代码</span><br><span class="line">  - 右侧可以看到详细的调用堆栈信息</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">- 另外，也可以借用C语言函数查看模块运行时间：</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>CFTimeInterval startTime = CACurrentMediaTime();<br>//执行方法<br>CFTimeInterval endTime = CACurrentMediaTime();<br><code>`</code></p>
+</li>
+</ul>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/projects_url">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#iOS应用启动时做了哪些工作-amp-启动时间优化"><span class="toc-number">1.</span> <span class="toc-text">iOS应用启动时做了哪些工作&amp;启动时间优化</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#启动工作"><span class="toc-number">1.0.0.1.</span> <span class="toc-text">启动工作</span></a></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://ikirk.cn/2018/11/20/iOS应用启动及启动时间优化/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://ikirk.cn/2018/11/20/iOS应用启动及启动时间优化/&text="><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://ikirk.cn/2018/11/20/iOS应用启动及启动时间优化/&title="><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://ikirk.cn/2018/11/20/iOS应用启动及启动时间优化/&is_video=false&description="><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=&body=Check out this article: http://ikirk.cn/2018/11/20/iOS应用启动及启动时间优化/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://ikirk.cn/2018/11/20/iOS应用启动及启动时间优化/&title="><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://ikirk.cn/2018/11/20/iOS应用启动及启动时间优化/&title="><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://ikirk.cn/2018/11/20/iOS应用启动及启动时间优化/&title="><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://ikirk.cn/2018/11/20/iOS应用启动及启动时间优化/&title="><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://ikirk.cn/2018/11/20/iOS应用启动及启动时间优化/&name=&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2018 Kirk
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/projects_url">Projects</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+</body>
+</html>
+<!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+<!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+

@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="iOS性能优化这篇性能优化主要从四个方面来谈：应用启动时间；页面刷新滚动流畅度；耗电量；安装包的大小 1、 应用启动时间这里的应用时间指，应用启动到显示第一个页面展示时的时间。 应用启动有冷启动和热启动，热启动是指应用在后台活着，然后再启动应用。这里只谈冷启动。 启动流程和启动优化请阅读另一篇文章 iOS应用启动及启动时间优化 2、页面刷新滚动流畅度在优化流程度前需要先了解下iOS页面的成像过程。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="KK">
+<meta property="og:url" content="http://ikirk.cn/2018/11/20/iOS性能优化/index.html">
+<meta property="og:site_name" content="KK">
+<meta property="og:description" content="iOS性能优化这篇性能优化主要从四个方面来谈：应用启动时间；页面刷新滚动流畅度；耗电量；安装包的大小 1、 应用启动时间这里的应用时间指，应用启动到显示第一个页面展示时的时间。 应用启动有冷启动和热启动，热启动是指应用在后台活着，然后再启动应用。这里只谈冷启动。 启动流程和启动优化请阅读另一篇文章 iOS应用启动及启动时间优化 2、页面刷新滚动流畅度在优化流程度前需要先了解下iOS页面的成像过程。">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-11-27T09:35:01.986Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="KK">
+<meta name="twitter:description" content="iOS性能优化这篇性能优化主要从四个方面来谈：应用启动时间；页面刷新滚动流畅度；耗电量；安装包的大小 1、 应用启动时间这里的应用时间指，应用启动到显示第一个页面展示时的时间。 应用启动有冷启动和热启动，热启动是指应用在后台活着，然后再启动应用。这里只谈冷启动。 启动流程和启动优化请阅读另一篇文章 iOS应用启动及启动时间优化 2、页面刷新滚动流畅度在优化流程度前需要先了解下iOS页面的成像过程。">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>KK</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/projects_url">Projects</a></li>
+        
+      </ul>
+    </span>
+    <br>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2018/11/20/LLVM/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2018/11/20/iOS应用启动及启动时间优化/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://ikirk.cn/2018/11/20/iOS性能优化/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://ikirk.cn/2018/11/20/iOS性能优化/&text="><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://ikirk.cn/2018/11/20/iOS性能优化/&title="><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://ikirk.cn/2018/11/20/iOS性能优化/&is_video=false&description="><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=&body=Check out this article: http://ikirk.cn/2018/11/20/iOS性能优化/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://ikirk.cn/2018/11/20/iOS性能优化/&title="><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://ikirk.cn/2018/11/20/iOS性能优化/&title="><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://ikirk.cn/2018/11/20/iOS性能优化/&title="><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://ikirk.cn/2018/11/20/iOS性能优化/&title="><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://ikirk.cn/2018/11/20/iOS性能优化/&name=&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#iOS性能优化"><span class="toc-number">1.</span> <span class="toc-text">iOS性能优化</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1、-应用启动时间"><span class="toc-number">1.0.0.1.</span> <span class="toc-text">1、 应用启动时间</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2、页面刷新滚动流畅度"><span class="toc-number">1.0.0.2.</span> <span class="toc-text">2、页面刷新滚动流畅度</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3、耗电量"><span class="toc-number">1.0.0.3.</span> <span class="toc-text">3、耗电量</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#安装包瘦身"><span class="toc-number">1.0.0.4.</span> <span class="toc-text">安装包瘦身</span></a></li></ol></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope="" itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+        <span itemprop="name">KK</span>
+      </span>
+      
+    <div class="postdate">
+        <time datetime="2018-11-20T03:55:10.664Z" itemprop="datePublished">2018-11-20</time>
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h1 id="iOS性能优化"><a href="#iOS性能优化" class="headerlink" title="iOS性能优化"></a>iOS性能优化</h1><p>这篇性能优化主要从四个方面来谈：应用启动时间；页面刷新滚动流畅度；耗电量；安装包的大小</p>
+<h4 id="1、-应用启动时间"><a href="#1、-应用启动时间" class="headerlink" title="1、 应用启动时间"></a>1、 应用启动时间</h4><p>这里的应用时间指，应用启动到显示第一个页面展示时的时间。</p>
+<p>应用启动有冷启动和热启动，热启动是指应用在后台活着，然后再启动应用。这里只谈冷启动。</p>
+<p>启动流程和启动优化请阅读另一篇文章 <a href="../OC/iOS应用启动及启动时间优化.md"><strong>iOS应用启动及启动时间优化</strong></a></p>
+<h4 id="2、页面刷新滚动流畅度"><a href="#2、页面刷新滚动流畅度" class="headerlink" title="2、页面刷新滚动流畅度"></a>2、页面刷新滚动流畅度</h4><p>在优化流程度前需要先了解下iOS页面的成像过程。</p>
+<p><strong>CPU</strong>（Central Processing Unit，中央处理器）:</p>
+<p>对象的创建和销毁、对象属性的调整、布局计算、文本的计算和排版、图片的格式转换和解码、图像的绘制（Core Graphics）</p>
+<p><strong>GPU</strong>（Graphics Processing Unit，图形处理器）：</p>
+<p>纹理的渲染</p>
+<p><strong>成像过程</strong>：</p>
+<p>CPU计算信息，GPU渲染信息到帧缓存区（iOS是双缓存机制，有前帧缓存、后帧缓存），视频控制器从帧缓存中读取信息显示到屏幕上。</p>
+<p><strong>造成卡顿的原因</strong>：</p>
+<p>按照60FPS的刷帧率，每隔16ms就会有一次VSync信号，VSync信号来的时候就需要从帧缓存区中取缓存显示到屏幕上，如果每次VSync信号来的时候CPU和GPU没有处理好信息渲染到缓存区，那么就会从缓存中拿之前缓存的显示，就造成了丢帧，丢帧多了就会造成卡顿。</p>
+<p><strong>解决卡顿的核心</strong></p>
+<p>尽可能减少CPU、GPU资源消耗</p>
+<ul>
+<li><p><strong>优化CPU</strong></p>
+<ul>
+<li><p>尽量用轻量级的对象，比如用不到事件处理的地方，可以考虑使用CALayer取代UIView</p>
+</li>
+<li><p>不要频繁地调用UIView的相关属性，比如frame、bounds、transform等属性，尽量减少不必要的修改</p>
+</li>
+<li><p>尽量提前计算好布局，在有需要时一次性调整对应的属性，不要多次修改属性</p>
+</li>
+<li><p>Autolayout会比直接设置frame消耗更多的CPU资源</p>
+</li>
+<li><p>图片的size最好刚好跟UIImageView的size保持一致</p>
+</li>
+<li><p>控制一下线程的最大并发数量</p>
+</li>
+<li><p>尽量把耗时的操作放到子线程</p>
+<ul>
+<li><p>文本处理（尺寸计算、绘制）</p>
+</li>
+<li><p>图片处理（解码、绘制）</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>优化GPU</strong></p>
+<ul>
+<li><p>尽量避免短时间内大量图片的显示，尽可能将多张图片合成一张进行显示</p>
+</li>
+<li><p>尽量减少视图数量和层次</p>
+</li>
+<li><p>减少透明的视图（alpha&lt;1），不透明的就设置opaque为YES</p>
+</li>
+<li><p>尽量避免出现离屏渲染</p>
+</li>
+</ul>
+</li>
+<li><p><strong>离屏渲染</strong></p>
+<p>在OpenGL中，GPU有2种渲染方式：</p>
+<ul>
+<li><p>On-Screen Rendering：当前屏幕渲染，在当前用于显示的屏幕缓冲区进行渲染操作；</p>
+</li>
+<li><p>Off-Screen Rendering：离屏渲染，在当前屏幕缓冲区以外新开辟一个缓冲区进行渲染操作</p>
+</li>
+</ul>
+<p>离屏渲染消耗性能的原因</p>
+<ul>
+<li>需要创建新的缓冲区</li>
+<li>离屏渲染的整个过程，需要多次切换上下文环境，先是从当前屏幕（On-Screen）切换到离屏（Off-Screen）；等到离屏渲染结束以后，将离屏缓冲区的渲染结果显示到屏幕上，又需要将上下文环境从离屏切换到当前屏幕</li>
+</ul>
+<p>会造成离屏渲染的有：</p>
+<ul>
+<li>光栅化，layer.shouldRasterize = YES</li>
+<li>遮罩，layer.mask</li>
+<li>圆角，同时设置layer.masksToBounds = YES、layer.cornerRadius大于（考虑通过CoreGraphics绘制裁剪圆角，或者叫美工提供圆角图片）</li>
+<li>阴影，layer.shadowXXX，如果设置了layer.shadowPath就不会产生离屏渲染</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><p><strong>卡顿检测</strong></p>
+<p>平时所说的“卡顿”主要是因为在主线程执行了比较耗时的操作，这里检测的有两个方案：</p>
+<ul>
+<li><p>Instruments中的coreAnimation工具，查看刷帧率，最理想最高的是60fps</p>
+</li>
+<li><p>可以添加Observer到主线程RunLoop中，通过监听RunLoop状态切换的耗时，以达到监控卡顿的目的</p>
+<p>这个可以借助第三方框架（github上很多），如：<a href="https://github.com/UIControl/LXDAppFluecyMonitor" target="_blank" rel="noopener"><strong>LXDAppFluecyMonitor</strong></a>、<a href="https://github.com/joggerplus/JPFPSStatus" target="_blank" rel="noopener"><strong>JPFPSStatus</strong></a></p>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="3、耗电量"><a href="#3、耗电量" class="headerlink" title="3、耗电量"></a>3、耗电量</h4><ul>
+<li><p>应用耗电的主要来源有：</p>
+<ul>
+<li>CPU处理，Processing</li>
+<li>网络，Networking</li>
+<li>定位，Location</li>
+<li>图像，Graphics</li>
+</ul>
+</li>
+<li><p>耗电优化：</p>
+<ul>
+<li><p>尽可能降低CPU、GPU功耗</p>
+</li>
+<li><p>少用定时器</p>
+</li>
+<li><p>优化I/O操作</p>
+<ul>
+<li><p>尽量不要频繁写入小数据，最好批量一次性写入</p>
+</li>
+<li><p>读写大量重要数据时，考虑用dispatch_io，其提供了基于GCD的异步操作文件I/O的API。用dispatch_io系统会优化磁盘访问</p>
+</li>
+<li>数据量比较大的，建议使用数据库（比如SQLite、CoreData）</li>
+</ul>
+</li>
+<li><p>网络优化</p>
+<ul>
+<li>减少、压缩网络数据</li>
+<li>如果多次请求的结果是相同的，尽量使用缓存</li>
+<li>使用断点续传，否则网络不稳定时可能多次传输相同的内容</li>
+<li>网络不可用时，不要尝试执行网络请求</li>
+<li>让用户可以取消长时间运行或者速度很慢的网络操作，设置合适的超时时间</li>
+<li>批量传输，比如，下载视频流时，不要传输很小的数据包，直接下载整个文件或者一大块一大块地下载。如果下载广告，一次性多下载一些，然后再慢慢展示。如果下载电子邮件，一次下载多封，不要一封一封地下载</li>
+</ul>
+</li>
+<li><p>定位优化</p>
+<ul>
+<li>如果只是需要快速确定用户位置，最好用CLLocationManager的requestLocation方法。定位完成后，会自动让定位硬件断电</li>
+<li>如果不是导航应用，尽量不要实时更新位置，定位完毕就关掉定位服务</li>
+<li>尽量降低定位精度，比如尽量不要使用精度最高的kCLLocationAccuracyBest</li>
+<li>需要后台定位时，尽量设置pausesLocationUpdatesAutomatically为YES，如果用户不太可能移动的时候系统会自动暂停位置更新</li>
+<li>尽量不要使用startMonitoringSignificantLocationChanges，优先考虑startMonitoringForRegion:</li>
+</ul>
+</li>
+<li><p>硬件检测优化</p>
+<ul>
+<li>用户移动、摇晃、倾斜设备时，会产生动作(motion)事件，这些事件由加速度计、陀螺仪、磁力计等硬件检测。在不需要检测的场合，应该及时关闭这些硬件</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="安装包瘦身"><a href="#安装包瘦身" class="headerlink" title="安装包瘦身"></a>安装包瘦身</h4><p>安装包（IPA）主要由可执行文件、资源组成</p>
+<ul>
+<li>资源（图片、音频、视频等）<ul>
+<li>采取无损压缩</li>
+<li>去除没有用到的资源</li>
+</ul>
+</li>
+<li>可执行文件瘦身<ul>
+<li>编译器优化<ul>
+<li>Strip Linked Product、Make Strings Read-Only、Symbols Hidden by Default设置为YES</li>
+<li>去掉异常支持，Enable C++ Exceptions、Enable Objective-C Exceptions设置为NO， Other C Flags添加-fno-exceptions</li>
+</ul>
+</li>
+<li>利用AppCode（<a href="https://www.jetbrains.com/objc/" target="_blank" rel="noopener">https://www.jetbrains.com/objc/</a>）检测未使用的代码：菜单栏 -&gt; Code -&gt; Inspect Code</li>
+<li>编写LLVM插件检测出重复代码、未被调用的代码</li>
+<li>生成LinkMap文件，可以查看可执行文件的具体组成，哪些文件偏大<ul>
+<li>可借助第三方工具解析LinkMap文件： <a href="https://github.com/huanxsd/LinkMap" target="_blank" rel="noopener">https://github.com/huanxsd/LinkMap</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>Facebook 和 Pinterest 维护的 ASDK </p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/projects_url">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#iOS性能优化"><span class="toc-number">1.</span> <span class="toc-text">iOS性能优化</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1、-应用启动时间"><span class="toc-number">1.0.0.1.</span> <span class="toc-text">1、 应用启动时间</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2、页面刷新滚动流畅度"><span class="toc-number">1.0.0.2.</span> <span class="toc-text">2、页面刷新滚动流畅度</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3、耗电量"><span class="toc-number">1.0.0.3.</span> <span class="toc-text">3、耗电量</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#安装包瘦身"><span class="toc-number">1.0.0.4.</span> <span class="toc-text">安装包瘦身</span></a></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://ikirk.cn/2018/11/20/iOS性能优化/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://ikirk.cn/2018/11/20/iOS性能优化/&text="><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://ikirk.cn/2018/11/20/iOS性能优化/&title="><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://ikirk.cn/2018/11/20/iOS性能优化/&is_video=false&description="><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=&body=Check out this article: http://ikirk.cn/2018/11/20/iOS性能优化/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://ikirk.cn/2018/11/20/iOS性能优化/&title="><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://ikirk.cn/2018/11/20/iOS性能优化/&title="><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://ikirk.cn/2018/11/20/iOS性能优化/&title="><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://ikirk.cn/2018/11/20/iOS性能优化/&title="><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://ikirk.cn/2018/11/20/iOS性能优化/&name=&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2018 Kirk
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/projects_url">Projects</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+</body>
+</html>
+<!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+<!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+

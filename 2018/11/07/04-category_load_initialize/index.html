@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="Category_Load_InitializeCategory category实现原理  category在编译时，会被编程成结构体struct category_t，里面存储着原类名、对象方法、类方法、属性、协议信息  在程序运行的时候，runtime会将category中的数据，合并到类信息中（类对象-对象方法、属性信息、协议信息，元类对象-类方法中）  分类的执行顺序：后编译的先执行，分">
+<meta property="og:type" content="article">
+<meta property="og:title" content="KK">
+<meta property="og:url" content="http://ikirk.cn/2018/11/07/04-category_load_initialize/index.html">
+<meta property="og:site_name" content="KK">
+<meta property="og:description" content="Category_Load_InitializeCategory category实现原理  category在编译时，会被编程成结构体struct category_t，里面存储着原类名、对象方法、类方法、属性、协议信息  在程序运行的时候，runtime会将category中的数据，合并到类信息中（类对象-对象方法、属性信息、协议信息，元类对象-类方法中）  分类的执行顺序：后编译的先执行，分">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-11-08T05:13:16.721Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="KK">
+<meta name="twitter:description" content="Category_Load_InitializeCategory category实现原理  category在编译时，会被编程成结构体struct category_t，里面存储着原类名、对象方法、类方法、属性、协议信息  在程序运行的时候，runtime会将category中的数据，合并到类信息中（类对象-对象方法、属性信息、协议信息，元类对象-类方法中）  分类的执行顺序：后编译的先执行，分">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>KK</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/projects_url">Projects</a></li>
+        
+      </ul>
+    </span>
+    <br>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2018/11/08/05-关联对象/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2018/11/07/03-KVC/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://ikirk.cn/2018/11/07/04-category_load_initialize/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://ikirk.cn/2018/11/07/04-category_load_initialize/&text="><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://ikirk.cn/2018/11/07/04-category_load_initialize/&title="><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://ikirk.cn/2018/11/07/04-category_load_initialize/&is_video=false&description="><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=&body=Check out this article: http://ikirk.cn/2018/11/07/04-category_load_initialize/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://ikirk.cn/2018/11/07/04-category_load_initialize/&title="><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://ikirk.cn/2018/11/07/04-category_load_initialize/&title="><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://ikirk.cn/2018/11/07/04-category_load_initialize/&title="><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://ikirk.cn/2018/11/07/04-category_load_initialize/&title="><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://ikirk.cn/2018/11/07/04-category_load_initialize/&name=&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Category-Load-Initialize"><span class="toc-number">1.</span> <span class="toc-text">Category_Load_Initialize</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Category"><span class="toc-number">1.0.0.1.</span> <span class="toc-text">Category</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#load方法加载"><span class="toc-number">1.0.0.2.</span> <span class="toc-text">load方法加载</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Initialieze"><span class="toc-number">1.0.0.3.</span> <span class="toc-text">Initialieze</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#load与initialize的区别"><span class="toc-number">1.0.0.4.</span> <span class="toc-text">load与initialize的区别</span></a></li></ol></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope="" itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+        <span itemprop="name">KK</span>
+      </span>
+      
+    <div class="postdate">
+        <time datetime="2018-11-07T07:39:49.666Z" itemprop="datePublished">2018-11-07</time>
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h1 id="Category-Load-Initialize"><a href="#Category-Load-Initialize" class="headerlink" title="Category_Load_Initialize"></a>Category_Load_Initialize</h1><h4 id="Category"><a href="#Category" class="headerlink" title="Category"></a>Category</h4><ul>
+<li><p><strong>category实现原理</strong></p>
+<ul>
+<li><p>category在编译时，会被编程成结构体struct category_t，里面存储着原类名、对象方法、类方法、属性、协议信息</p>
+</li>
+<li><p>在程序运行的时候，runtime会将category中的数据，合并到类信息中（类对象-对象方法、属性信息、协议信息，元类对象-类方法中）</p>
+</li>
+<li><p>分类的执行顺序：后编译的先执行，分类方法优先于原类方法执行</p>
+<ul>
+<li><p>分类的方法在合并到类信息之前，会按照后编译到先编译的顺序将每个分类的方法数组先后取出</p>
+</li>
+<li><p>在分类方法合并到类信息中时，会将分类中的方法数组插入到类原方法数组前，即现将原方法数组后移，再讲分类方法插入到最前面</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><strong>category与class extension的区别</strong><ul>
+<li>class extension在编译的时候就已经将数据合并在类信息中了，category先放在了category——t这样的数据结构中，运行时再合并到类信息中</li>
+<li>category添加的属性不会自动生成setter和getter方法的实现和成员变量，只会声明setget方法，需要通过runtime自己实现set和get方法</li>
+<li>class extension 主要是为了不将私有的属性暴露在头文件中，自己内部使用</li>
+</ul>
+</li>
+</ul>
+<h4 id="load方法加载"><a href="#load方法加载" class="headerlink" title="load方法加载"></a>load方法加载</h4><ul>
+<li><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">- 每个类、分类的```+load```在程序运行过程中只加载一次</span><br><span class="line">- ```+load```的调用过程，区别于普通方法以消息发送机制（objec_senMessage）调用，它是直接拿到```+load```的内存地址（从load方法数组中获取）直接调用</span><br><span class="line">- 如果手动调用```+load```方法，就同普通方法调用一样以消息发送机制进行调用</span><br><span class="line">- 调用顺序：</span><br><span class="line">  - 先调用类的```+load</span><br></pre></td></tr></table></figure>
+<ul>
+<li>无关联的类之间按照编译顺序调用（先编译先调用）</li>
+<li>调用子类的<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">- 再调用分类的```+load</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+<h4 id="Initialieze"><a href="#Initialieze" class="headerlink" title="Initialieze"></a>Initialieze</h4><ul>
+<li><p><code>+initialize</code>在类第一次接收到消息的时候进行调用</p>
+</li>
+<li><p><code>+initialize</code>调用机制是使用的消息传递机制<code>objc_sendMessage()</code>进行的</p>
+</li>
+<li><p>调用顺序：</p>
+<ul>
+<li><p>先调用父类的<code>+initialize</code>再调用子类的（在调用的时候，应用了递归遍历父类来调用初始化方法）</p>
+</li>
+<li><p>先初始化父类，再初始化子类，每个类只初始化一次（如果某个类没有实现初始化方法，就会用其superclass指针向上找父类的初始化方法进行调用—-消息传递机制进行调用）</p>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="load与initialize的区别"><a href="#load与initialize的区别" class="headerlink" title="load与initialize的区别"></a>load与initialize的区别</h4><ul>
+<li><p><strong>1、调用方式</strong></p>
+<ul>
+<li><p>load的调用方式是，找到load方法的内存地址， 直接进行调用</p>
+</li>
+<li><p>initialize的调用方式是，消息发送机制进行调用（objc_sendMessage）</p>
+</li>
+</ul>
+</li>
+<li><p><strong>2、调用时间</strong></p>
+<ul>
+<li><p>load是在类被加载到内存的时候进行调用</p>
+</li>
+<li><p>initialize是在类第一次接受到消息的时候进行调用</p>
+</li>
+</ul>
+</li>
+<li><p><strong>3、调用顺序</strong></p>
+<ul>
+<li>load的调用顺序是：<ul>
+<li>先调用类的，在调用分类的load<ul>
+<li>先编译的类，优先调用load</li>
+<li>调用子类的load前会先调用父类的load(底层在调用之前会递归遍历父类进行调用)</li>
+</ul>
+</li>
+<li>再调用分类的load<ul>
+<li>分类之间，按照编译顺序进行调用，先编译的先调用（底层将load方法按照编译顺序存储在了有序数组中的）</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>initialize的调用顺序是：<ul>
+<li>先初始化父类的，再初始化子类的</li>
+<li>如果子类没有实现初始化方法，通过superclass向上寻找调用父类的</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/projects_url">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Category-Load-Initialize"><span class="toc-number">1.</span> <span class="toc-text">Category_Load_Initialize</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Category"><span class="toc-number">1.0.0.1.</span> <span class="toc-text">Category</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#load方法加载"><span class="toc-number">1.0.0.2.</span> <span class="toc-text">load方法加载</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Initialieze"><span class="toc-number">1.0.0.3.</span> <span class="toc-text">Initialieze</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#load与initialize的区别"><span class="toc-number">1.0.0.4.</span> <span class="toc-text">load与initialize的区别</span></a></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://ikirk.cn/2018/11/07/04-category_load_initialize/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://ikirk.cn/2018/11/07/04-category_load_initialize/&text="><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://ikirk.cn/2018/11/07/04-category_load_initialize/&title="><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://ikirk.cn/2018/11/07/04-category_load_initialize/&is_video=false&description="><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=&body=Check out this article: http://ikirk.cn/2018/11/07/04-category_load_initialize/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://ikirk.cn/2018/11/07/04-category_load_initialize/&title="><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://ikirk.cn/2018/11/07/04-category_load_initialize/&title="><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://ikirk.cn/2018/11/07/04-category_load_initialize/&title="><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://ikirk.cn/2018/11/07/04-category_load_initialize/&title="><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://ikirk.cn/2018/11/07/04-category_load_initialize/&name=&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2018 Kirk
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/projects_url">Projects</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+</body>
+</html>
+<!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+<!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+

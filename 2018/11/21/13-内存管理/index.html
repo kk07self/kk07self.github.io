@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="内存管理1、内存布局iOS程序的内存管理，从低到高分为了6部分，地址由低到高：保留（一部分）、代码段（__TEXT）、数据段（__DATA）、堆（heap）、栈（stack）、内核。和我们开发相关的有中间四部分：  代码段：存储编译之后的代码 数据段： 字符串常量：比如NSString *str = @”123” 已初始化的数据：已初始化的全局变量、静态变量等 未初始化的数据：未初始化的全局变量、">
+<meta property="og:type" content="article">
+<meta property="og:title" content="KK">
+<meta property="og:url" content="http://ikirk.cn/2018/11/21/13-内存管理/index.html">
+<meta property="og:site_name" content="KK">
+<meta property="og:description" content="内存管理1、内存布局iOS程序的内存管理，从低到高分为了6部分，地址由低到高：保留（一部分）、代码段（__TEXT）、数据段（__DATA）、堆（heap）、栈（stack）、内核。和我们开发相关的有中间四部分：  代码段：存储编译之后的代码 数据段： 字符串常量：比如NSString *str = @”123” 已初始化的数据：已初始化的全局变量、静态变量等 未初始化的数据：未初始化的全局变量、">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://ikirk.cn/2018/11/21/资源/autorelease_01.png">
+<meta property="og:updated_time" content="2018-11-22T15:03:06.193Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="KK">
+<meta name="twitter:description" content="内存管理1、内存布局iOS程序的内存管理，从低到高分为了6部分，地址由低到高：保留（一部分）、代码段（__TEXT）、数据段（__DATA）、堆（heap）、栈（stack）、内核。和我们开发相关的有中间四部分：  代码段：存储编译之后的代码 数据段： 字符串常量：比如NSString *str = @”123” 已初始化的数据：已初始化的全局变量、静态变量等 未初始化的数据：未初始化的全局变量、">
+<meta name="twitter:image" content="http://ikirk.cn/2018/11/21/资源/autorelease_01.png">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>KK</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/projects_url">Projects</a></li>
+        
+      </ul>
+    </span>
+    <br>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2018/11/30/本地数据存储/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2018/11/20/设计模式与架构设计/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://ikirk.cn/2018/11/21/13-内存管理/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://ikirk.cn/2018/11/21/13-内存管理/&text="><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://ikirk.cn/2018/11/21/13-内存管理/&title="><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://ikirk.cn/2018/11/21/13-内存管理/&is_video=false&description="><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=&body=Check out this article: http://ikirk.cn/2018/11/21/13-内存管理/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://ikirk.cn/2018/11/21/13-内存管理/&title="><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://ikirk.cn/2018/11/21/13-内存管理/&title="><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://ikirk.cn/2018/11/21/13-内存管理/&title="><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://ikirk.cn/2018/11/21/13-内存管理/&title="><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://ikirk.cn/2018/11/21/13-内存管理/&name=&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#内存管理"><span class="toc-number">1.</span> <span class="toc-text">内存管理</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1、内存布局"><span class="toc-number">1.0.0.1.</span> <span class="toc-text">1、内存布局</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2、TagPoint"><span class="toc-number">1.0.0.2.</span> <span class="toc-text">2、TagPoint</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3、OC对象的内存管理"><span class="toc-number">1.0.0.3.</span> <span class="toc-text">3、OC对象的内存管理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4、Copy、MutableCopy"><span class="toc-number">1.0.0.4.</span> <span class="toc-text">4、Copy、MutableCopy</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5、自动释放池"><span class="toc-number">1.0.0.5.</span> <span class="toc-text">5、自动释放池</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6、Timer定时器"><span class="toc-number">1.0.0.6.</span> <span class="toc-text">6、Timer定时器</span></a></li></ol></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope="" itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+        <span itemprop="name">KK</span>
+      </span>
+      
+    <div class="postdate">
+        <time datetime="2018-11-21T01:29:11.000Z" itemprop="datePublished">2018-11-21</time>
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h1 id="内存管理"><a href="#内存管理" class="headerlink" title="内存管理"></a>内存管理</h1><h4 id="1、内存布局"><a href="#1、内存布局" class="headerlink" title="1、内存布局"></a>1、内存布局</h4><p>iOS程序的内存管理，从低到高分为了6部分，地址由低到高：保留（一部分）、代码段（__TEXT）、数据段（__DATA）、堆（heap）、栈（stack）、内核。和我们开发相关的有中间四部分：</p>
+<ul>
+<li><strong>代码段</strong>：存储编译之后的代码</li>
+<li><strong>数据段</strong>：<ul>
+<li>字符串常量：比如NSString *str = @”123”</li>
+<li>已初始化的数据：已初始化的全局变量、静态变量等</li>
+<li>未初始化的数据：未初始化的全局变量、静态变量等</li>
+</ul>
+</li>
+<li><strong>堆</strong>：通过alloc、malloc、calloc等动态分配的空间，分配的内存空间地址越来越大</li>
+<li><strong>栈</strong>：函数调用开销，比如局部变量。分配的内存空间地址越来越小</li>
+</ul>
+<h4 id="2、TagPoint"><a href="#2、TagPoint" class="headerlink" title="2、TagPoint"></a>2、TagPoint</h4><p>从64bit开始，iOS引入了Tagged Pointer技术，用于优化NSNumber、NSDate、NSString等小对象的存储</p>
+<p>在没有使用Tagged Pointer之前， NSNumber等对象需要动态分配内存、维护引用计数等，NSNumber指针存储的是堆中NSNumber对象的地址值。</p>
+<p>使用Tagged Pointer之后，NSNumber指针里面存储的数据变成了：Tag + Data，也就是将数据直接存储在了指针中，不会再在堆中存储NSNumber对象。但是如果数据偏大，指针中存储不下就会切换到以前的方式存储</p>
+<p>nobjc_msgSend能识别Tagged Pointer，比如NSNumber的intValue方法，直接从指针提取数据，节省了以前的调用开销</p>
+<p>如何判断一个指针是否为Tagged Pointer？iOS平台，最高有效位是1（第64bit）(底层判断是否是tagpoint的方法是内存地址进行位运算&amp;一个MASK(1UL&lt;&lt;63))</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">// 使用tagpoint之前</span><br><span class="line">number = 0x10001 ——》地址：0x10001的NSNumber对象 其存储值：10;</span><br><span class="line">// 使用之后</span><br><span class="line">number = 0xb000a1	// a是值，0xb00001是地址</span><br></pre></td></tr></table></figure>
+<p>面试题：思考以下2段代码能发生什么事？有什么区别？</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">// 第一段</span><br><span class="line">dispatch_queue_t queue = dispatch_get_global_queue(0, 0);</span><br><span class="line">for (int i = 0; i &lt; 1000; i++) &#123;</span><br><span class="line">    dispatch_async(queue, ^&#123;</span><br><span class="line">        self.name = [NSString stringWithFormat:@&quot;abcdefghijk&quot;];</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 第二段</span><br><span class="line">dispatch_queue_t queue = dispatch_get_global_queue(0, 0);</span><br><span class="line">for (int i = 0; i &lt; 1000; i++) &#123;</span><br><span class="line">    dispatch_async(queue, ^&#123;</span><br><span class="line">        self.name = [NSString stringWithFormat:@&quot;abc&quot;];</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>第一段会crash，crash的原因是坏内存地址访问。由于字符串<code>abcdefghijk</code>过长，需要在数据区存储这个字符串，然后将这个地址赋值给属性<code>name</code>，每次给<code>name</code>设置新的属性的时候会经历以下步骤，release，retain</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">- (void)setName:(NSString *)name</span><br><span class="line">&#123;</span><br><span class="line">    if (_name != name) &#123;</span><br><span class="line">        [_name release];</span><br><span class="line">        _name = [name retain];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>由于多线程异步访问，同一个_name地址会同时多次调用release因而造成坏地址访问。</p>
+<p>第二段就不会存在这个问题，因为字符串<code>abc</code>比较小，系统会将其存放在栈区的指针地址中，每一次赋值只会修改<code>_name</code>的值而不会进行其他release和retain操作。</p>
+<h4 id="3、OC对象的内存管理"><a href="#3、OC对象的内存管理" class="headerlink" title="3、OC对象的内存管理"></a>3、OC对象的内存管理</h4><ul>
+<li><strong>原理</strong></li>
+</ul>
+<p>在iOS中，使用引用计数来管理OC对象的内存：</p>
+<p>一个新创建的OC对象引用计数默认是1，当引用计数减为0，OC对象就会销毁，释放其占用的内存空间。</p>
+<p>调用retain会让OC对象的引用计数+1，调用release会让OC对象的引用计数-1。</p>
+<p>内存管理的经验总结：</p>
+<p>当调用alloc、new、copy、mutableCopy方法返回了一个对象，在不需要这个对象时，要调用release或者autorelease来释放它；</p>
+<p>想拥有某个对象，就让它的引用计数+1；不想再拥有某个对象，就让它的引用计数-1。</p>
+<p><strong>MRC（Manual Reference Counting）</strong>下需要自己对对象进行管理，对创建的对象需要手动调用release将其释放，或者在init时进行autorelease操作；</p>
+<p><strong>ARC</strong>下就不需要再手动对其进行内存管理，系统会自动管理引用计数。但是调用CF等C语言库的时候还是需要进行手动内存管理的。</p>
+<ul>
+<li><strong>引用计数器的存储</strong>：</li>
+</ul>
+<p>在64bit中，引用计数可以直接存储在优化过的isa指针中，也可能存储在SideTable类中（引用计数器过大时会存储在这里）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">// isa_t 共用体中的信息：</span><br><span class="line">unitptr_t has_sidetable_rc		: 1; // 引用计数器是否过大无法存储在isa中,如果为1，那么引用计数会存储在一个叫SideTable的类的属性中</span><br><span class="line">unitpyr_t extra_rc				: 1; // 里面存储的值是引用计数器减</span><br><span class="line"></span><br><span class="line">// SideTable结构体</span><br><span class="line">struct SideTable &#123;</span><br><span class="line">    spinlock_t slock;</span><br><span class="line">    RefcountMap refcnts; // 一个存放着对象引用计数的散列表</span><br><span class="line">    weak_table_t weak_table; // 弱引用的散列表</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p><strong>dealloc：释放对象</strong></p>
+<p>当一个对象要释放时，会自动调用dealloc，接下的调用轨迹是</p>
+<ul>
+<li><p>dealloc</p>
+</li>
+<li><p>_objc_rootDealloc</p>
+</li>
+<li><p>rootDealloc</p>
+</li>
+<li><p>object_dispose</p>
+</li>
+<li><p>objc_destructInstance、free</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">void objc_destructInstance(id obj) &#123;</span><br><span class="line">    bool cxx = obj-&gt;hasCxxDtor();</span><br><span class="line">    bool assoc = obj-&gt;hasAssociatedObjects();</span><br><span class="line">    if(cxx) object__cxxDestruct(obj); // 清除属性</span><br><span class="line">    if(assoc) object_remove_assocations(obj); // 清除关联对象</span><br><span class="line">    obj-&gt;clearDeallocating(); // 清除弱引用，将指向当前对象的若指针设为nil</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p><strong>strong weak对比</strong></p>
+<p><strong>__strong</strong>：强引用，计数器+1</p>
+<p><strong>__weak</strong>：弱引用，计数器不变，引用的对象销毁，指针会被设为nil</p>
+<p><strong>__unsafe_unretained</strong>：弱引用，计数器不变，引用的对象销毁，指针不会被设为nil</p>
+</li>
+</ul>
+<h4 id="4、Copy、MutableCopy"><a href="#4、Copy、MutableCopy" class="headerlink" title="4、Copy、MutableCopy"></a>4、Copy、MutableCopy</h4><p><strong>拷贝的目的</strong>：产生一个副本对象，与源对象互不影响。即修改了源对象，不会影响副本对象；修改了副本对象，不会影响源对象。</p>
+<p>iOS提供了2个拷贝方法：</p>
+<p><strong>copy</strong>，不可变拷贝，产生不可变副本；</p>
+<p><strong>mutableCopy</strong>，可变拷贝，产生可变副本</p>
+<p><strong>深拷贝</strong>和<strong>浅拷贝</strong></p>
+<p> 1.深拷贝：内容拷贝，产生新的对象</p>
+<p> 2.浅拷贝：指针拷贝，没有产生新的对象</p>
+<p>下面这份表是对iOS集合进行copy或mutableCopy后的总结</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>copy</th>
+<th>mutableCopy</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NSString</td>
+<td>NSString   浅拷贝</td>
+<td>NSMutableString   深拷贝</td>
+</tr>
+<tr>
+<td>NSMutableString</td>
+<td>NSString   深拷贝</td>
+<td>NSMutableString   深拷贝</td>
+</tr>
+<tr>
+<td>NSArray</td>
+<td>NSArray   浅拷贝</td>
+<td>NSMutableArray   深拷贝</td>
+</tr>
+<tr>
+<td>NSMutableArray</td>
+<td>NSArray   深拷贝</td>
+<td>NSMutableArray   深拷贝</td>
+</tr>
+<tr>
+<td>NSDictionary</td>
+<td>NSDictionary   浅拷贝</td>
+<td>NSMutableDictionary   深拷贝</td>
+</tr>
+<tr>
+<td>NSMutableDictionary</td>
+<td>NSDictionary   深拷贝</td>
+<td>NSMutableDictionary   深拷贝</td>
+</tr>
+</tbody>
+</table>
+<p>面试题：</p>
+<p>在给对象定义<strong>不可变集合</strong>（NSString、NSArray、NSDictionary）属性时为什么使用copy。</p>
+<p>为了保证数据不被外部修改。如果给属性赋值的源数据是可变集合，并且集合属性没有用copy，那么源数据修改时就会影响到此属性。</p>
+<h4 id="5、自动释放池"><a href="#5、自动释放池" class="headerlink" title="5、自动释放池"></a>5、自动释放池</h4><p>自动释放池的主要底层数据结构是：__AtAutoreleasePool、AutoreleasePoolPage</p>
+<p>调用了autorelease的对象最终都是通过AutoreleasePoolPage对象来管理的</p>
+<ul>
+<li><p><strong>AutoreleasePoolPage的结构</strong></p>
+<ul>
+<li><p>每个AutoreleasePoolPage对象占用4096字节内存，除了用来存放它内部的成员变量，剩下的空间用来存放autorelease对象的地址</p>
+</li>
+<li><p>所有的AutoreleasePoolPage对象通过双向链表的形式连接在一起，如下图</p>
+</li>
+</ul>
+<p><img src="../资源/autorelease_01.png" alt=""></p>
+<ul>
+<li><p>调用push方法会将一个POOL_BOUNDARY入栈，并且返回其存放的内存地址</p>
+</li>
+<li><p>调用pop方法时传入一个POOL_BOUNDARY的内存地址，会从最后一个入栈的对象开始发送release消息，直到遇到这个POOL_BOUNDARY</p>
+</li>
+<li><p>id *next指向了下一个能存放autorelease对象地址的区域  </p>
+</li>
+</ul>
+</li>
+<li><p><strong>Runloop和Autorelease</strong></p>
+<p>iOS在主线程的Runloop中注册了2个Observer</p>
+<ul>
+<li><p>第1个Observer监听了kCFRunLoopEntry事件，会调用objc_autoreleasePoolPush()</p>
+</li>
+<li><p>第2个Observer：</p>
+<ul>
+<li><p>监听了kCFRunLoopBeforeWaiting事件，会调用objc_autoreleasePoolPop()、objc_autoreleasePoolPush()</p>
+</li>
+<li><p>监听了kCFRunLoopBeforeExit事件，会调用objc_autoreleasePoolPop()</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>  面试题：局部OC对象会在什么时候销毁？出了方法或函数就被销毁么？</p>
+<p>  会在当前线程的runloop进入kCFRunLoopBeforeWaiting或者kCFRunLoopBeforeExit状态时才进行销毁，也就是说方法或函数结束后并不会马上被销毁。同样，autorelease也是在监听到了这两个状态才会执行release操作。</p>
+<h4 id="6、Timer定时器"><a href="#6、Timer定时器" class="headerlink" title="6、Timer定时器"></a>6、Timer定时器</h4><ul>
+<li><strong>问题</strong>：</li>
+</ul>
+<p>CADisplayLink、NSTimer会对target产生强引用，如果target又对它们产生强引用，那么就会引发循环引用</p>
+<ul>
+<li><p><strong>解决方案</strong></p>
+<ul>
+<li><p><strong>方案1</strong>：NSTimer：调用含有block的API，然后weak target</p>
+</li>
+<li><p><strong>方案2</strong>：使用代理对象（NSProxy）</p>
+<p>利用消息的转发机制，将定时器的target找个第三方对象介入，来解除循环引用。</p>
+<p>方法调用流程：阶段一，isa递归查找方法；阶段二，动态方法解析；阶段三，消息转发。</p>
+<ul>
+<li><p>1、实现一个类，继承自NSProxy；</p>
+</li>
+<li><p>2、创建定时器的时候，将target用这个类的实例对象取代；</p>
+</li>
+<li><p>3、在这个类中实现消息转发方法，将方法调用转发给原target</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">// timer创建</span><br><span class="line">self.timer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:[MJProxy proxyWithTarget:self] selector:@selector(timerTest) userInfo:nil repeats:YES];</span><br><span class="line"></span><br><span class="line">// 类申明</span><br><span class="line">@interface KKProxy : NSProxy</span><br><span class="line">+ (instancetype)proxyWithTarget:(id)target;</span><br><span class="line">@property (weak, nonatomic) id target;</span><br><span class="line">@end</span><br><span class="line">    </span><br><span class="line">// 实现</span><br><span class="line">@implementation KKProxy</span><br><span class="line"></span><br><span class="line">+ (instancetype)proxyWithTarget:(id)target</span><br><span class="line">&#123;</span><br><span class="line">    // NSProxy对象不需要调用init，因为它本来就没有init方法</span><br><span class="line">    KKProxy *proxy = [KKProxy alloc];</span><br><span class="line">    proxy.target = target;</span><br><span class="line">    return proxy;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 消息转发</span><br><span class="line">- (NSMethodSignature *)methodSignatureForSelector:(SEL)sel</span><br><span class="line">&#123;</span><br><span class="line">    return [self.target methodSignatureForSelector:sel];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (void)forwardInvocation:(NSInvocation *)invocation</span><br><span class="line">&#123;</span><br><span class="line">    [invocation invokeWithTarget:self.target];</span><br><span class="line">&#125;</span><br><span class="line">@end</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>NSProxy</strong>：这个类等同于NSObject，内部只有一个isa指针，不继承任何类</p>
+<p>它的方法调用，不是NSObject及其子类那样经过isa找方法调用，它是直接调用消息转发机制进行方法调用。它的存在就是为了消息转发。</p>
+</li>
+</ul>
+<ul>
+<li><p><strong>GCD定时器</strong></p>
+<p>NSTimer依赖于RunLoop，如果RunLoop的任务过于繁重，可能会导致NSTimer不准时</p>
+<p>而GCD的定时器会更加准时，它独立于runloop，内核实现的</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">@property (strong, nonatomic) dispatch_source_t timer;</span><br><span class="line">- (void)createTimer &#123;</span><br><span class="line">    // 队列</span><br><span class="line">    //    dispatch_queue_t queue = dispatch_get_main_queue();</span><br><span class="line">    dispatch_queue_t queue = dispatch_queue_create(&quot;timer&quot;, DISPATCH_QUEUE_SERIAL);</span><br><span class="line">    </span><br><span class="line">    // 创建定时器</span><br><span class="line">    dispatch_source_t timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, queue);</span><br><span class="line">    </span><br><span class="line">    // 设置时间</span><br><span class="line">    uint64_t start = 2.0; // 2秒后开始执行</span><br><span class="line">    uint64_t interval = 1.0; // 每隔1秒执行</span><br><span class="line">    dispatch_source_set_timer(timer,</span><br><span class="line">                              dispatch_time(DISPATCH_TIME_NOW, start * NSEC_PER_SEC),</span><br><span class="line">                              interval * NSEC_PER_SEC, 0);</span><br><span class="line">    </span><br><span class="line">    // 设置回调</span><br><span class="line">    //    dispatch_source_set_event_handler(timer, ^&#123;</span><br><span class="line">    //        NSLog(@&quot;1111&quot;);</span><br><span class="line">    //    &#125;);</span><br><span class="line">    dispatch_source_set_event_handler_f(timer, timerFire);</span><br><span class="line">    </span><br><span class="line">    // 启动定时器</span><br><span class="line">    dispatch_resume(timer);</span><br><span class="line">    </span><br><span class="line">    self.timer = timer;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void timerFire(void *param) &#123;</span><br><span class="line">    NSLog(@&quot;kkkkkkkkkkkk - %@&quot;, [NSThread currentThread]);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>封装个定时器：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br></pre></td><td class="code"><pre><span class="line">// .h</span><br><span class="line">#import &lt;Foundation/Foundation.h&gt;</span><br><span class="line">@interface KKTimer : NSObject</span><br><span class="line"></span><br><span class="line">    </span><br><span class="line"> /**</span><br><span class="line"> 创建定时器</span><br><span class="line"></span><br><span class="line"> @param task 任务block</span><br><span class="line"> @param start 开始时间</span><br><span class="line"> @param interval 时间间隔</span><br><span class="line"> @param repeats 是否重复</span><br><span class="line"> @param async 同步、异步</span><br><span class="line"> @return 返回定时器标识</span><br><span class="line"> */</span><br><span class="line"></span><br><span class="line">+ (NSString *)execTask:(void(^)(void))task</span><br><span class="line">           start:(NSTimeInterval)start</span><br><span class="line">        interval:(NSTimeInterval)interval</span><br><span class="line">         repeats:(BOOL)repeats</span><br><span class="line">           async:(BOOL)async;</span><br><span class="line"></span><br><span class="line">+ (NSString *)execTask:(id)target</span><br><span class="line">              selector:(SEL)selector</span><br><span class="line">                 start:(NSTimeInterval)start</span><br><span class="line">              interval:(NSTimeInterval)interval</span><br><span class="line">               repeats:(BOOL)repeats</span><br><span class="line">                 async:(BOOL)async;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> 销毁定时器</span><br><span class="line"> @param name 定时器标识</span><br><span class="line"> */</span><br><span class="line">+ (void)cancelTask:(NSString *)name;</span><br><span class="line"></span><br><span class="line">@end</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">// .m</span><br><span class="line">#import &quot;KKTimer.h&quot;</span><br><span class="line"></span><br><span class="line">@implementation KKTimer</span><br><span class="line"></span><br><span class="line">static NSMutableDictionary *timers_;</span><br><span class="line">dispatch_semaphore_t semaphore_;</span><br><span class="line">+ (void)initialize</span><br><span class="line">&#123;</span><br><span class="line">    static dispatch_once_t onceToken;</span><br><span class="line">    dispatch_once(&amp;onceToken, ^&#123;</span><br><span class="line">        timers_ = [NSMutableDictionary dictionary];</span><br><span class="line">        semaphore_ = dispatch_semaphore_create(1);</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">+ (NSString *)execTask:(void (^)(void))task start:(NSTimeInterval)start interval:(NSTimeInterval)interval repeats:(BOOL)repeats async:(BOOL)async</span><br><span class="line">&#123;</span><br><span class="line">    if (!task || start &lt; 0 || (interval &lt;= 0 &amp;&amp; repeats)) return nil;</span><br><span class="line">    </span><br><span class="line">    // 队列</span><br><span class="line">    dispatch_queue_t queue = async ? dispatch_get_global_queue(0, 0) : dispatch_get_main_queue();</span><br><span class="line">    </span><br><span class="line">    // 创建定时器</span><br><span class="line">    dispatch_source_t timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, queue);</span><br><span class="line">    </span><br><span class="line">    // 设置时间</span><br><span class="line">    dispatch_source_set_timer(timer,</span><br><span class="line">                              dispatch_time(DISPATCH_TIME_NOW, start * NSEC_PER_SEC),</span><br><span class="line">                              interval * NSEC_PER_SEC, 0);</span><br><span class="line">    </span><br><span class="line">    // 信号锁，保证其安全，可以多线程同时使用定时器</span><br><span class="line">    dispatch_semaphore_wait(semaphore_, DISPATCH_TIME_FOREVER);</span><br><span class="line">    // 定时器的唯一标识</span><br><span class="line">    NSString *name = [NSString stringWithFormat:@&quot;%zd&quot;, timers_.count];</span><br><span class="line">    // 存放到字典中</span><br><span class="line">    timers_[name] = timer;</span><br><span class="line">    dispatch_semaphore_signal(semaphore_);</span><br><span class="line">    </span><br><span class="line">    // 设置回调</span><br><span class="line">    dispatch_source_set_event_handler(timer, ^&#123;</span><br><span class="line">        task();</span><br><span class="line">        </span><br><span class="line">        if (!repeats) &#123; // 不重复的任务</span><br><span class="line">            [self cancelTask:name];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">    </span><br><span class="line">    // 启动定时器</span><br><span class="line">    dispatch_resume(timer);</span><br><span class="line">    </span><br><span class="line">    return name;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">+ (NSString *)execTask:(id)target selector:(SEL)selector start:(NSTimeInterval)start interval:(NSTimeInterval)interval repeats:(BOOL)repeats async:(BOOL)async</span><br><span class="line">&#123;</span><br><span class="line">    if (!target || !selector) return nil;</span><br><span class="line">    </span><br><span class="line">    return [self execTask:^&#123;</span><br><span class="line">        if ([target respondsToSelector:selector]) &#123;</span><br><span class="line">#pragma clang diagnostic push</span><br><span class="line">#pragma clang diagnostic ignored &quot;-Warc-performSelector-leaks&quot;</span><br><span class="line">            [target performSelector:selector];</span><br><span class="line">#pragma clang diagnostic pop</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; start:start interval:interval repeats:repeats async:async];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">+ (void)cancelTask:(NSString *)name</span><br><span class="line">&#123;</span><br><span class="line">    if (name.length == 0) return;</span><br><span class="line">    </span><br><span class="line">    dispatch_semaphore_wait(semaphore_, DISPATCH_TIME_FOREVER);</span><br><span class="line">    </span><br><span class="line">    dispatch_source_t timer = timers_[name];</span><br><span class="line">    if (timer) &#123;</span><br><span class="line">        dispatch_source_cancel(timer);</span><br><span class="line">        [timers_ removeObjectForKey:name];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    dispatch_semaphore_signal(semaphore_);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">@end</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/projects_url">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#内存管理"><span class="toc-number">1.</span> <span class="toc-text">内存管理</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1、内存布局"><span class="toc-number">1.0.0.1.</span> <span class="toc-text">1、内存布局</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2、TagPoint"><span class="toc-number">1.0.0.2.</span> <span class="toc-text">2、TagPoint</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3、OC对象的内存管理"><span class="toc-number">1.0.0.3.</span> <span class="toc-text">3、OC对象的内存管理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4、Copy、MutableCopy"><span class="toc-number">1.0.0.4.</span> <span class="toc-text">4、Copy、MutableCopy</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5、自动释放池"><span class="toc-number">1.0.0.5.</span> <span class="toc-text">5、自动释放池</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6、Timer定时器"><span class="toc-number">1.0.0.6.</span> <span class="toc-text">6、Timer定时器</span></a></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://ikirk.cn/2018/11/21/13-内存管理/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://ikirk.cn/2018/11/21/13-内存管理/&text="><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://ikirk.cn/2018/11/21/13-内存管理/&title="><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://ikirk.cn/2018/11/21/13-内存管理/&is_video=false&description="><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=&body=Check out this article: http://ikirk.cn/2018/11/21/13-内存管理/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://ikirk.cn/2018/11/21/13-内存管理/&title="><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://ikirk.cn/2018/11/21/13-内存管理/&title="><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://ikirk.cn/2018/11/21/13-内存管理/&title="><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://ikirk.cn/2018/11/21/13-内存管理/&title="><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://ikirk.cn/2018/11/21/13-内存管理/&name=&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2018 Kirk
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/projects_url">Projects</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+</body>
+</html>
+<!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+<!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+

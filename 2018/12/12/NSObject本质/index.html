@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="1 Objective-C的底层实现是：C/C++实现的OC—————&amp;gt;C/C++—————&amp;gt;汇编语言—————&amp;gt;机器语言 将OC代码转换成C/C++代码： 1xcrun -sdk iphoneos clang -arch arm64 -rewrite-objc 源文件 -o 输出的cpp文件 如果需要链接到其他框架，使用 1234567891011121314151617181">
+<meta name="keywords" content="本质 底层实现">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NSObject本质">
+<meta property="og:url" content="http://ikirk.cn/2018/12/12/NSObject本质/index.html">
+<meta property="og:site_name" content="KK">
+<meta property="og:description" content="1 Objective-C的底层实现是：C/C++实现的OC—————&amp;gt;C/C++—————&amp;gt;汇编语言—————&amp;gt;机器语言 将OC代码转换成C/C++代码： 1xcrun -sdk iphoneos clang -arch arm64 -rewrite-objc 源文件 -o 输出的cpp文件 如果需要链接到其他框架，使用 1234567891011121314151617181">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-12-12T08:35:21.826Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="NSObject本质">
+<meta name="twitter:description" content="1 Objective-C的底层实现是：C/C++实现的OC—————&amp;gt;C/C++—————&amp;gt;汇编语言—————&amp;gt;机器语言 将OC代码转换成C/C++代码： 1xcrun -sdk iphoneos clang -arch arm64 -rewrite-objc 源文件 -o 输出的cpp文件 如果需要链接到其他框架，使用 1234567891011121314151617181">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>NSObject本质</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/projects_url">Projects</a></li>
+        
+      </ul>
+    </span>
+    <br>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" href="/2018/11/30/本地数据存储/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://ikirk.cn/2018/12/12/NSObject本质/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://ikirk.cn/2018/12/12/NSObject本质/&text=NSObject本质"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://ikirk.cn/2018/12/12/NSObject本质/&title=NSObject本质"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://ikirk.cn/2018/12/12/NSObject本质/&is_video=false&description=NSObject本质"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=NSObject本质&body=Check out this article: http://ikirk.cn/2018/12/12/NSObject本质/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://ikirk.cn/2018/12/12/NSObject本质/&title=NSObject本质"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://ikirk.cn/2018/12/12/NSObject本质/&title=NSObject本质"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://ikirk.cn/2018/12/12/NSObject本质/&title=NSObject本质"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://ikirk.cn/2018/12/12/NSObject本质/&title=NSObject本质"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://ikirk.cn/2018/12/12/NSObject本质/&name=NSObject本质&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-Objective-C的底层实现是：C-C-实现的"><span class="toc-number">1.</span> <span class="toc-text">1 Objective-C的底层实现是：C/C++实现的</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-一个NSObject对象内存分配16个字节的地址："><span class="toc-number">2.</span> <span class="toc-text">3 一个NSObject对象内存分配16个字节的地址：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-OC对象的分类"><span class="toc-number">3.</span> <span class="toc-text">4 OC对象的分类</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-isa-SuperClass"><span class="toc-number">4.</span> <span class="toc-text">5 isa SuperClass</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope="" itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        NSObject本质
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+        <span itemprop="name">KK</span>
+      </span>
+      
+    <div class="postdate">
+        <time datetime="2018-12-12T07:45:55.000Z" itemprop="datePublished">2018-12-12</time>
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/本质-底层实现/">本质 底层实现</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h4 id="1-Objective-C的底层实现是：C-C-实现的"><a href="#1-Objective-C的底层实现是：C-C-实现的" class="headerlink" title="1 Objective-C的底层实现是：C/C++实现的"></a>1 Objective-C的底层实现是：C/C++实现的</h4><p>OC—————&gt;C/C++—————&gt;汇编语言—————&gt;机器语言</p>
+<p>将OC代码转换成C/C++代码：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xcrun -sdk iphoneos clang -arch arm64 -rewrite-objc 源文件 -o 输出的cpp文件</span><br></pre></td></tr></table></figure>
+<p>如果需要链接到其他框架，使用 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#### 2 OC的对象、类：基于C/C++的结构体实现</span><br><span class="line"></span><br><span class="line">例： NSObject</span><br><span class="line"></span><br><span class="line">```objective-c</span><br><span class="line">// oc语言</span><br><span class="line">@interface NSObject &#123;</span><br><span class="line">	Class isa;</span><br><span class="line">&#125;</span><br><span class="line">@end</span><br><span class="line"></span><br><span class="line">// c/c++</span><br><span class="line">struct NSObject_IMPL &#123;</span><br><span class="line">	Class isa;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">typedef struct object_class *Class;// 对象指针</span><br></pre></td></tr></table></figure></p>
+<p>例：student</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">// oc</span><br><span class="line">@interface Student: NSObject &#123;</span><br><span class="line">    @public</span><br><span class="line">	int _age;</span><br><span class="line">    int _no;</span><br><span class="line">&#125;</span><br><span class="line">@end</span><br><span class="line">    </span><br><span class="line">// c/c**</span><br><span class="line">struct Student_IMPL &#123;</span><br><span class="line">    struct NSObject_IMPL NSObject_IVAR;</span><br><span class="line">    int _age;</span><br><span class="line">    int _no;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 由于 struct NSObject_IMPL结构体中只有一个isa指针，因此可以简写成</span><br><span class="line">struct Student_IMPL &#123;</span><br><span class="line">	Class isa;</span><br><span class="line">    int _age;</span><br><span class="line">    int _no;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 可以检验下：</span><br><span class="line">Student *stu = [[Student alloc] init];</span><br><span class="line">stu-&gt;_age = 4;</span><br><span class="line">stu-&gt;_no = 5;</span><br><span class="line"></span><br><span class="line">// 可以将stu对象转换成结构体</span><br><span class="line"></span><br><span class="line">struct Student_IMPL stu_impl = (__ bridge struct Student_IMPL)stu;</span><br><span class="line">stu_impl-&gt;_age, stu_impl_no；// 这里获取的信息和stu获取的信息一样</span><br></pre></td></tr></table></figure>
+<p>列：Person、Student</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">// OC</span><br><span class="line">@interface Person: NSObject &#123;</span><br><span class="line">	int _age;</span><br><span class="line">&#125;</span><br><span class="line">@end</span><br><span class="line"></span><br><span class="line">@interface Student: Person &#123;</span><br><span class="line">	int _no;</span><br><span class="line">&#125;</span><br><span class="line">@end</span><br><span class="line"></span><br><span class="line">// C/C++</span><br><span class="line">struct Person_IMPL &#123;</span><br><span class="line">	struct NSObject_IMPL NSObject_IVAR;</span><br><span class="line">    int _age;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">struct Student_IMPL &#123;</span><br><span class="line">	struct Person_IMPL Person_IVAR;</span><br><span class="line">    int _no;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="3-一个NSObject对象内存分配16个字节的地址："><a href="#3-一个NSObject对象内存分配16个字节的地址：" class="headerlink" title="3 一个NSObject对象内存分配16个字节的地址："></a>3 一个NSObject对象内存分配16个字节的地址：</h4><p>内存分配了16个地址，即占用了16个字节的地址，但实际上只使用了8个字节的地址，isa指针使用的。</p>
+<p>获取实例对象的内存大小：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">#import &lt;objc/runtime.h&gt;</span><br><span class="line">class_getInstanceSize([NSObject class]); // 获取的是对象在内存中真正使用了多少内存</span><br><span class="line"></span><br><span class="line">#import &lt;malloc/malloc.h&gt;</span><br><span class="line">malloc_size((__bridge const void *)obj); // 获取的是对象在内存中实际被分配了多少内存</span><br></pre></td></tr></table></figure>
+<p><strong>补充：</strong></p>
+<ul>
+<li>内存对齐，结构体内存的大小必须是最大成员变量大小的倍数</li>
+<li>系统内存分配对齐，内存在给数据类型进行存储空间分配时，也是要对齐的，即16的倍数（iOS系统中，会提前准备好内存块，有16、32、48、64…最大256，在分配时会从这里拿一块去给与）</li>
+</ul>
+<h4 id="4-OC对象的分类"><a href="#4-OC对象的分类" class="headerlink" title="4 OC对象的分类"></a>4 OC对象的分类</h4><ul>
+<li><p><strong>实例对象</strong>：</p>
+<p>通过类alloc出来的对象，每次调用alloc都会产生新的实例对象</p>
+<p>实例对象内存储的信息包括：</p>
+<ul>
+<li>isa指针</li>
+<li>其他成员变量</li>
+</ul>
+</li>
+<li><p><strong>类对象</strong></p>
+<p>每一个类对象在内存中只有一个class对象</p>
+<p>类对象在内存中的存储信息主要包括：</p>
+<ul>
+<li>isa指针</li>
+<li>superclass指针</li>
+<li>类的属性信息（@property）</li>
+<li>类的对象方法（instance method）</li>
+<li>类的协议信息（protocol）</li>
+<li>类的成员变量信息（ivar）</li>
+<li>·······</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">NSObject *bj = [[NSObject alloc] init]; // bj实例对象</span><br><span class="line">Class obClass1 = [bj class]; // 类对象</span><br><span class="line">Class obClass2 = [NSObject class];// 类对象</span><br><span class="line">Class obClass3 = object_getClass(bj);// 类对象 runtime API</span><br><span class="line">Class metaClass1 = object_getClass(obClass3); // 元类对象，runtime API</span><br><span class="line">Class obClass4 = [[NSObject class] class]; // 获取的还是类对象</span><br><span class="line">// 获取元类对象只有用runtime的api进行获取</span><br><span class="line">Class metaClass2 = object_getClass([NSObject class]);</span><br><span class="line"></span><br><span class="line">// 判断某个类对象是不是元类对象</span><br><span class="line"># import &lt;objc/runtime.h&gt;</span><br><span class="line">BOOL result = class_isMetaClass([NSObject class]);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>元类对象</strong></p>
+<p>每一个类在内存中有且只有一个元类对象（meta-class）</p>
+<p>元类对象在内存中的存储信息包括：</p>
+<ul>
+<li>isa指针</li>
+<li>superclass指针</li>
+<li>类的类方法信息（class method）</li>
+<li>······</li>
+</ul>
+</li>
+</ul>
+<h4 id="5-isa-SuperClass"><a href="#5-isa-SuperClass" class="headerlink" title="5 isa SuperClass"></a>5 isa SuperClass</h4><ul>
+<li><p><strong>isa指针</strong>：</p>
+<ul>
+<li><p>实例对象的isa指针指向类（class）</p>
+<p>当调用实例对象的对象方法时，通过isa指针找到class，然后找到里面的对象方法</p>
+</li>
+<li><p>Class 的isa指针指向meta-class（元类）</p>
+<p>当调用类方法是，通过isa指针找到meta-class，然后从其中找到类方法</p>
+</li>
+</ul>
+</li>
+<li><p><strong>superClass：</strong></p>
+<p>类对象、元类对象才有superClass指针</p>
+<ul>
+<li><p>对象方法调用时</p>
+<p>先通过对象的isa指针，找到其class，查看其class中是否有对应的对象方法，如果有就调用其对象方法，如果没有，通过类的superclass指针找到其父类并查看其是否有对应的对象方法，以此类推，直到找到基类，如果基类也没有，就抛出方法找不到异常。</p>
+</li>
+<li><p>类方法调用时</p>
+<p>先通过类对象的isa指针，找到其元类对象meta-class，查看其class中是否有对应的类方法，如果有就实现，如果没有，就通过meta-class的superclass指针找到其父类并查看其是否有对应的类方法，以此类推，直到基类元类，如果基类元类也没有，再通过基类元类的suerclass指针找到基类，查看其对象方法中有没有同名的对象方法，如果有就调用对象方法；如果到这一步还没有，就抛出方法找不到异常。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>备注</strong>：</p>
+<ul>
+<li>isa指针指向的并不是类的地址，而是需要位运算下才能得到真正需要指向的地址，@ ISA_MASK</li>
+<li>superclass指向的就是其父类的地址</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/projects_url">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-Objective-C的底层实现是：C-C-实现的"><span class="toc-number">1.</span> <span class="toc-text">1 Objective-C的底层实现是：C/C++实现的</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-一个NSObject对象内存分配16个字节的地址："><span class="toc-number">2.</span> <span class="toc-text">3 一个NSObject对象内存分配16个字节的地址：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-OC对象的分类"><span class="toc-number">3.</span> <span class="toc-text">4 OC对象的分类</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-isa-SuperClass"><span class="toc-number">4.</span> <span class="toc-text">5 isa SuperClass</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://ikirk.cn/2018/12/12/NSObject本质/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://ikirk.cn/2018/12/12/NSObject本质/&text=NSObject本质"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://ikirk.cn/2018/12/12/NSObject本质/&title=NSObject本质"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://ikirk.cn/2018/12/12/NSObject本质/&is_video=false&description=NSObject本质"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=NSObject本质&body=Check out this article: http://ikirk.cn/2018/12/12/NSObject本质/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://ikirk.cn/2018/12/12/NSObject本质/&title=NSObject本质"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://ikirk.cn/2018/12/12/NSObject本质/&title=NSObject本质"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://ikirk.cn/2018/12/12/NSObject本质/&title=NSObject本质"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://ikirk.cn/2018/12/12/NSObject本质/&title=NSObject本质"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://ikirk.cn/2018/12/12/NSObject本质/&name=NSObject本质&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2018 Kirk
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/projects_url">Projects</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+</body>
+</html>
+<!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+<!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+
