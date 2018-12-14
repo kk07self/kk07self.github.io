@@ -112,12 +112,12 @@ h2.article-head {
   color: #34495e;
 }
 .more {
-  font-weight: 400;
+  font-weight: 500;
   display: inline-block;
   transition: all 0.3s;
 }
 .more:hover {
-  transform: translateX(10px);
+  transform: scale(1.2);
 }
 #article-banner {
   width: 100%;
