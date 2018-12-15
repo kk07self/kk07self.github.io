@@ -163,11 +163,11 @@
 </li>
 <li><p>forKeyPath：访问直接属性或间接属性，可根据属性路径一层一层访问下去</p>
 <p>例如：</p>
+</li>
+</ul>
+</li>
+</ul>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">@interface Cat : NSObject</span><br><span class="line">@property (assign, nonatomic) int weight;</span><br><span class="line">@end</span><br><span class="line"></span><br><span class="line">@interface Person : NSObject</span><br><span class="line">@property (assign, nonatomic) int age;</span><br><span class="line"></span><br><span class="line">@property (assign, nonatomic) Cat *cat;</span><br><span class="line">@end</span><br><span class="line">    </span><br><span class="line">// 这里通过kvc访问person下面的cat对象里面的weight，使用forKey是不行的，需要使用forKeyPath, forKeyPay:@&quot;cat.weight&quot;,这样一层一层路径关联下去就可以访问到</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-</li>
-</ul>
 <h4 id="setVaule-forKey-原理"><a href="#setVaule-forKey-原理" class="headerlink" title="setVaule: forKey: 原理"></a>setVaule: forKey: 原理</h4><p>当调用此方法时：</p>
 <ul>
 <li>先查找<strong>setKey:</strong>方法，如果没有查找<strong>_setKey:</strong>方法，如果找到了，传递参数调用方法</li>
@@ -200,17 +200,17 @@
   <div class="nav-container">
     <!-- reverse left and right to put prev and next in a more logic postition -->
     
-      <a class="nav-left" href="/2018/10/11/02-KVO/">
+      <a class="nav-left" href="/2018/10/12/04-category_load_initialize/">
         <span class="nav-arrow">← </span>
         
-          KVO-观察者模式
+          Load_Initialize_Category
         
       </a>
     
     
-      <a class="nav-right" href="/2018/10/12/04-category_load_initialize/">
+      <a class="nav-right" href="/2018/11/08/05-关联对象/">
         
-          Load_Initialize_Category
+          (untitled)
         
         <span class="nav-arrow"> →</span>
       </a>

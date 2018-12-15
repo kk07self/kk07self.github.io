@@ -622,7 +622,7 @@ h2.article-head {
 }
 .markdown-content > table,
 .article-summary > table {
-  width: 100%;
+  width: 80%;
 }
 .markdown-content > table thead,
 .article-summary > table thead {
@@ -956,15 +956,18 @@ h2.article-head {
   width: 180px;
   box-sizing: border-box;
 }
+.catalog-container .toc-main .toc-catalog {
+  font-weight: 600;
+  font-size: 20px;
+}
 .catalog-container .toc-main .toc-title {
-  text-align: left;
   font-size: 1.1em;
   position: relative;
   padding-left: 28px;
 }
 .catalog-container .toc-main .toc-nav {
   padding: 0;
-  margin-top: 1em;
+  margin-top: 0.5em;
   overflow-y: scroll;
   max-height: 480px;
 }
