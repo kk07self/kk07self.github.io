@@ -3,7 +3,7 @@
   <head><meta name="generator" content="Hexo 3.8.0">
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
   <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
-  <meta name="description" content="yanm1ng&#39;s blog">
+  <meta name="description" content="kirk&#39;s blog">
   <meta name="keyword" content="hexo-theme, vuejs">
   
     <link rel="shortcut icon" href="/css/images/logo.png">
@@ -147,17 +147,18 @@
 <main class="app-body flex-box">
   <!-- Article START -->
   <article class="post-article">
-    <section class="markdown-content"><p>KVC的全称是Key-Value Coding，俗称“键值编码”，可以通过一个key来访问某个属性.</p>
-<h4 id="API"><a href="#API" class="headerlink" title="API"></a>API</h4><ul>
-<li><p>常见API</p>
+    <section class="markdown-content"><blockquote>
+<p>本篇文章将阐述OC中KVC的内部处理机制，希望有助于读者加深对KVC的理解与应用。</p>
+</blockquote>
+<p>KVC的全称是Key-Value Coding，俗称“键值编码”，可以通过一个key来访问某个属性.</p>
+<h3 id="常见API"><a href="#常见API" class="headerlink" title="常见API"></a>常见API</h3><p>KVO的API有赋值和取值方法各两个，分别是：</p>
 <ul>
 <li>-(void)setValue:(id)value forKeyPath:(NSString *)keyPath;</li>
 <li>-(void)setValue:(id)value forKey:(NSString *)key;</li>
 <li>-(id)valueForKeyPath:(NSString *)keyPath;</li>
 <li>-(id)valueForKey:(NSString *)key; </li>
 </ul>
-</li>
-<li><p>forKey与forKeyPath的区别</p>
+<p>以上我们可以看出，在赋值和取值的两个API里，最主要的区别是key，在这里forKey与forKeyPath的主要区别是：</p>
 <ul>
 <li><p>forkey：访问其直接属性</p>
 </li>
@@ -165,17 +166,17 @@
 <p>例如：</p>
 </li>
 </ul>
-</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">@interface Cat : NSObject</span><br><span class="line">@property (assign, nonatomic) int weight;</span><br><span class="line">@end</span><br><span class="line"></span><br><span class="line">@interface Person : NSObject</span><br><span class="line">@property (assign, nonatomic) int age;</span><br><span class="line"></span><br><span class="line">@property (assign, nonatomic) Cat *cat;</span><br><span class="line">@end</span><br><span class="line">    </span><br><span class="line">// 这里通过kvc访问person下面的cat对象里面的weight，使用forKey是不行的，需要使用forKeyPath, forKeyPay:@&quot;cat.weight&quot;,这样一层一层路径关联下去就可以访问到</span><br></pre></td></tr></table></figure>
-<h4 id="setVaule-forKey-原理"><a href="#setVaule-forKey-原理" class="headerlink" title="setVaule: forKey: 原理"></a>setVaule: forKey: 原理</h4><p>当调用此方法时：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 这里通过kvc访问person下面的cat对象里面的weight，使用forKey是不行的，</span></span><br><span class="line"><span class="comment">// 需要使用forKeyPath, forKeyPay:@"cat.weight",这样一层一层路径关联下去就可以访问到</span></span><br><span class="line">@interface <span class="type">Cat</span> : <span class="type">NSObject</span></span><br><span class="line">@property (assign, nonatomic) int weight;</span><br><span class="line">@end</span><br><span class="line"></span><br><span class="line">@interface <span class="type">Person</span> : <span class="type">NSObject</span></span><br><span class="line">@property (assign, nonatomic) int age;</span><br><span class="line"></span><br><span class="line">@property (assign, nonatomic) <span class="type">Cat</span> *cat;</span><br><span class="line">@end</span><br></pre></td></tr></table></figure>
+<p>​    </p>
+<h3 id="setVaule-forKey-内部机制"><a href="#setVaule-forKey-内部机制" class="headerlink" title="setVaule: forKey:  内部机制"></a>setVaule: forKey:  内部机制</h3><p>当调用此方法时：</p>
 <ul>
 <li>先查找<strong>setKey:</strong>方法，如果没有查找<strong>_setKey:</strong>方法，如果找到了，传递参数调用方法</li>
 <li>如果上面两个set方法都没找到，查看<strong>accessInstanceVariablesDirectly</strong>方法的返回值（默认是YES）</li>
 <li>如果上个步骤返回为NO，则调用<strong>setValue:forUndefinedKey:</strong>并抛出异常<strong>NSUnknownKeyException</strong></li>
 <li>如果上个步骤的返回值是YES，按照<strong>_key、_isKey、key、isKey</strong>的顺序查找成员变量，找到成员变量进行复制，找不到抛出异常</li>
 </ul>
-<h4 id="valueForKey-的原理"><a href="#valueForKey-的原理" class="headerlink" title="valueForKey:的原理"></a>valueForKey:的原理</h4><p>当调用此方法时：</p>
+<p>​    </p>
+<h3 id="valueForKey-内部机制"><a href="#valueForKey-内部机制" class="headerlink" title="valueForKey: 内部机制"></a>valueForKey: 内部机制</h3><p>当调用此方法时：</p>
 <ul>
 <li>按照<strong>getKey、key、isKey、_key</strong>顺序查找get方法，找到了，调用方法返回值</li>
 <li>若以上都没有找到，则调用<strong>accessInstanceVariablesDirectly</strong>方法，查看其返回值</li>
@@ -260,7 +261,7 @@
     
     <div class="toc-catalog">Catalog</div>
     
-      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#API"><span class="toc-nav-text">API</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#setVaule-forKey-原理"><span class="toc-nav-text">setVaule: forKey: 原理</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#valueForKey-的原理"><span class="toc-nav-text">valueForKey:的原理</span></a></li></ol>
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#常见API"><span class="toc-nav-text">常见API</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#setVaule-forKey-内部机制"><span class="toc-nav-text">setVaule: forKey:  内部机制</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#valueForKey-内部机制"><span class="toc-nav-text">valueForKey: 内部机制</span></a></li></ol>
     
   </div>
 </aside>
@@ -323,12 +324,12 @@
     });
 
     // gitment
-    var gitmentConfig = "yanm1ng";
+    var gitmentConfig = "kirk";
     if (gitmentConfig !== 'undefined') {
       var gitment = new Gitment({
         id: "KVC的内部实现",
-        owner: "yanm1ng",
-        repo: "yanm1ng.github.io",
+        owner: "kirk",
+        repo: "kk07self.github.io",
         oauth: {
           client_id: "0f87e490e00ee3fd87ef",
           client_secret: "4a9d2b148e7971c2201ad12131ce8bf8159ccd2e"
