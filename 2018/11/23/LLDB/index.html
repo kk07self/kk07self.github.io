@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html>
+  <head><meta name="generator" content="Hexo 3.8.0">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="kirk&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      LLDB | KK
+    
+  </title>
+  <link href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdn.bootcss.com/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdn.bootcss.com/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/plugins/gitment.css">
+  <script src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdn.bootcss.com/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdn.bootcss.com/nprogress/0.2.0/nprogress.min.js"></script>
+  <script src="/js/qrious.js"></script>
+<script src="/js/gitment.js"></script>
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+</head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png">
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>KK</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">首页</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">标签</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">归档</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">项目</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">关于</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">首页</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">标签</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">归档</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">项目</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">关于</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>LLDB</h2>
+  <p class="post-date">2018-11-23</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><h1 id="LLDB"><a href="#LLDB" class="headerlink" title="LLDB"></a>LLDB</h1><h4 id="指令的格式是"><a href="#指令的格式是" class="headerlink" title="指令的格式是"></a>指令的格式是</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;command&gt; [&lt;subcommand&gt; [&lt;subcommand&gt;...]] &lt;action&gt; [-options [option-</span><br><span class="line">value]] [argument [argument...]]</span><br></pre></td></tr></table></figure>
+<ul>
+<li>命令名称：<command></li>
+<li>子命令：[<subcommand> [<subcommand>…]]</subcommand></subcommand></li>
+<li>命令操作：<action></action></li>
+<li>命令选项：[-options [option- value]]</li>
+<li>命令参数：[argument [argument…]]</li>
+</ul>
+<p>例如：给某个函数设置断点</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">breakpoint <span class="built_in">set</span> -n test <span class="comment">// 给test函数设置断点，breakpoint-命令名称，set-命令操作，-n-命令选项， test-参数</span></span><br></pre></td></tr></table></figure>
+<h4 id="常用指令"><a href="#常用指令" class="headerlink" title="常用指令"></a>常用指令</h4><ul>
+<li><p><strong>0-help指令</strong></p>
+<p>查看指令</p>
+<ul>
+<li><p><strong>help</strong>：可查看所有lldb命令</p>
+</li>
+<li><p><strong>help 命令</strong>：可查看此命令下所有的操作或子命令，如<figure class="highlight plain"><figcaption><span>breakpoint```即可查到```breakpoint```下的所有子命令或操作（set write read name...）</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">  - **help 命令 子命令（操作）**：可查询子命令或操作下的命令选项，如```help breakpoint set```即可查出```set```下的命令选项(-n -t -s...)</span><br><span class="line"></span><br><span class="line">- **1-打印指令**</span><br><span class="line"></span><br><span class="line">  - **p、po**：</span><br><span class="line"></span><br><span class="line">    p 和 po 的区别在于使用 po 只会输出对应的值，而 p 则会返回值的类型以及命令结果的引用名。</span><br><span class="line"></span><br><span class="line">    p还可以进行常量的进制转换</span><br><span class="line"></span><br><span class="line">    ```objective-c</span><br><span class="line">    //默认打印为10进制</span><br><span class="line">    (lldb) p 100</span><br><span class="line">    (int) $8 = 100</span><br><span class="line">    //转16进制</span><br><span class="line">    (lldb) p/x 100</span><br><span class="line">    (int) $9 = 0x00000064</span><br><span class="line">    //转8进制</span><br><span class="line">    (lldb) p/o 100</span><br><span class="line">    (int) $10 = 0144</span><br><span class="line">    //转二进制</span><br><span class="line">    (lldb) p/t 100</span><br><span class="line">    (int) $2 = 0b00000000000000000000000001100100</span><br><span class="line">    //字符转10进制数字</span><br><span class="line">    (lldb) p/d &apos;A&apos;</span><br><span class="line">    (char) $7 = 65</span><br><span class="line">    //10进制数字转字符</span><br><span class="line">    (lldb) p/c 66</span><br><span class="line">    (int) $10 = B\0\0\0</span><br></pre></td></tr></table></figure></p>
+</li>
+<li><p><strong>expression</strong></p>
+<p>执⾏一个表达式，修改参数值</p>
+<p>expression cmd-option – expr</p>
+<ul>
+<li><p>cmd-option：是一个命令选项</p>
+</li>
+<li><p>–：是结束前面命令选项的标识</p>
+</li>
+<li><p>expr：是指表达式</p>
+</li>
+<li><p>通常可以直接省略中间的命令选项<figure class="highlight plain"><figcaption><span>expr```</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">```objective-c</span><br><span class="line">expression self.view.backgroundColor = [UIColor redColor]; // 动态设置背景颜色</span><br></pre></td></tr></table></figure></p>
+</li>
+</ul>
+</li>
+<li><p><strong>call</strong></p>
+<p>在断点调用某个方法，并输出此方法的返回值。</p>
+<p>注意，这里只能调用没有参数的方法或函数。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">(lldb) call test</span><br><span class="line">(int (*)()) $0 = 0x0000000100000d70 (C`test at main.c:34)</span><br><span class="line">(lldb) call test();</span><br><span class="line">-------test----------</span><br><span class="line">(int) $1 = 2</span><br><span class="line">(lldb)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p><strong>2-Thread</strong></p>
+<ul>
+<li><p><strong>thread backtrace或bt</strong></p>
+<p>打印线程的堆栈信息</p>
+</li>
+<li><p><strong>thread return</strong></p>
+<p>跳出当前方法的执行</p>
+</li>
+<li><p><strong>流程控制</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">继续：continue, c</span><br><span class="line">下一步：next, n</span><br><span class="line">进入：step, s</span><br><span class="line">跳出：finish, f</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>frame select N</strong></p>
+<p>bt打印出了堆栈信息列表，如果想看指定的位置，可以使用<figure class="highlight plain"><figcaption><span>select n```</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">  - **frame variable**</span><br><span class="line"></span><br><span class="line">    查看帧变量，打印当前帧的变量</span><br><span class="line"></span><br><span class="line">- **3-Image**</span><br><span class="line"></span><br><span class="line">  - **image lookup -address 查找崩溃位置**</span><br><span class="line"></span><br><span class="line">    当你遇见数组崩溃，你又没有找到崩溃的位置，只扔给你一堆报错信息，这时候image lookup来帮助你</span><br><span class="line"></span><br><span class="line">  - **image lookup -name 查找方法来源**</span><br><span class="line"></span><br><span class="line">    此命令可以用来查找方法的来源。包括在第三方SDK中的方法，也能被查到。</span><br><span class="line"></span><br><span class="line">    ```objective-c</span><br><span class="line">    image lookup -n test // test是方法</span><br></pre></td></tr></table></figure></p>
+</li>
+<li><p><strong>image lookup –type 查看成员</strong></p>
+<p>查看某个class的所有属性和成员变量。不过貌似frameWork库中文件不能查看</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">image lookup -t Student // Student是类</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p><strong>4-breakpoint</strong></p>
+<ul>
+<li><p><strong>给某一行加断点</strong></p>
+<figure class="highlight plain"><figcaption><span>set -f xxx -l xxx</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">breakpoint set -f xxx -l xxx // -f后面跟文件名，-l后跟行数</span><br><span class="line">breakpoint set -f Student.m -l 5 // 给Student.m文件的第5行加断点</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>给函数加断点</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">breakpoint set -n 方法名</span><br><span class="line">breakpoint set -n viewDidLoad // 给viewDidLoad加断点</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>查看断点列表</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">breakpoint list</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>禁用、启用断点</strong></p>
+<figure class="highlight plain"><figcaption><span>disable/enable 断点标识```</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">- **移除断点**</span><br><span class="line"></span><br><span class="line">  ```breakpoint delete 断点标识</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#LLDB">
+    <span class="tag-code">LLDB</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/2018/11/18/iOS性能优化/">
+        <span class="nav-arrow">← </span>
+        
+          iOS性能优化
+        
+      </a>
+    
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+      <div class="money-like">
+        <div class="reward-btn">
+          赏
+          <span class="money-code">
+            <span class="alipay-code">
+              <div class="code-image"></div>
+              <b>使用支付宝打赏</b>
+            </span>
+            <span class="wechat-code">
+              <div class="code-image"></div>
+              <b>使用微信打赏</b>
+            </span>
+          </span>
+        </div>
+        <p class="notice">若你觉得我的文章对你有帮助，欢迎点击上方按钮对我打赏</p>
+      </div>
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+      <div class="qrcode">
+        <canvas id="share-qrcode"></canvas>
+        <p class="notice">扫描二维码，分享此文章</p>
+      </div>
+    
+    <!-- 二维码 END -->
+    
+      <!-- Gitment START -->
+      <div id="comments"></div>
+      <!-- Gitment END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    
+    <div class="toc-catalog">Catalog</div>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#LLDB"><span class="toc-nav-text">LLDB</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#指令的格式是"><span class="toc-nav-text">指令的格式是</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#常用指令"><span class="toc-nav-text">常用指令</span></a></li></ol></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://ikirk.cn/2018/11/23/LLDB/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+     // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+        
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+
+    // qrcode
+    var qr = new QRious({
+      element: document.getElementById('share-qrcode'),
+      value: document.location.href
+    });
+
+    // gitment
+    var gitmentConfig = "kirk";
+    if (gitmentConfig !== 'undefined') {
+      var gitment = new Gitment({
+        id: "LLDB",
+        owner: "kirk",
+        repo: "kk07self.github.io",
+        oauth: {
+          client_id: "dd1dcb865cebd3bd7542",
+          client_secret: "d04573243b1d96b3d027340763220f2f2abbb8ee"
+        },
+        theme: {
+          render(state, instance) {
+            const container = document.createElement('div')
+            container.lang = "en-US"
+            container.className = 'gitment-container gitment-root-container'
+            container.appendChild(instance.renderHeader(state, instance))
+            container.appendChild(instance.renderEditor(state, instance))
+            container.appendChild(instance.renderComments(state, instance))
+            container.appendChild(instance.renderFooter(state, instance))
+            return container;
+          }
+        }
+      })
+      gitment.render(document.getElementById('comments'))
+    }
+  })();
+</script>
+
+<script>
+  var disqus_shortname = '';
+  
+  var disqus_url = 'http://ikirk.cn/2018/11/23/LLDB/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//go.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    <!-- &copy; 2018 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a> -->
+    &copy; 2018 | ikirk.cn
+    <br>
+    <!-- Theme by <a href="https://github.com/yanm1ng">yanm1ng</a> -->
+
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+<script src="/js/script.js"></script>
+  </body>
+</html>

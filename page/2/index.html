@@ -141,122 +141,52 @@
   
     <article class="article-card">
       <h2 class="article-head">
-        <a href="/2018/11/15/11-RunLoop/"></a>
+        <a href="/2018/10/15/04-category&load&initialize/">Load&Initialize&Category</a>
       </h2>
-      <p class="article-date">2018-11-15</p>
+      <p class="article-date">2018-10-15</p>
+      
+        
+  <a href="/tags#load">
+    <span class="tag-code">load</span>
+  </a>
+
+  <a href="/tags#initialize">
+    <span class="tag-code">initialize</span>
+  </a>
+
+  <a href="/tags#category">
+    <span class="tag-code">category</span>
+  </a>
+
       
       <div class="article-summary">
         
-          RunLoop简介运行循环，在程序运行过程中循环做些事情
+          
+本篇文章将阐述OC类在初始化时候的两个方法，load 和 initialize。其调用的时间，调用的机制以及相关联类调用的顺序。同时在最后，也顺便阐述下分类category的内部实现原理。
 
-作用
-保持程序的持续运行
-处理APP中的各种事务（比如触摸事件、定时器）
-节省CPU，提高性能：该做事时做事，该休息时休息
-
-
-
-RunLoop与线程
-每条线程都有唯一的一个与之对应的RunLoop对象
-RunLoop保存在一个全局 ...
+load方法加载
++load 方法会在类、分类被加载到内存的时候调用
+每个类、分类的+load在程 ...
         
       </div>
-      <a class="more" href="/2018/11/15/11-RunLoop/">read more</a>
+      <a class="more" href="/2018/10/15/04-category&load&initialize/">read more</a>
     </article>
   
     <article class="article-card">
       <h2 class="article-head">
-        <a href="/2018/11/14/09-runtimeAPI/"></a>
+        <a href="/2018/10/13/05-关联对象/">关联对象</a>
       </h2>
-      <p class="article-date">2018-11-14</p>
+      <p class="article-date">2018-10-13</p>
       
-      <div class="article-summary">
         
-          runtime API类1234567891011121314151617181920212223// 动态创建一个类（参数：父类，类名，额外的内存空间）Class objc_allocateClassPair(Class superclass, const char *name, size ...
-        
-      </div>
-      <a class="more" href="/2018/11/14/09-runtimeAPI/">read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/2018/11/14/10-关键字/"></a>
-      </h2>
-      <p class="article-date">2018-11-14</p>
-      
-      <div class="article-summary">
-        
-          关键字OC@dynamic 告诉编译器不用生成getter和setter方法的实现，等运行时再添加方法实现
-@synthesize 告诉编译器生成getter和setter方法的实现
-Swift
-final
-final关键字在大多数的编程语言中都存在，表示不允许对其修饰的内容进行继承或者重新 ...
-        
-      </div>
-      <a class="more" href="/2018/11/14/10-关键字/">read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/2018/11/09/07-Class底层结构/"></a>
-      </h2>
-      <p class="article-date">2018-11-09</p>
-      
-      <div class="article-summary">
-        
-          Class底层结构Class的结构123456789101112131415161718192021222324252627282930313233343536373839404142434445464748// 类的结构体信息struct objc_class &#123;    Clas ...
-        
-      </div>
-      <a class="more" href="/2018/11/09/07-Class底层结构/">read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/2018/11/09/08-objc_msgSend/"></a>
-      </h2>
-      <p class="article-date">2018-11-09</p>
-      
-      <div class="article-summary">
-        
-          objc_msgSend-消息机制OC中方法的调用，其实都是转为objc_msgSend()函数的调用
-Objc_msgSend()函数的执行分为三个阶段
+  <a href="/tags#关联对象">
+    <span class="tag-code">关联对象</span>
+  </a>
 
-消息发送阶段
-动态方法解析阶段
-消息转发阶段
+  <a href="/tags#分类属性">
+    <span class="tag-code">分类属性</span>
+  </a>
 
-流程1：消息发送阶段
-消息接收者receiver是否为nil，如果receiver为n ...
-        
-      </div>
-      <a class="more" href="/2018/11/09/08-objc_msgSend/">read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/2018/11/08/06-block/"></a>
-      </h2>
-      <p class="article-date">2018-11-08</p>
-      
-      <div class="article-summary">
-        
-          blockblock底层数据结构
-block本质上也是一个OC对象，它内部含有isa指针
-
-block是封装了函数调用以及函数调用环境的OC对象
-
-block底层结构：
-123456789101112131415161718192021222324252627// 例如这样的一个blocki ...
-        
-      </div>
-      <a class="more" href="/2018/11/08/06-block/">read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/2018/11/08/05-关联对象/"></a>
-      </h2>
-      <p class="article-date">2018-11-08</p>
       
       <div class="article-summary">
         
@@ -265,7 +195,7 @@ block底层结构：
 123456void objc_setAssociatedObject(id object, const void *key, id value, pbjc_AssociationPolicy poicy)// object 需要关联的对象// key  ...
         
       </div>
-      <a class="more" href="/2018/11/08/05-关联对象/">read more</a>
+      <a class="more" href="/2018/10/13/05-关联对象/">read more</a>
     </article>
   
     <article class="article-card">
@@ -296,38 +226,17 @@ KVC的全称是Key-Value Coding，俗称“键值编码”，可以通过一个k
   
     <article class="article-card">
       <h2 class="article-head">
-        <a href="/2018/10/12/04-category_load_initialize/">Load_Initialize_Category</a>
-      </h2>
-      <p class="article-date">2018-10-12</p>
-      
-        
-  <a href="/tags#load initialize category">
-    <span class="tag-code">load initialize category</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          
-本篇文章将阐述OC类在初始化时候的两个方法，load 和 initialize。其调用的时间，调用的机制以及相关联类调用的顺序。同时在最后，也顺便阐述下分类category的内部实现原理。
-
-load方法加载
-+load 方法会在类、分类被加载到内存的时候调用
-每个类、分类的+load在程 ...
-        
-      </div>
-      <a class="more" href="/2018/10/12/04-category_load_initialize/">read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
         <a href="/2018/10/11/02-KVO/">KVO-观察者模式</a>
       </h2>
       <p class="article-date">2018-10-11</p>
       
         
-  <a href="/tags#KVO 观察者模式">
-    <span class="tag-code">KVO 观察者模式</span>
+  <a href="/tags#KVO">
+    <span class="tag-code">KVO</span>
+  </a>
+
+  <a href="/tags#观察者模式">
+    <span class="tag-code">观察者模式</span>
   </a>
 
       
@@ -341,6 +250,48 @@ load方法加载
         
       </div>
       <a class="more" href="/2018/10/11/02-KVO/">read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/2018/10/08/07-Class底层结构/">class的底层结构</a>
+      </h2>
+      <p class="article-date">2018-10-08</p>
+      
+        
+  <a href="/tags#class">
+    <span class="tag-code">class</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          Class底层结构Class的结构123456789101112131415161718192021222324252627282930313233343536373839404142434445464748// 类的结构体信息struct objc_class &#123;    Clas ...
+        
+      </div>
+      <a class="more" href="/2018/10/08/07-Class底层结构/">read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/2018/10/05/NSObject本质/">NSObject本质</a>
+      </h2>
+      <p class="article-date">2018-10-05</p>
+      
+        
+  <a href="/tags#本质 底层实现">
+    <span class="tag-code">本质 底层实现</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          1 Objective-C的底层实现是：C/C++实现的OC—————&gt;C/C++—————&gt;汇编语言—————&gt;机器语言
+将OC代码转换成C/C++代码：
+1xcrun -sdk iphoneos clang -arch arm64 -rewrite-objc 源文件 - ...
+        
+      </div>
+      <a class="more" href="/2018/10/05/NSObject本质/">read more</a>
     </article>
   
 
