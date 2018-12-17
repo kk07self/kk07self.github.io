@@ -4,6 +4,7 @@
   var header = $('.header')
   var banner = document.getElementById('article-banner') || false
   var about = document.getElementById('about-banner') || false
+  var index = document.getElementById('index-banner') || false
   var top = $('.scroll-top')
   var catalog = $('.catalog-container .toc-main')
   var isOpen = false
@@ -82,7 +83,7 @@
   document.addEventListener('scroll', function () {
     var scrollTop = document.documentElement.scrollTop || document.body.scrollTop
     var headerH = header.height()
-    if (banner) {
+    if (banner || index) {
       if (scrollTop > headerH) {
         header.addClass('fixed-header')
       } else if (scrollTop === 0) {

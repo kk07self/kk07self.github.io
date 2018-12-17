@@ -65,6 +65,14 @@ pre {
   transform: translateY(-20px);
   transition: all 0.4s;
 }
+#index-banner {
+  width: 100%;
+  position: relative;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  height: 240px;
+}
 .hljs {
   background: none !important;
 }
@@ -127,9 +135,7 @@ h2.article-head {
   padding: 100px 20px 25px 20px;
   text-align: center;
   position: relative;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: cover;
+  background-color: #2e2f43;
 }
 @media screen and (max-width: 480px) {
   #article-banner {
