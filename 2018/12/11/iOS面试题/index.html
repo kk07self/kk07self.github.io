@@ -10,7 +10,7 @@
   
   <title>
     
-      Stay hungry stay foolish | KK
+      iOS面试题 | KK
     
   </title>
   <link href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
@@ -126,8 +126,8 @@
 </header>
 
     <div id="article-banner">
-  <h2>Stay hungry stay foolish</h2>
-  <p class="post-date">2018-10-01</p>
+  <h2>iOS面试题</h2>
+  <p class="post-date">2018-12-11</p>
   <div class="arrow-down">
     <a href="javascript:;"></a>
   </div>
@@ -136,11 +136,68 @@
   <!-- Article START -->
   <article class="post-article">
     <section class="markdown-content"><blockquote>
-<p>多年后的那个你一定会感谢现在努力的自己</p>
+<p>这篇博客收集了很多iOS的面试题，不断更新中…</p>
 </blockquote>
-<h4 id="写博客的目的"><a href="#写博客的目的" class="headerlink" title="写博客的目的"></a>写博客的目的</h4><h4 id="为什么是现在才开始"><a href="#为什么是现在才开始" class="headerlink" title="为什么是现在才开始"></a>为什么是现在才开始</h4><p>####博客的内容</p>
+<h4 id="1-struct-和-class的区别"><a href="#1-struct-和-class的区别" class="headerlink" title="1. struct 和 class的区别"></a>1. struct 和 class的区别</h4><p><strong>1.1 本质区别</strong>：</p>
+<p>struct 是值类型，class是引用类型。值类型在传递和赋值时进行的是拷贝（深拷贝），而引用类型则只会使用引用对象的一个“指向”（指向对象的地址）。所以两者的区别就是这两个类型的区别。值类型的值存储在栈区，而引用类型的值存储在堆区。</p>
+<p>在swift中，如果用==或!=比较两个变量存储的内容是否一致，则需要遵守Equatable协议，并实现==方法；引用类型要比较引用的指向是否一致，可以用===或!==方法，比较内部的值有需要遵守Equatable协议。</p>
+<p>作为函数的参数传递时，值类型内部的信息不能修改，除非将值类型的值拷贝给一个新值，再进行内部修改；引用类型则可以修改内部的值。</p>
+<p> <br></p>
+<p><strong>1.2 class优于struct的功能：</strong></p>
+<p>1）class可以继承，子类可以使用父类的特性和方法；</p>
+<p>2）可以用deinit方法来释放里面的资源；</p>
+<p>3）一个对象可以被多次引用；</p>
+<p>4）类型转换可以在runtime的时候检查和解释一个实例的类型</p>
+<p> <br></p>
+<p><strong>1.3 struct优于class的地方：</strong></p>
+<p>1）结构较小，适用于复制操作，相比于class的实例被多次引用更加安全；</p>
+<p>2）无须担心内存泄漏或多线程冲突问题</p>
+<p> <br></p>
+<p><strong>1.4 拓展</strong></p>
+<p><strong>1.4.1 swift中Array是什么实现的</strong></p>
+<p>swift中的Array是struct实现的，属于值类型，他的复制属于深拷贝。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> new1 = [<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>]</span><br><span class="line"><span class="keyword">var</span> new2 = new1</span><br><span class="line">new1[<span class="number">0</span>] = <span class="number">1</span></span><br><span class="line"><span class="built_in">print</span>(new1) <span class="comment">// [1, 0, 0]</span></span><br><span class="line"><span class="built_in">print</span>(new2) <span class="comment">// [0, 0, 0]</span></span><br></pre></td></tr></table></figure>
+<p>对应Array中大量复制时会不会影响性能，swift内部做了处理，在相对空间较为宽裕的堆上来完成的。</p>
+<p><br></p>
+<p><strong>1.4.2、枚举-Enum</strong></p>
+<p>swift的枚举相比于OC增加了很多新功能</p>
+<p>1）类型拓展，不仅支持Int类型，还支持字符串等数据类型</p>
+<p>2）可以添加属性，实现get方法</p>
+<p>3）可以穿的参数，以匹配不同的类型</p>
+<p><br></p>
+<p><strong>1.4.3、协议-protocol</strong></p>
+<p><br></p>
+<p><br></p>
+<h4 id="2-介绍下观察者模式"><a href="#2-介绍下观察者模式" class="headerlink" title="2 介绍下观察者模式"></a>2 介绍下观察者模式</h4><p><strong>2.1 观察者模式：</strong></p>
+<p>定义对象间一对多的关系，使得当一个对象的属性发生改变时，其相关依赖对象（进行监听的对象）皆收到通知并实现完成自己对应的操作。</p>
+<p>iOS中典型的此模式实现方式是：通知（NSNotificationCenter）和KVO.</p>
+<p><br></p>
+<p><strong>2.2 通知：</strong></p>
+<p>1）观察者先通过<strong>addObserver</strong>API向通知中心（NSNotificationCenter）注册监听某一信息（指定通知的name），通知中心会将其放入观察者列表中（猜测是name: observerList）；</p>
+<p>2）被观察者在指定被观察的位置通过<strong>postNotificationName:object:userInfo</strong>API向通知中心发送指定name的通知</p>
+<p>3）通知中心在收到通知后，通过name找出之前注册的观察者，调用其注册时关联的方法或block。</p>
+<p>4）注意：在观察者被销毁的时候要向通知中心注销其观察者，如果不注销，在被观察者发送通知给观察者时，会crash。对象已经被销毁，这时候再那指向对象的指针去调用方法，就会出行野指针bug，crash。</p>
+<p><br></p>
+<p>【关联】这里，在通知中心通过观察者调用方法或block时，可以引申出方法调用机制、block底层机制，这里可以关注另外两篇博客 <a href="https://ikirk.cn/2018/10/21/08-objc_msgSend/"><strong>消息发送机制</strong></a> 和 <a href="https://ikirk.cn/2018/10/28/06-block/"><strong>block底层实现</strong> </a></p>
+<p><br></p>
+<p><strong>2.3 KVO：</strong></p>
+<p>KVO的全称是Key-Value Observer，即键值观察。是一种没有中心枢纽的观察者模式的实现方式。一个主题对象管理所有依赖于它的观察者对象，并且在自身状态发生改变的时候主动通知观察者对象。</p>
+<p>关于KVO更全的信息，可以阅读我的另一篇博客<a href="https://ikirk.cn/2018/10/11/02-KVO/"><strong>KVO内部实现</strong></a></p>
+<p><br></p>
+<p><br></p>
+<h4 id="3-在一个https连接的网站里，输入账号密码点击登录后，到服务器返回这个请求前，中间经历了什么"><a href="#3-在一个https连接的网站里，输入账号密码点击登录后，到服务器返回这个请求前，中间经历了什么" class="headerlink" title="3 在一个https连接的网站里，输入账号密码点击登录后，到服务器返回这个请求前，中间经历了什么"></a>3 在一个https连接的网站里，输入账号密码点击登录后，到服务器返回这个请求前，中间经历了什么</h4><p><strong>3.1 https:</strong></p>
+<p>https是http(超文本传输协议)加了一层加密协议（SSL/TSL）对信息进行加密。这套协议将对称加密、非对称加密以及HASH算法全部使用在内。（关于这几种加密方式的介绍，可以参考我的另一篇博文，[<strong>iOS</strong>]）</p>
 </section>
     <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#面试题">
+    <span class="tag-code">面试题</span>
+  </a>
+
+      </div>
     
     <!-- Tags END -->
     <!-- NAV START -->
@@ -148,13 +205,13 @@
   <div class="nav-container">
     <!-- reverse left and right to put prev and next in a more logic postition -->
     
-    
-      <a class="nav-right" href="/2018/10/05/NSObject本质/">
+      <a class="nav-left" href="/2018/11/23/LLDB/">
+        <span class="nav-arrow">← </span>
         
-          NSObject本质
+          LLDB
         
-        <span class="nav-arrow"> →</span>
       </a>
+    
     
   </div>
 
@@ -201,7 +258,7 @@
     
     <div class="toc-catalog">Catalog</div>
     
-      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#写博客的目的"><span class="toc-nav-text">写博客的目的</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#为什么是现在才开始"><span class="toc-nav-text">为什么是现在才开始</span></a></li></ol>
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#1-struct-和-class的区别"><span class="toc-nav-text">1. struct 和 class的区别</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#2-介绍下观察者模式"><span class="toc-nav-text">2 介绍下观察者模式</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#3-在一个https连接的网站里，输入账号密码点击登录后，到服务器返回这个请求前，中间经历了什么"><span class="toc-nav-text">3 在一个https连接的网站里，输入账号密码点击登录后，到服务器返回这个请求前，中间经历了什么</span></a></li></ol>
     
   </div>
 </aside>
@@ -211,7 +268,7 @@
 
 <script>
   (function () {
-    var url = 'http://ikirk.cn/2018/10/01/top/';
+    var url = 'http://ikirk.cn/2018/12/11/iOS面试题/';
     var banner = ''
     if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
       $('#article-banner').css({
@@ -267,7 +324,7 @@
     var gitmentConfig = "undefined";
     if (gitmentConfig !== 'undefined') {
       var gitment = new Gitment({
-        id: "Stay hungry stay foolish",
+        id: "iOS面试题",
         owner: "undefined",
         repo: "blog_comment",
         oauth: {
@@ -295,7 +352,7 @@
 <script>
   var disqus_shortname = '';
   
-  var disqus_url = 'http://ikirk.cn/2018/10/01/top/';
+  var disqus_url = 'http://ikirk.cn/2018/12/11/iOS面试题/';
   
   (function(){
     var dsq = document.createElement('script');

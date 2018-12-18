@@ -130,6 +130,42 @@
   
     <article class="article-card">
       <h2 class="article-head">
+        <a href="/2018/10/21/08-objc_msgSend/">OC的方法调用逻辑</a>
+      </h2>
+      <p class="article-date">2018-10-21</p>
+      
+        
+  <a href="/tags#objc_msgSend">
+    <span class="tag-code">objc_msgSend</span>
+  </a>
+
+  <a href="/tags#动态解析">
+    <span class="tag-code">动态解析</span>
+  </a>
+
+  <a href="/tags#消息转发">
+    <span class="tag-code">消息转发</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          objc_msgSend-消息机制OC中方法的调用，其实都是转为objc_msgSend()函数的调用
+Objc_msgSend()函数的执行分为三个阶段
+
+消息发送阶段
+动态方法解析阶段
+消息转发阶段
+
+流程1：消息发送阶段
+消息接收者receiver是否为nil，如果receiver为n ...
+        
+      </div>
+      <a class="more" href="/2018/10/21/08-objc_msgSend/">read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
         <a href="/2018/10/15/04-category&load&initialize/">Load&Initialize&Category</a>
       </h2>
       <p class="article-date">2018-10-15</p>
@@ -239,6 +275,40 @@ KVC的全称是Key-Value Coding，俗称“键值编码”，可以通过一个k
         
       </div>
       <a class="more" href="/2018/10/11/02-KVO/">read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/2018/10/10/01-iOS签名机制/">iOS签名机制</a>
+      </h2>
+      <p class="article-date">2018-10-10</p>
+      
+        
+  <a href="/tags#iOS签名机制">
+    <span class="tag-code">iOS签名机制</span>
+  </a>
+
+  <a href="/tags#对称加密">
+    <span class="tag-code">对称加密</span>
+  </a>
+
+  <a href="/tags#非对称加密">
+    <span class="tag-code">非对称加密</span>
+  </a>
+
+  <a href="/tags#Hash加密">
+    <span class="tag-code">Hash加密</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          iOS签名机制本章将涵盖的内容有：
+加密解密（对称密码（DES、3DES、AES）、公钥密码(RSA)）—&gt;单向散列函数（MD4、MD5，SHA-1、SHA-2、SHA-3）—&gt;数字签名—&gt;证书—&gt;iOS签名机制
+关键字：encrypt(加密)、decryt(解密)、 ...
+        
+      </div>
+      <a class="more" href="/2018/10/10/01-iOS签名机制/">read more</a>
     </article>
   
     <article class="article-card">
