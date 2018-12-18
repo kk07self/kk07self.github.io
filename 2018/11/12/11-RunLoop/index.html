@@ -169,7 +169,7 @@
 <li>CFRunLoopRef：RunLoop类</li>
 <li>CFRunLoopModeRef: RunLoop对应的模式类</li>
 <li>CFRunLoopSourceRef：资源类</li>
-<li>CFRunLoopTimerRef：事件类</li>
+<li>CFRunLoopTimerRef：定时器类</li>
 <li>CFRunLoopObserverRef：观察者类</li>
 </ul>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> __<span class="title">CFRunLoop</span> *<span class="title">CFRunLoopRef</span>;</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> __<span class="title">CFRunLoop</span> &#123;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">pthread_t</span> _pthread;</span><br><span class="line">    CFMutableSetRef _commonModes;</span><br><span class="line">    CFMutableSetRef _commonModeItems;</span><br><span class="line">    CFRunLoopModeRef _curentMode;</span><br><span class="line">    CFMutableSetRef _modes;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> __<span class="title">CFRunLoopMode</span> *<span class="title">CFRunLoopModeRef</span>;</span> </span><br><span class="line"><span class="class"><span class="keyword">struct</span> __<span class="title">CFRunLoopMode</span> &#123;</span></span><br><span class="line"></span><br><span class="line">    CFStringRef _name;<span class="comment">// 名称</span></span><br><span class="line">    CFMutableSetRef _sources0;</span><br><span class="line">    CFMutableSetRef _sources1;</span><br><span class="line">    CFRunLoopModeRef _observers;</span><br><span class="line">    CFRunLoopModeRef _times;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
@@ -242,6 +242,8 @@
 <li>监控应用卡顿</li>
 <li>性能优化</li>
 </ul>
+<p><br></p>
+<p>关于更详细的Runloop机制，可参考这篇文章<a href="https://blog.ibireme.com/2015/05/18/runloop/" target="_blank" rel="noopener"><strong>深入理解RunLoop</strong></a></p>
 </section>
     <!-- Tags START -->
     
@@ -337,7 +339,7 @@
         'background-image': 'url(' + banner + ')'
       })
     } else {
-      $('#article-banner').geopattern(url)
+      // $('#article-banner').geopattern(url)
     }
     $('.header').removeClass('fixed-header')
 

@@ -186,7 +186,43 @@
 <p><br></p>
 <p><br></p>
 <h4 id="3-在一个https连接的网站里，输入账号密码点击登录后，到服务器返回这个请求前，中间经历了什么"><a href="#3-在一个https连接的网站里，输入账号密码点击登录后，到服务器返回这个请求前，中间经历了什么" class="headerlink" title="3 在一个https连接的网站里，输入账号密码点击登录后，到服务器返回这个请求前，中间经历了什么"></a>3 在一个https连接的网站里，输入账号密码点击登录后，到服务器返回这个请求前，中间经历了什么</h4><p><strong>3.1 https:</strong></p>
-<p>https是http(超文本传输协议)加了一层加密协议（SSL/TSL）对信息进行加密。这套协议将对称加密、非对称加密以及HASH算法全部使用在内。（关于这几种加密方式的介绍，可以参考我的另一篇博文，[<strong>iOS</strong>]）</p>
+<p>https是http(超文本传输协议)加了一层加密协议（SSL/TSL）对信息进行加密。这套协议将对称加密、非对称加密以及HASH算法全部使用在内。（关于这几种加密方式的介绍，可以参考我的另一篇博文，<a href="https://ikirk.cn/2018/10/10/01-iOS%E7%AD%BE%E5%90%8D%E6%9C%BA%E5%88%B6/"><strong>iOS签名机制</strong></a>）</p>
+<p><br></p>
+<p><strong>3.2 传输过程：</strong></p>
+<p>在梳理流程前，先介绍下几个关键词：</p>
+<p>1）客户端连接服务端，客户端根据网络地址请求服务端，连接服务端；</p>
+<p>2）服务端接受请求，客户端的请求先发送到DNS服务器，DNS服务器会将网络地址解析成IP地址，这个IP地址对应一台机器。过了DNS这关后，客户端就链接上了服务端。服务端会有一套数字证书返回给客户端。（数字证书：证书里包含了网站地址、加密公钥、证书期限、证书颁发机构等。数字证书里的公钥是服务端生成的一对非对称加密的公钥，用来加密客户端的密钥的，密钥自己保留，用来解密客户端的密钥，拿到客户端的密钥后就能解密出客户端的请求数据。）</p>
+<p>3）客户端验证服务端数字证书，验证证书上的网站地址、期限及证书的有效性等，通过验证后进行下一步；</p>
+<p>4）客户端加密要传输的数据，客户端生成一对对称密钥，对数据进行加密，对密钥加密密钥进行加密，然后将加密好的数据和加密后的密钥发送给服务端；</p>
+<p>5）服务端解密请求数据，服务端通过自己的密钥对客户端加密的密钥进行解密，拿到客户端对称加密的密钥，然后用此密钥解密加密的请求数据，然后读取；</p>
+<p>6）服务端返回的数据，服务端读取客户端请求数据后，将要返回的数据用刚刚解密客户端的密钥进行加密，然后返回给客户端</p>
+<p>7）客户端接收返回数据，客户端收到服务端的加密数据后，用自己生成的密钥进行解密，获取到真正的数据。</p>
+<p><br></p>
+<p>针对以上的这个面试题，这里只需要回答出前5点即可，因为问题是返回这个请求前的过程。</p>
+<p><br></p>
+<p><br></p>
+<h4 id="4-在一个app中间有一个button，在你手触摸屏幕点击后，到这个button收到点击事件，中间发生了什么"><a href="#4-在一个app中间有一个button，在你手触摸屏幕点击后，到这个button收到点击事件，中间发生了什么" class="headerlink" title="4 在一个app中间有一个button，在你手触摸屏幕点击后，到这个button收到点击事件，中间发生了什么"></a>4 在一个app中间有一个button，在你手触摸屏幕点击后，到这个button收到点击事件，中间发生了什么</h4><p><strong>4.1 事件响应链：</strong></p>
+<p>1）设备将touch到的UITouch对象和UIEvent对象打包，放到当前活动的UIApplication的事件队列中；</p>
+<p>2）UIApplication会从事件队列中取出触摸事件并传递给UIWindow对象</p>
+<p>3）UIWindow使用hitTest:withEvent:方法递归查找touch操作所在的视图view</p>
+<p>4）用查找到的view去调用触摸事件</p>
+<p>5）查找最有效视图View过程：</p>
+<p>​    1）判断自己是否支持可交互；</p>
+<p>​    2）判断触摸的点是否在我的范围呢；（pointInside: withEvent方法判断）</p>
+<p>​    3）是否有子视图，如果有子视图，则从子视图中找：遍历子视图，依次这样判断；如果没有那么就是自己，前提是前面两条都满足。</p>
+<p>6）了解事件链，我们可以拦截事件、处理事件冲突，或者添加视图可响应区域</p>
+<p><br></p>
+<p><strong>4.2 RunLoop</strong></p>
+<p>1）主线程的runloop会被唤醒；</p>
+<p>2）通知observer处理Timer和Source0</p>
+<p>3）通知observer处理Source1，如果source1中有事件，处理source1并跳到开始再处理一边之前的逻辑；</p>
+<p>4）通知observer即将进入休眠</p>
+<p>5）休眠，等待唤醒</p>
+<p>6）通知observer线程被唤醒</p>
+<p>7）处理唤醒的消息，之后跳到2</p>
+<p>8）通知observer：即将推出</p>
+<p><br></p>
+<p>关于更详细的Runloop机制，可参考这篇文章<a href="https://blog.ibireme.com/2015/05/18/runloop/" target="_blank" rel="noopener"><strong>深入理解RunLoop</strong></a></p>
 </section>
     <!-- Tags START -->
     
@@ -212,6 +248,13 @@
         
       </a>
     
+    
+      <a class="nav-right" href="/2018/12/15/iOS面试题-Swift/">
+        
+          iOS面试题-Swift
+        
+        <span class="nav-arrow"> →</span>
+      </a>
     
   </div>
 
@@ -258,7 +301,7 @@
     
     <div class="toc-catalog">Catalog</div>
     
-      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#1-struct-和-class的区别"><span class="toc-nav-text">1. struct 和 class的区别</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#2-介绍下观察者模式"><span class="toc-nav-text">2 介绍下观察者模式</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#3-在一个https连接的网站里，输入账号密码点击登录后，到服务器返回这个请求前，中间经历了什么"><span class="toc-nav-text">3 在一个https连接的网站里，输入账号密码点击登录后，到服务器返回这个请求前，中间经历了什么</span></a></li></ol>
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#1-struct-和-class的区别"><span class="toc-nav-text">1. struct 和 class的区别</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#2-介绍下观察者模式"><span class="toc-nav-text">2 介绍下观察者模式</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#3-在一个https连接的网站里，输入账号密码点击登录后，到服务器返回这个请求前，中间经历了什么"><span class="toc-nav-text">3 在一个https连接的网站里，输入账号密码点击登录后，到服务器返回这个请求前，中间经历了什么</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#4-在一个app中间有一个button，在你手触摸屏幕点击后，到这个button收到点击事件，中间发生了什么"><span class="toc-nav-text">4 在一个app中间有一个button，在你手触摸屏幕点击后，到这个button收到点击事件，中间发生了什么</span></a></li></ol>
     
   </div>
 </aside>
@@ -275,7 +318,7 @@
         'background-image': 'url(' + banner + ')'
       })
     } else {
-      $('#article-banner').geopattern(url)
+      // $('#article-banner').geopattern(url)
     }
     $('.header').removeClass('fixed-header')
 
