@@ -207,9 +207,8 @@ h2.article-head {
   text-align: center;
   vertical-align: middle;
   color: #fff;
-  border: 1px solid #f1b60e;
   border-radius: 50%;
-  background: linear-gradient(to bottom, #fccd60 0, #fbae12 100%, #2989d8 100%, #207cca 100%);
+  background-color: #f5a623;
 }
 .money-like .money-code {
   position: absolute;
@@ -233,7 +232,7 @@ h2.article-head {
   float: left;
 }
 .money-like .money-code .alipay-code .code-image {
-  background-image: url("images/alipay.jpg");
+  background-image: url("images/alipay.png");
   background-size: contain;
   background-repeat: no-repeat;
   width: 4.5em;
@@ -243,7 +242,7 @@ h2.article-head {
   float: right;
 }
 .money-like .money-code .wechat-code .code-image {
-  background-image: url("images/wechat.jpg");
+  background-image: url("images/wechat.png");
   background-size: contain;
   background-repeat: no-repeat;
   width: 4.5em;
@@ -531,6 +530,9 @@ h2.article-head {
 .markdown-content p,
 .article-summary p {
   line-height: 1.6em;
+  font-size: 14px;
+  color: #555;
+  padding: 0px 0 5px 0;
 }
 .markdown-content p code,
 .article-summary p code {
@@ -540,6 +542,15 @@ h2.article-head {
   margin: 0 2px;
   border-radius: 2px;
   white-space: nowrap;
+}
+.markdown-content strong,
+.article-summary strong {
+  font-size: 15px;
+  line-height: 35px;
+}
+.markdown-content li,
+.article-summary li {
+  font-size: 14px;
 }
 .markdown-content h1,
 .article-summary h1 {
