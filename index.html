@@ -392,30 +392,33 @@ KVC的全称是Key-Value Coding，俗称“键值编码”，可以通过一个k
   
     <article class="article-card">
       <h2 class="article-head">
-        <a href="/2018/10/11/00003-观察者模式/">KVO-观察者模式</a>
+        <a href="/2018/10/12/00001-OC中类、对象的本质/">OC中类、对象的本质</a>
       </h2>
-      <p class="article-date">2018-10-11</p>
+      <p class="article-date">2018-10-12</p>
       
         
-  <a href="/tags#KVO">
-    <span class="tag-code">KVO</span>
+  <a href="/tags#类的本质">
+    <span class="tag-code">类的本质</span>
   </a>
 
-  <a href="/tags#观察者模式">
-    <span class="tag-code">观察者模式</span>
+  <a href="/tags#isa指针">
+    <span class="tag-code">isa指针</span>
   </a>
 
       
       <div class="article-summary">
         
-          Key-Value Observing
-实现原理
-利用runtime API动态生成一个子类，并让实例对象的isa指针，从原来的类指向这个子类
-这个子类会重写监听属性的set方法，在set方法中完成对属性修改的监听，调用监听的方法
-这个子类的superclass属性指向其父类，方便调用不需要 ...
+          
+本文将阐述OC中类在C/C++底层语言中的具体实现，对象的分类，isa指针和superclass指针，顺便也说明了类的load和initialize方法
+
+
+NSObject类在C/C++中的呈现方式
+NSObject对象内存分配大小
+class的底层结构
+对象的分类及其isa和super ...
         
       </div>
-      <a class="more" href="/2018/10/11/00003-观察者模式/">read more</a>
+      <a class="more" href="/2018/10/12/00001-OC中类、对象的本质/">read more</a>
     </article>
   
 
