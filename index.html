@@ -304,9 +304,9 @@ RunLoop保存在一个全局 ...
   
     <article class="article-card">
       <h2 class="article-head">
-        <a href="/2018/10/21/00002-OC方法调用机制/">OC的方法调用逻辑</a>
+        <a href="/2018/10/15/00002-OC方法调用机制/">OC的方法调用逻辑</a>
       </h2>
-      <p class="article-date">2018-10-21</p>
+      <p class="article-date">2018-10-15</p>
       
         
   <a href="/tags#objc_msgSend">
@@ -324,18 +324,26 @@ RunLoop保存在一个全局 ...
       
       <div class="article-summary">
         
-          objc_msgSend-消息机制OC中方法的调用，其实都是转为objc_msgSend()函数的调用
-Objc_msgSend()函数的执行分为三个阶段
+          
+本文将阐述OC中方法调用过程
+
+
+消息发送
+动态方法解析
+消息转发
+
+上一篇文章窥探OC中类的本质
+OC方法的调用，其实都是转为objc_msgSend()函数的调用（出+load方法外）。
+Objc_msgSend()的执行分为三个阶段
 
 消息发送阶段
 动态方法解析阶段
 消息转发阶段
 
-流程1：消息发送阶段
-消息接收者receiver是否为nil，如果receiver为n ...
+ ...
         
       </div>
-      <a class="more" href="/2018/10/21/00002-OC方法调用机制/">read more</a>
+      <a class="more" href="/2018/10/15/00002-OC方法调用机制/">read more</a>
     </article>
   
     <article class="article-card">
@@ -392,17 +400,29 @@ KVC的全称是Key-Value Coding，俗称“键值编码”，可以通过一个k
   
     <article class="article-card">
       <h2 class="article-head">
-        <a href="/2018/10/12/00001-OC中类、对象的本质/">OC中类、对象的本质</a>
+        <a href="/2018/10/12/00001-窥探OC中类的本质/">窥探OC中类的本质</a>
       </h2>
       <p class="article-date">2018-10-12</p>
       
         
-  <a href="/tags#类的本质">
-    <span class="tag-code">类的本质</span>
-  </a>
-
   <a href="/tags#isa指针">
     <span class="tag-code">isa指针</span>
+  </a>
+
+  <a href="/tags#category">
+    <span class="tag-code">category</span>
+  </a>
+
+  <a href="/tags#superclass">
+    <span class="tag-code">superclass</span>
+  </a>
+
+  <a href="/tags#objc_class">
+    <span class="tag-code">objc_class</span>
+  </a>
+
+  <a href="/tags#对象分类">
+    <span class="tag-code">对象分类</span>
   </a>
 
       
@@ -418,7 +438,7 @@ class的底层结构
 对象的分类及其isa和super ...
         
       </div>
-      <a class="more" href="/2018/10/12/00001-OC中类、对象的本质/">read more</a>
+      <a class="more" href="/2018/10/12/00001-窥探OC中类的本质/">read more</a>
     </article>
   
 

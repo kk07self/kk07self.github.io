@@ -10,7 +10,7 @@
   
   <title>
     
-      KVC的内部实现 | KK
+      OC的方法调用逻辑 | KK
     
   </title>
   <link href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
@@ -126,8 +126,8 @@
 </header>
 
     <div id="article-banner">
-  <h2>KVC的内部实现</h2>
-  <p class="post-date">2018-10-12</p>
+  <h2>OC的方法调用逻辑</h2>
+  <p class="post-date">2018-10-15</p>
   <div class="arrow-down">
     <a href="javascript:;"></a>
   </div>
@@ -136,49 +136,58 @@
   <!-- Article START -->
   <article class="post-article">
     <section class="markdown-content"><blockquote>
-<p>本篇文章将阐述OC中KVC的内部处理机制，希望有助于读者加深对KVC的理解与应用。</p>
+<p>本文将阐述OC中方法调用过程</p>
 </blockquote>
-<p>KVC的全称是Key-Value Coding，俗称“键值编码”，可以通过一个key来访问某个属性.</p>
-<h3 id="常见API"><a href="#常见API" class="headerlink" title="常见API"></a>常见API</h3><p>KVO的API有赋值和取值方法各两个，分别是：</p>
 <ul>
-<li>-(void)setValue:(id)value forKeyPath:(NSString *)keyPath;</li>
-<li>-(void)setValue:(id)value forKey:(NSString *)key;</li>
-<li>-(id)valueForKeyPath:(NSString *)keyPath;</li>
-<li>-(id)valueForKey:(NSString *)key; </li>
+<li>消息发送</li>
+<li>动态方法解析</li>
+<li>消息转发</li>
 </ul>
-<p>以上我们可以看出，在赋值和取值的两个API里，最主要的区别是key，在这里forKey与forKeyPath的主要区别是：</p>
+<p>上一篇文章<a href="">窥探OC中类的本质</a></p>
+<p>OC方法的调用，其实都是转为objc_msgSend()函数的调用（出+load方法外）。</p>
+<p>Objc_msgSend()的执行分为三个阶段</p>
 <ul>
-<li><p>forkey：访问其直接属性</p>
-</li>
-<li><p>forKeyPath：访问直接属性或间接属性，可根据属性路径一层一层访问下去</p>
-<p>例如：</p>
-</li>
+<li>消息发送阶段</li>
+<li>动态方法解析阶段</li>
+<li>消息转发阶段</li>
 </ul>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 这里通过kvc访问person下面的cat对象里面的weight，使用forKey是不行的，</span></span><br><span class="line"><span class="comment">// 需要使用forKeyPath, forKeyPay:@"cat.weight",这样一层一层路径关联下去就可以访问到</span></span><br><span class="line">@interface <span class="type">Cat</span> : <span class="type">NSObject</span></span><br><span class="line">@property (assign, nonatomic) int weight;</span><br><span class="line">@end</span><br><span class="line"></span><br><span class="line">@interface <span class="type">Person</span> : <span class="type">NSObject</span></span><br><span class="line">@property (assign, nonatomic) int age;</span><br><span class="line"></span><br><span class="line">@property (assign, nonatomic) <span class="type">Cat</span> *cat;</span><br><span class="line">@end</span><br></pre></td></tr></table></figure>
-<p>​    </p>
-<h3 id="setVaule-forKey-内部机制"><a href="#setVaule-forKey-内部机制" class="headerlink" title="setVaule: forKey:  内部机制"></a>setVaule: forKey:  内部机制</h3><p>当调用此方法时：</p>
+<h4 id="流程1：消息发送阶段"><a href="#流程1：消息发送阶段" class="headerlink" title="流程1：消息发送阶段"></a>流程1：消息发送阶段</h4><ul>
+<li>消息接收者receiver是否为nil，如果receiver为nil直接退出</li>
+<li>从receiver的Class的cache中查找方法，找到了就调用方法查找结束</li>
+<li>从receiver的Class的class_rw_t中查找方法，找到了就调用方法并将其缓存在Class的cache_t中，结束查找</li>
+<li>判断上层是否有superClass，如果有则继续以下查找，往复，如果没有就进行到下一阶段（动态方法解析）</li>
+<li>从receiver的superClass得cache中查找方法，找到了就调用方法查找结束</li>
+<li>从receiver的superClass的class_rw_t方法列表中查找方法，找到了就调用方法并将其缓存在Class的cache_t中，结束查找</li>
+</ul>
+<h4 id="流程2：动态方法解析"><a href="#流程2：动态方法解析" class="headerlink" title="流程2：动态方法解析"></a>流程2：动态方法解析</h4><ul>
+<li>是否曾经有动态解析，如果有，则进入到下一阶段（消息转发阶段）</li>
+<li>如果没有，调用<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">- 将动态解析的方法放到class_method_t中，并标记为已经动态解析过了，然后走流程1消息发送阶段</span><br><span class="line"></span><br><span class="line">开发者可以实现以下方法，来动态添加方法实现</span><br><span class="line"></span><br><span class="line">- +resolveInstanceMethod:</span><br><span class="line"></span><br><span class="line">- +resolveClassMethod:</span><br><span class="line"></span><br><span class="line">动态解析过后，会重新走“消息发送”的流程，“从receiverClass的cache中查找方法”这一步开始执行</span><br><span class="line"></span><br><span class="line">**动态添加方法**</span><br><span class="line"></span><br><span class="line">```objective-c</span><br><span class="line">void c_other(id self, SEL _cmd)</span><br><span class="line">&#123;</span><br><span class="line">    NSLog(@&quot;c_other - %@ - %@&quot;, self, NSStringFromSelector(_cmd));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">+ (BOOL)resolveClassMethod:(SEL)sel</span><br><span class="line">&#123;</span><br><span class="line">    if (sel == @selector(test)) &#123;</span><br><span class="line">        // 第一个参数是object_getClass(self)</span><br><span class="line">        class_addMethod(object_getClass(self), sel, (IMP)c_other, &quot;v16@0:8&quot;);</span><br><span class="line">        return YES;</span><br><span class="line">    &#125;</span><br><span class="line">    return [super resolveClassMethod:sel];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">+ (BOOL)resolveInstanceMethod:(SEL)sel</span><br><span class="line">&#123;</span><br><span class="line">    if (sel == @selector(test)) &#123;</span><br><span class="line">        // 动态添加test方法的实现</span><br><span class="line">        class_addMethod(self, sel, (IMP)c_other, &quot;v16@0:8&quot;);</span><br><span class="line"></span><br><span class="line">        // 返回YES代表有动态添加方法</span><br><span class="line">        return YES;</span><br><span class="line">    &#125;</span><br><span class="line">    return [super resolveInstanceMethod:sel];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p><strong>流程3：消息转发</strong></p>
 <ul>
-<li>先查找<strong>setKey:</strong>方法，如果没有查找<strong>_setKey:</strong>方法，如果找到了，传递参数调用方法</li>
-<li>如果上面两个set方法都没找到，查看<strong>accessInstanceVariablesDirectly</strong>方法的返回值（默认是YES）</li>
-<li>如果上个步骤返回为NO，则调用<strong>setValue:forUndefinedKey:</strong>并抛出异常<strong>NSUnknownKeyException</strong></li>
-<li>如果上个步骤的返回值是YES，按照<strong>_key、_isKey、key、isKey</strong>的顺序查找成员变量，找到成员变量进行复制，找不到抛出异常</li>
+<li>调用forwardingTargetForSelector：方法，如果返回值不为nil，则向返回值发送消息objc_msgSend(返回值，方法)</li>
+<li>如果返回值为nil，则调用methodSignatureForSelector:方法，返回值不为nil，则调用forwardInvocation:方法</li>
+<li>如果返回值为nil，则调用doesNotRecognizeSelector：方法</li>
 </ul>
-<p>​    </p>
-<h3 id="valueForKey-内部机制"><a href="#valueForKey-内部机制" class="headerlink" title="valueForKey: 内部机制"></a>valueForKey: 内部机制</h3><p>当调用此方法时：</p>
-<ul>
-<li>按照<strong>getKey、key、isKey、_key</strong>顺序查找get方法，找到了，调用方法返回值</li>
-<li>若以上都没有找到，则调用<strong>accessInstanceVariablesDirectly</strong>方法，查看其返回值</li>
-<li>如果上一步返回时NO,则调用<strong>setValue:forUndefinedKey:</strong>并抛出异常<strong>NSUnknownKeyException</strong></li>
-<li>如果上个步骤的返回值是YES，按照<strong>_key、_isKey、key、isKey</strong>的顺序查找成员变量，找到成员变量取值返回，找不到抛出异常</li>
-</ul>
+<p>开发者可以在forwardInvocation:方法中自定义任何逻辑</p>
+<p>以上方法都有对象方法、类方法2个版本（前面可以是加号+，也可以是减号-）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">@implementation MJPerson</span><br><span class="line"></span><br><span class="line">+ (id)forwardingTargetForSelector:(SEL)aSelector</span><br><span class="line">&#123;</span><br><span class="line">    // objc_msgSend([[MJCat alloc] init], @selector(test))</span><br><span class="line">    // [[[MJCat alloc] init] test]</span><br><span class="line">    if (aSelector == @selector(test)) return [[MJCat alloc] init];</span><br><span class="line"></span><br><span class="line">    return [super forwardingTargetForSelector:aSelector];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//+ (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector</span><br><span class="line">//&#123;</span><br><span class="line">//    if (aSelector == @selector(test)) return [NSMethodSignature signatureWithObjCTypes:&quot;v@:&quot;];</span><br><span class="line">//    </span><br><span class="line">//    return [super methodSignatureForSelector:aSelector];</span><br><span class="line">//&#125;</span><br><span class="line">//</span><br><span class="line">//+ (void)forwardInvocation:(NSInvocation *)anInvocation</span><br><span class="line">//&#123;</span><br><span class="line">//    NSLog(@&quot;1123&quot;);</span><br><span class="line">//&#125;</span><br><span class="line"></span><br><span class="line">@end</span><br><span class="line">    </span><br><span class="line">+ (void)test</span><br><span class="line">&#123;</span><br><span class="line">    NSLog(@&quot;%s&quot;, __func__);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (void)test</span><br><span class="line">&#123;</span><br><span class="line">    NSLog(@&quot;%s&quot;, __func__);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 </section>
     <!-- Tags START -->
     
       <div class="tags">
         <span>Tags:</span>
         
-  <a href="/tags#KVC">
-    <span class="tag-code">KVC</span>
+  <a href="/tags#objc_msgSend">
+    <span class="tag-code">objc_msgSend</span>
+  </a>
+
+  <a href="/tags#动态解析">
+    <span class="tag-code">动态解析</span>
+  </a>
+
+  <a href="/tags#消息转发">
+    <span class="tag-code">消息转发</span>
   </a>
 
       </div>
@@ -189,17 +198,17 @@
   <div class="nav-container">
     <!-- reverse left and right to put prev and next in a more logic postition -->
     
-      <a class="nav-left" href="/2018/10/12/00001-窥探OC中类的本质/">
+      <a class="nav-left" href="/2018/10/13/00005-关联对象/">
         <span class="nav-arrow">← </span>
         
-          窥探OC中类的本质
+          关联对象
         
       </a>
     
     
-      <a class="nav-right" href="/2018/10/13/00005-关联对象/">
+      <a class="nav-right" href="/2018/10/25/00006-内存管理机制/">
         
-          关联对象
+          iOS内存管理机制
         
         <span class="nav-arrow"> →</span>
       </a>
@@ -249,7 +258,7 @@
     
     <div class="toc-catalog">Catalog</div>
     
-      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#常见API"><span class="toc-nav-text">常见API</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#setVaule-forKey-内部机制"><span class="toc-nav-text">setVaule: forKey:  内部机制</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#valueForKey-内部机制"><span class="toc-nav-text">valueForKey: 内部机制</span></a></li></ol>
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#流程1：消息发送阶段"><span class="toc-nav-text">流程1：消息发送阶段</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#流程2：动态方法解析"><span class="toc-nav-text">流程2：动态方法解析</span></a></li></ol>
     
   </div>
 </aside>
@@ -259,7 +268,7 @@
 
 <script>
   (function () {
-    var url = 'http://ikirk.cn/2018/10/12/00010-KVC内部实现/';
+    var url = 'http://ikirk.cn/2018/10/15/00002-OC方法调用机制/';
     var banner = ''
     if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
       $('#article-banner').css({
@@ -309,7 +318,7 @@
     var gitmentConfig = "undefined";
     if (gitmentConfig !== 'undefined') {
       var gitment = new Gitment({
-        id: "KVC的内部实现",
+        id: "OC的方法调用逻辑",
         owner: "undefined",
         repo: "blog_comment",
         oauth: {
@@ -337,7 +346,7 @@
 <script>
   var disqus_shortname = '';
   
-  var disqus_url = 'http://ikirk.cn/2018/10/12/00010-KVC内部实现/';
+  var disqus_url = 'http://ikirk.cn/2018/10/15/00002-OC方法调用机制/';
   
   (function(){
     var dsq = document.createElement('script');
