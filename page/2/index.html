@@ -130,290 +130,57 @@
   
     <article class="article-card">
       <h2 class="article-head">
-        <a href="/2018/10/25/13-内存管理/">iOS内存管理机制</a>
-      </h2>
-      <p class="article-date">2018-10-25</p>
-      
-        
-  <a href="/tags#内存管理">
-    <span class="tag-code">内存管理</span>
-  </a>
-
-  <a href="/tags#TagPoint">
-    <span class="tag-code">TagPoint</span>
-  </a>
-
-  <a href="/tags#定时器">
-    <span class="tag-code">定时器</span>
-  </a>
-
-  <a href="/tags#copy">
-    <span class="tag-code">copy</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          内存管理1、内存布局iOS程序的内存管理，从低到高分为了6部分，地址由低到高：保留（一部分）、代码段（__TEXT）、数据段（__DATA）、堆（heap）、栈（stack）、内核。和我们开发相关的有中间四部分：
-
-代码段：存储编译之后的代码
-数据段：
-字符串常量：比如NSString *s ...
-        
-      </div>
-      <a class="more" href="/2018/10/25/13-内存管理/">read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/2018/10/21/08-objc_msgSend/">OC的方法调用逻辑</a>
-      </h2>
-      <p class="article-date">2018-10-21</p>
-      
-        
-  <a href="/tags#objc_msgSend">
-    <span class="tag-code">objc_msgSend</span>
-  </a>
-
-  <a href="/tags#动态解析">
-    <span class="tag-code">动态解析</span>
-  </a>
-
-  <a href="/tags#消息转发">
-    <span class="tag-code">消息转发</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          objc_msgSend-消息机制OC中方法的调用，其实都是转为objc_msgSend()函数的调用
-Objc_msgSend()函数的执行分为三个阶段
-
-消息发送阶段
-动态方法解析阶段
-消息转发阶段
-
-流程1：消息发送阶段
-消息接收者receiver是否为nil，如果receiver为n ...
-        
-      </div>
-      <a class="more" href="/2018/10/21/08-objc_msgSend/">read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/2018/10/15/04-category&load&initialize/">Load&Initialize&Category</a>
-      </h2>
-      <p class="article-date">2018-10-15</p>
-      
-        
-  <a href="/tags#load">
-    <span class="tag-code">load</span>
-  </a>
-
-  <a href="/tags#initialize">
-    <span class="tag-code">initialize</span>
-  </a>
-
-  <a href="/tags#category">
-    <span class="tag-code">category</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          
-本篇文章将阐述OC类在初始化时候的两个方法，load 和 initialize。其调用的时间，调用的机制以及相关联类调用的顺序。同时在最后，也顺便阐述下分类category的内部实现原理。
-
-load方法加载
-+load 方法会在类、分类被加载到内存的时候调用
-每个类、分类的+load在程 ...
-        
-      </div>
-      <a class="more" href="/2018/10/15/04-category&load&initialize/">read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/2018/10/13/05-关联对象/">关联对象</a>
-      </h2>
-      <p class="article-date">2018-10-13</p>
-      
-        
-  <a href="/tags#关联对象">
-    <span class="tag-code">关联对象</span>
-  </a>
-
-  <a href="/tags#分类属性">
-    <span class="tag-code">分类属性</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          关联对象关联对象API
-添加关联对象
-123456void objc_setAssociatedObject(id object, const void *key, id value, pbjc_AssociationPolicy poicy)// object 需要关联的对象// key  ...
-        
-      </div>
-      <a class="more" href="/2018/10/13/05-关联对象/">read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/2018/10/12/03-KVC/">KVC的内部实现</a>
-      </h2>
-      <p class="article-date">2018-10-12</p>
-      
-        
-  <a href="/tags#KVC">
-    <span class="tag-code">KVC</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          
-本篇文章将阐述OC中KVC的内部处理机制，希望有助于读者加深对KVC的理解与应用。
-
-KVC的全称是Key-Value Coding，俗称“键值编码”，可以通过一个key来访问某个属性.
-常见APIKVO的API有赋值和取值方法各两个，分别是：
-
--(void)setValue:(id)v ...
-        
-      </div>
-      <a class="more" href="/2018/10/12/03-KVC/">read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/2018/10/11/02-KVO/">KVO-观察者模式</a>
+        <a href="/2018/10/11/00001-OC中类、对象的本质/">OC中类、对象的本质</a>
       </h2>
       <p class="article-date">2018-10-11</p>
       
         
-  <a href="/tags#KVO">
-    <span class="tag-code">KVO</span>
+  <a href="/tags#类的本质">
+    <span class="tag-code">类的本质</span>
   </a>
 
-  <a href="/tags#观察者模式">
-    <span class="tag-code">观察者模式</span>
+  <a href="/tags#isa指针">
+    <span class="tag-code">isa指针</span>
   </a>
 
       
       <div class="article-summary">
         
-          Key-Value Observing
-实现原理
-利用runtime API动态生成一个子类，并让实例对象的isa指针，从原来的类指向这个子类
-这个子类会重写监听属性的set方法，在set方法中完成对属性修改的监听，调用监听的方法
-这个子类的superclass属性指向其父类，方便调用不需要 ...
+          
+本文将阐述OC中类在C/C++底层语言中的具体实现，对象的分类，isa指针和superclass指针，顺便也说明了类的load和initialize方法
+
+
+NSObject类在C/C++中的呈现方式
+NSObject对象内存分配大小
+class的底层结构
+对象的分类及其isa和super ...
         
       </div>
-      <a class="more" href="/2018/10/11/02-KVO/">read more</a>
+      <a class="more" href="/2018/10/11/00001-OC中类、对象的本质/">read more</a>
     </article>
   
     <article class="article-card">
       <h2 class="article-head">
-        <a href="/2018/10/10/01-iOS签名机制/">iOS签名机制</a>
+        <a href="/2018/10/10/00000-Objective-C系列/">Objective-C系列</a>
       </h2>
       <p class="article-date">2018-10-10</p>
       
         
-  <a href="/tags#iOS签名机制">
-    <span class="tag-code">iOS签名机制</span>
-  </a>
-
-  <a href="/tags#对称加密">
-    <span class="tag-code">对称加密</span>
-  </a>
-
-  <a href="/tags#非对称加密">
-    <span class="tag-code">非对称加密</span>
-  </a>
-
-  <a href="/tags#Hash加密">
-    <span class="tag-code">Hash加密</span>
+  <a href="/tags#OC底层">
+    <span class="tag-code">OC底层</span>
   </a>
 
       
       <div class="article-summary">
         
-          iOS签名机制本章将涵盖的内容有：
-加密解密（对称密码（DES、3DES、AES）、公钥密码(RSA)）—&gt;单向散列函数（MD4、MD5，SHA-1、SHA-2、SHA-3）—&gt;数字签名—&gt;证书—&gt;iOS签名机制
-关键字：encrypt(加密)、decryt(解密)、 ...
+          
+Objectvie-C系列文章集合
+
+
+接下来的一段时间，将会总结一些OC相关的文章，多数与底层有关。刚接触开发，我们会以业务为主，对于编程，会写会用能实现就行。随着开发的不断深入，我们追求的不仅仅再局限于业务的正常实现，对自己使用的技术需要一个跟深入的理解，知其然更要知其所以然。当技术慢 ...
         
       </div>
-      <a class="more" href="/2018/10/10/01-iOS签名机制/">read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/2018/10/08/07-Class底层结构/">class的底层结构</a>
-      </h2>
-      <p class="article-date">2018-10-08</p>
-      
-        
-  <a href="/tags#class">
-    <span class="tag-code">class</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          Class底层结构Class的结构123456789101112131415161718192021222324252627282930313233343536373839404142434445464748// 类的结构体信息struct objc_class &#123;    Clas ...
-        
-      </div>
-      <a class="more" href="/2018/10/08/07-Class底层结构/">read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/2018/10/05/NSObject本质/">NSObject本质</a>
-      </h2>
-      <p class="article-date">2018-10-05</p>
-      
-        
-  <a href="/tags#本质 底层实现">
-    <span class="tag-code">本质 底层实现</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          1 Objective-C的底层实现是：C/C++实现的OC—————&gt;C/C++—————&gt;汇编语言—————&gt;机器语言
-将OC代码转换成C/C++代码：
-1xcrun -sdk iphoneos clang -arch arm64 -rewrite-objc 源文件 - ...
-        
-      </div>
-      <a class="more" href="/2018/10/05/NSObject本质/">read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/2018/10/01/阿里云服务器部署hexo博客/">阿里云服务器部署hexo博客</a>
-      </h2>
-      <p class="article-date">2018-10-01</p>
-      
-        
-  <a href="/tags#阿里云">
-    <span class="tag-code">阿里云</span>
-  </a>
-
-  <a href="/tags#hexo博客">
-    <span class="tag-code">hexo博客</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          1、登录阿里云服务器：
-1ssh root@ip //ip是阿里云服务器的ip地址
-2、安装git和NodeJS
-123yum install git#安装NodeJScurl --silent --location https://rpm.nodesource.com/setup_5.x  ...
-        
-      </div>
-      <a class="more" href="/2018/10/01/阿里云服务器部署hexo博客/">read more</a>
+      <a class="more" href="/2018/10/10/00000-Objective-C系列/">read more</a>
     </article>
   
 

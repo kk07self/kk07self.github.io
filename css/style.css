@@ -547,6 +547,7 @@ h2.article-head {
 .article-summary strong {
   font-size: 15px;
   line-height: 35px;
+  color: #333;
 }
 .markdown-content li,
 .article-summary li {
