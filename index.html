@@ -154,40 +154,87 @@
   
     <article class="article-card">
       <h2 class="article-head">
-        <a href="/2018/11/15/00007-多线程/">多线程</a>
+        <a href="/2018/11/22/00004-runtimeAPI/">runtime常用API</a>
       </h2>
-      <p class="article-date">2018-11-15</p>
+      <p class="article-date">2018-11-22</p>
       
         
-  <a href="/tags#多线程">
-    <span class="tag-code">多线程</span>
+  <a href="/tags#runtime">
+    <span class="tag-code">runtime</span>
+  </a>
+
+  <a href="/tags#钩子函数">
+    <span class="tag-code">钩子函数</span>
+  </a>
+
+  <a href="/tags#私有变量">
+    <span class="tag-code">私有变量</span>
   </a>
 
       
       <div class="article-summary">
         
-          多线程多线程实现方案
-pthread
-C语言，跨平台的，线程生命周期需要程序员自己写
-
-NSThread
-OC语言，使用更加面向对象，对pthread面向对象的封装
-
-GCD
-C语言，旨在替代NSThread等线程技术，充分利用设备的多核，生命周期自动管理
-
-NSOperation
-OC语言 ...
+          runtime API类1234567891011121314151617181920212223// 动态创建一个类（参数：父类，类名，额外的内存空间）Class objc_allocateClassPair(Class superclass, const char *name, size ...
         
       </div>
-      <a class="more" href="/2018/11/15/00007-多线程/">read more</a>
+      <a class="more" href="/2018/11/22/00004-runtimeAPI/">read more</a>
     </article>
   
     <article class="article-card">
       <h2 class="article-head">
-        <a href="/2018/11/12/00008-RunLoop与多线程/">RunLoop内部机制</a>
+        <a href="/2018/11/12/00010-KVC内部实现/">KVC的内部实现</a>
       </h2>
       <p class="article-date">2018-11-12</p>
+      
+        
+  <a href="/tags#KVC">
+    <span class="tag-code">KVC</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          
+本篇文章将阐述OC中KVC的内部处理机制，希望有助于读者加深对KVC的理解与应用。
+
+KVC的全称是Key-Value Coding，俗称“键值编码”，可以通过一个key来访问某个属性.
+常见APIKVO的API有赋值和取值方法各两个，分别是：
+
+-(void)setValue:(id)v ...
+        
+      </div>
+      <a class="more" href="/2018/11/12/00010-KVC内部实现/">read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/2018/11/10/00009-block内部实现/">block的底层实现</a>
+      </h2>
+      <p class="article-date">2018-11-10</p>
+      
+        
+  <a href="/tags#block">
+    <span class="tag-code">block</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          KVC的全称是Key-Value Coding，俗称“键值编码”，可以通过一个key来访问某个属性.
+常见APIKVO的API有赋值和取值方法各两个，分别是：
+
+-(void)setValue:(id)value forKeyPath:(NSString *)keyPath;
+-(void) ...
+        
+      </div>
+      <a class="more" href="/2018/11/10/00009-block内部实现/">read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/2018/11/07/00008-RunLoop与多线程/">RunLoop内部机制</a>
+      </h2>
+      <p class="article-date">2018-11-07</p>
       
         
   <a href="/tags#Runloop">
@@ -211,66 +258,45 @@ RunLoop与线程
 RunLoop保存在一个全局 ...
         
       </div>
-      <a class="more" href="/2018/11/12/00008-RunLoop与多线程/">read more</a>
+      <a class="more" href="/2018/11/07/00008-RunLoop与多线程/">read more</a>
     </article>
   
     <article class="article-card">
       <h2 class="article-head">
-        <a href="/2018/11/05/00004-runtimeAPI/">runtime常用API</a>
+        <a href="/2018/11/01/00007-多线程/">多线程</a>
       </h2>
-      <p class="article-date">2018-11-05</p>
+      <p class="article-date">2018-11-01</p>
       
         
-  <a href="/tags#runtime">
-    <span class="tag-code">runtime</span>
-  </a>
-
-  <a href="/tags#钩子函数">
-    <span class="tag-code">钩子函数</span>
-  </a>
-
-  <a href="/tags#私有变量">
-    <span class="tag-code">私有变量</span>
+  <a href="/tags#多线程">
+    <span class="tag-code">多线程</span>
   </a>
 
       
       <div class="article-summary">
         
-          runtime API类1234567891011121314151617181920212223// 动态创建一个类（参数：父类，类名，额外的内存空间）Class objc_allocateClassPair(Class superclass, const char *name, size ...
+          多线程多线程实现方案
+pthread
+C语言，跨平台的，线程生命周期需要程序员自己写
+
+NSThread
+OC语言，使用更加面向对象，对pthread面向对象的封装
+
+GCD
+C语言，旨在替代NSThread等线程技术，充分利用设备的多核，生命周期自动管理
+
+NSOperation
+OC语言 ...
         
       </div>
-      <a class="more" href="/2018/11/05/00004-runtimeAPI/">read more</a>
+      <a class="more" href="/2018/11/01/00007-多线程/">read more</a>
     </article>
   
     <article class="article-card">
       <h2 class="article-head">
-        <a href="/2018/10/28/00009-block内部实现/">block的底层实现</a>
+        <a href="/2018/10/27/00006-内存管理机制/">iOS内存管理机制</a>
       </h2>
-      <p class="article-date">2018-10-28</p>
-      
-        
-  <a href="/tags#block">
-    <span class="tag-code">block</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          KVC的全称是Key-Value Coding，俗称“键值编码”，可以通过一个key来访问某个属性.
-常见APIKVO的API有赋值和取值方法各两个，分别是：
-
--(void)setValue:(id)value forKeyPath:(NSString *)keyPath;
--(void) ...
-        
-      </div>
-      <a class="more" href="/2018/10/28/00009-block内部实现/">read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/2018/10/25/00006-内存管理机制/">iOS内存管理机制</a>
-      </h2>
-      <p class="article-date">2018-10-25</p>
+      <p class="article-date">2018-10-27</p>
       
         
   <a href="/tags#内存管理">
@@ -299,7 +325,61 @@ RunLoop保存在一个全局 ...
 字符串常量：比如NSString *s ...
         
       </div>
-      <a class="more" href="/2018/10/25/00006-内存管理机制/">read more</a>
+      <a class="more" href="/2018/10/27/00006-内存管理机制/">read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/2018/10/23/00005-关联对象/">关联对象</a>
+      </h2>
+      <p class="article-date">2018-10-23</p>
+      
+        
+  <a href="/tags#关联对象">
+    <span class="tag-code">关联对象</span>
+  </a>
+
+  <a href="/tags#分类属性">
+    <span class="tag-code">分类属性</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          关联对象关联对象API
+添加关联对象
+123456void objc_setAssociatedObject(id object, const void *key, id value, pbjc_AssociationPolicy poicy)// object 需要关联的对象// key  ...
+        
+      </div>
+      <a class="more" href="/2018/10/23/00005-关联对象/">read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/2018/10/18/00003-观察者模式/">KVO-观察者模式</a>
+      </h2>
+      <p class="article-date">2018-10-18</p>
+      
+        
+  <a href="/tags#KVO">
+    <span class="tag-code">KVO</span>
+  </a>
+
+  <a href="/tags#观察者模式">
+    <span class="tag-code">观察者模式</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          Key-Value Observing
+实现原理
+利用runtime API动态生成一个子类，并让实例对象的isa指针，从原来的类指向这个子类
+这个子类会重写监听属性的set方法，在set方法中完成对属性修改的监听，调用监听的方法
+这个子类的superclass属性指向其父类，方便调用不需要 ...
+        
+      </div>
+      <a class="more" href="/2018/10/18/00003-观察者模式/">read more</a>
     </article>
   
     <article class="article-card">
@@ -332,113 +412,12 @@ RunLoop保存在一个全局 ...
 动态方法解析
 消息转发
 
-上一篇文章窥探OC中类的本质
-OC方法的调用，其实都是转为objc_msgSend()函数的调用（出+load方法外）。
-Objc_msgSend()的执行分为三个阶段
+上一篇文章窥探OC中类的本质窥探了OC类的底层内部信息，也简单阐述了方法调用的逻辑，那么这篇文章将更深一步的探讨OC中方法调用的逻辑。
 
-消息发送阶段
-动态方法解析阶段
-消息转发阶段
-
- ...
+OC中方法的调用，其实都会转为objc_msgSend()函数的调用（出+load ...
         
       </div>
       <a class="more" href="/2018/10/15/00002-OC方法调用机制/">read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/2018/10/13/00005-关联对象/">关联对象</a>
-      </h2>
-      <p class="article-date">2018-10-13</p>
-      
-        
-  <a href="/tags#关联对象">
-    <span class="tag-code">关联对象</span>
-  </a>
-
-  <a href="/tags#分类属性">
-    <span class="tag-code">分类属性</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          关联对象关联对象API
-添加关联对象
-123456void objc_setAssociatedObject(id object, const void *key, id value, pbjc_AssociationPolicy poicy)// object 需要关联的对象// key  ...
-        
-      </div>
-      <a class="more" href="/2018/10/13/00005-关联对象/">read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/2018/10/12/00010-KVC内部实现/">KVC的内部实现</a>
-      </h2>
-      <p class="article-date">2018-10-12</p>
-      
-        
-  <a href="/tags#KVC">
-    <span class="tag-code">KVC</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          
-本篇文章将阐述OC中KVC的内部处理机制，希望有助于读者加深对KVC的理解与应用。
-
-KVC的全称是Key-Value Coding，俗称“键值编码”，可以通过一个key来访问某个属性.
-常见APIKVO的API有赋值和取值方法各两个，分别是：
-
--(void)setValue:(id)v ...
-        
-      </div>
-      <a class="more" href="/2018/10/12/00010-KVC内部实现/">read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/2018/10/12/00001-窥探OC中类的本质/">窥探OC中类的本质</a>
-      </h2>
-      <p class="article-date">2018-10-12</p>
-      
-        
-  <a href="/tags#isa指针">
-    <span class="tag-code">isa指针</span>
-  </a>
-
-  <a href="/tags#category">
-    <span class="tag-code">category</span>
-  </a>
-
-  <a href="/tags#superclass">
-    <span class="tag-code">superclass</span>
-  </a>
-
-  <a href="/tags#objc_class">
-    <span class="tag-code">objc_class</span>
-  </a>
-
-  <a href="/tags#对象分类">
-    <span class="tag-code">对象分类</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          
-本文将阐述OC中类在C/C++底层语言中的具体实现，对象的分类，isa指针和superclass指针，顺便也说明了类的load和initialize方法
-
-
-NSObject类在C/C++中的呈现方式
-NSObject对象内存分配大小
-class的底层结构
-对象的分类及其isa和super ...
-        
-      </div>
-      <a class="more" href="/2018/10/12/00001-窥探OC中类的本质/">read more</a>
     </article>
   
 

@@ -10,7 +10,7 @@
   
   <title>
     
-      Objective-C系列 | KK
+      KVO-观察者模式 | KK
     
   </title>
   <link href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
@@ -126,8 +126,8 @@
 </header>
 
     <div id="article-banner">
-  <h2>Objective-C系列</h2>
-  <p class="post-date">2018-10-10</p>
+  <h2>KVO-观察者模式</h2>
+  <p class="post-date">2018-10-18</p>
   <div class="arrow-down">
     <a href="javascript:;"></a>
   </div>
@@ -135,35 +135,47 @@
 <main class="app-body flex-box">
   <!-- Article START -->
   <article class="post-article">
-    <section class="markdown-content"><blockquote>
-<p>Objectvie-C系列文章集合</p>
-</blockquote>
-<p><br></p>
-<p>接下来的一段时间，将会总结一些OC相关的文章，多数与底层有关。刚接触开发，我们会以业务为主，对于编程，会写会用能实现就行。随着开发的不断深入，我们追求的不仅仅再局限于业务的正常实现，对自己使用的技术需要一个跟深入的理解，知其然更要知其所以然。当技术慢慢的深入，在反观业务，会有更高的效率和更好的性能。</p>
-<p><br></p>
-<h4 id="系列文章目录："><a href="#系列文章目录：" class="headerlink" title="系列文章目录："></a>系列文章目录：</h4><p>接下来的文章会有（每写完一篇会将连接关联到这）：</p>
-<ul>
-<li><a href="">OC中类、对象的本质</a></li>
-<li><a href="">OC方法的调用机制</a></li>
-<li><a href="">观察者模式</a></li>
-<li><a href="">runtimeAPI</a></li>
-<li><a href="">关联对象</a></li>
-<li><a href="">内存管理机制</a></li>
-<li><a href="">多线程</a></li>
-<li><a href="">RunLoop与多线程</a></li>
-<li><a href="">block内部实现</a></li>
-<li><a href="">KVC内部实现</a></li>
-<li>未完待续···········</li>
+    <section class="markdown-content"><p>Key-Value Observing</p>
+<h4 id="实现原理"><a href="#实现原理" class="headerlink" title="实现原理"></a>实现原理</h4><ul>
+<li>利用runtime API动态生成一个子类，并让实例对象的isa指针，从原来的类指向这个子类</li>
+<li>这个子类会重写监听属性的set方法，在set方法中完成对属性修改的监听，调用监听的方法</li>
+<li>这个子类的superclass属性指向其父类，方便调用不需要重写的方法，比如属性的get方法</li>
+<li>实现流程：<ul>
+<li>修改实例对象的属性值时，会通过isa指针找到新的子类</li>
+<li>在新的子类中找到其对应的属性set方法</li>
+<li>在set方法中会调用Foundation的c语言函数（_NSSetXXXValueAndNotify），这个函数会实现属性的赋值、监听器的触发<ul>
+<li>_NSSetXXXValueAndNotify()函数中会调用：willChangeValueForKey:方法</li>
+<li>调用父类的set方法，让其属性完成赋值</li>
+<li>再调用didChangeValueForKey：方法，这个方法内部会触发监听器的监听方法</li>
 </ul>
-<p><br></p>
+</li>
+</ul>
+</li>
+<li>其他：<ul>
+<li>会重写class方法：返回原始类，让开发者忽略子类的存在，隐藏kvo的内部实现</li>
+<li>会重写delloc方法：需要在销毁时做些额外处理</li>
+<li>会重新_isKVOA方法</li>
+</ul>
+</li>
+</ul>
+<h4 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h4><ul>
+<li><p>手动触发KVO：手动调用willChangeValueForKey:方法，didChangeValueForKey:方法</p>
+</li>
+<li><p>直接修改成员变量会不会触发KVO：不会触发，因为没有调用其属性的set方法</p>
+</li>
+</ul>
 </section>
     <!-- Tags START -->
     
       <div class="tags">
         <span>Tags:</span>
         
-  <a href="/tags#OC底层">
-    <span class="tag-code">OC底层</span>
+  <a href="/tags#KVO">
+    <span class="tag-code">KVO</span>
+  </a>
+
+  <a href="/tags#观察者模式">
+    <span class="tag-code">观察者模式</span>
   </a>
 
       </div>
@@ -174,17 +186,17 @@
   <div class="nav-container">
     <!-- reverse left and right to put prev and next in a more logic postition -->
     
-      <a class="nav-left" href="/2018/10/08/top/">
+      <a class="nav-left" href="/2018/10/15/00002-OC方法调用机制/">
         <span class="nav-arrow">← </span>
         
-          Stay hungry stay foolish
+          OC的方法调用逻辑
         
       </a>
     
     
-      <a class="nav-right" href="/2018/10/12/00001-窥探OC中类的本质/">
+      <a class="nav-right" href="/2018/10/23/00005-关联对象/">
         
-          窥探OC中类的本质
+          关联对象
         
         <span class="nav-arrow"> →</span>
       </a>
@@ -234,7 +246,7 @@
     
     <div class="toc-catalog">Catalog</div>
     
-      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#系列文章目录："><span class="toc-nav-text">系列文章目录：</span></a></li></ol>
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#实现原理"><span class="toc-nav-text">实现原理</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#其他"><span class="toc-nav-text">其他</span></a></li></ol>
     
   </div>
 </aside>
@@ -244,7 +256,7 @@
 
 <script>
   (function () {
-    var url = 'http://ikirk.cn/2018/10/10/00000-Objective-C系列/';
+    var url = 'http://ikirk.cn/2018/10/18/00003-观察者模式/';
     var banner = ''
     if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
       $('#article-banner').css({
@@ -294,7 +306,7 @@
     var gitmentConfig = "undefined";
     if (gitmentConfig !== 'undefined') {
       var gitment = new Gitment({
-        id: "Objective-C系列",
+        id: "KVO-观察者模式",
         owner: "undefined",
         repo: "blog_comment",
         oauth: {
@@ -322,7 +334,7 @@
 <script>
   var disqus_shortname = '';
   
-  var disqus_url = 'http://ikirk.cn/2018/10/10/00000-Objective-C系列/';
+  var disqus_url = 'http://ikirk.cn/2018/10/18/00003-观察者模式/';
   
   (function(){
     var dsq = document.createElement('script');

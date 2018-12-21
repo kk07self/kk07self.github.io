@@ -10,7 +10,7 @@
   
   <title>
     
-      Objective-C系列 | KK
+      KVC的内部实现 | KK
     
   </title>
   <link href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
@@ -126,8 +126,8 @@
 </header>
 
     <div id="article-banner">
-  <h2>Objective-C系列</h2>
-  <p class="post-date">2018-10-10</p>
+  <h2>KVC的内部实现</h2>
+  <p class="post-date">2018-11-12</p>
   <div class="arrow-down">
     <a href="javascript:;"></a>
   </div>
@@ -136,34 +136,49 @@
   <!-- Article START -->
   <article class="post-article">
     <section class="markdown-content"><blockquote>
-<p>Objectvie-C系列文章集合</p>
+<p>本篇文章将阐述OC中KVC的内部处理机制，希望有助于读者加深对KVC的理解与应用。</p>
 </blockquote>
-<p><br></p>
-<p>接下来的一段时间，将会总结一些OC相关的文章，多数与底层有关。刚接触开发，我们会以业务为主，对于编程，会写会用能实现就行。随着开发的不断深入，我们追求的不仅仅再局限于业务的正常实现，对自己使用的技术需要一个跟深入的理解，知其然更要知其所以然。当技术慢慢的深入，在反观业务，会有更高的效率和更好的性能。</p>
-<p><br></p>
-<h4 id="系列文章目录："><a href="#系列文章目录：" class="headerlink" title="系列文章目录："></a>系列文章目录：</h4><p>接下来的文章会有（每写完一篇会将连接关联到这）：</p>
+<p>KVC的全称是Key-Value Coding，俗称“键值编码”，可以通过一个key来访问某个属性.</p>
+<h3 id="常见API"><a href="#常见API" class="headerlink" title="常见API"></a>常见API</h3><p>KVO的API有赋值和取值方法各两个，分别是：</p>
 <ul>
-<li><a href="">OC中类、对象的本质</a></li>
-<li><a href="">OC方法的调用机制</a></li>
-<li><a href="">观察者模式</a></li>
-<li><a href="">runtimeAPI</a></li>
-<li><a href="">关联对象</a></li>
-<li><a href="">内存管理机制</a></li>
-<li><a href="">多线程</a></li>
-<li><a href="">RunLoop与多线程</a></li>
-<li><a href="">block内部实现</a></li>
-<li><a href="">KVC内部实现</a></li>
-<li>未完待续···········</li>
+<li>-(void)setValue:(id)value forKeyPath:(NSString *)keyPath;</li>
+<li>-(void)setValue:(id)value forKey:(NSString *)key;</li>
+<li>-(id)valueForKeyPath:(NSString *)keyPath;</li>
+<li>-(id)valueForKey:(NSString *)key; </li>
 </ul>
-<p><br></p>
+<p>以上我们可以看出，在赋值和取值的两个API里，最主要的区别是key，在这里forKey与forKeyPath的主要区别是：</p>
+<ul>
+<li><p>forkey：访问其直接属性</p>
+</li>
+<li><p>forKeyPath：访问直接属性或间接属性，可根据属性路径一层一层访问下去</p>
+<p>例如：</p>
+</li>
+</ul>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 这里通过kvc访问person下面的cat对象里面的weight，使用forKey是不行的，</span></span><br><span class="line"><span class="comment">// 需要使用forKeyPath, forKeyPay:@"cat.weight",这样一层一层路径关联下去就可以访问到</span></span><br><span class="line">@interface <span class="type">Cat</span> : <span class="type">NSObject</span></span><br><span class="line">@property (assign, nonatomic) int weight;</span><br><span class="line">@end</span><br><span class="line"></span><br><span class="line">@interface <span class="type">Person</span> : <span class="type">NSObject</span></span><br><span class="line">@property (assign, nonatomic) int age;</span><br><span class="line"></span><br><span class="line">@property (assign, nonatomic) <span class="type">Cat</span> *cat;</span><br><span class="line">@end</span><br></pre></td></tr></table></figure>
+<p>​    </p>
+<h3 id="setVaule-forKey-内部机制"><a href="#setVaule-forKey-内部机制" class="headerlink" title="setVaule: forKey:  内部机制"></a>setVaule: forKey:  内部机制</h3><p>当调用此方法时：</p>
+<ul>
+<li>先查找<strong>setKey:</strong>方法，如果没有查找<strong>_setKey:</strong>方法，如果找到了，传递参数调用方法</li>
+<li>如果上面两个set方法都没找到，查看<strong>accessInstanceVariablesDirectly</strong>方法的返回值（默认是YES）</li>
+<li>如果上个步骤返回为NO，则调用<strong>setValue:forUndefinedKey:</strong>并抛出异常<strong>NSUnknownKeyException</strong></li>
+<li>如果上个步骤的返回值是YES，按照<strong>_key、_isKey、key、isKey</strong>的顺序查找成员变量，找到成员变量进行复制，找不到抛出异常</li>
+</ul>
+<p>​    </p>
+<h3 id="valueForKey-内部机制"><a href="#valueForKey-内部机制" class="headerlink" title="valueForKey: 内部机制"></a>valueForKey: 内部机制</h3><p>当调用此方法时：</p>
+<ul>
+<li>按照<strong>getKey、key、isKey、_key</strong>顺序查找get方法，找到了，调用方法返回值</li>
+<li>若以上都没有找到，则调用<strong>accessInstanceVariablesDirectly</strong>方法，查看其返回值</li>
+<li>如果上一步返回时NO,则调用<strong>setValue:forUndefinedKey:</strong>并抛出异常<strong>NSUnknownKeyException</strong></li>
+<li>如果上个步骤的返回值是YES，按照<strong>_key、_isKey、key、isKey</strong>的顺序查找成员变量，找到成员变量取值返回，找不到抛出异常</li>
+</ul>
 </section>
     <!-- Tags START -->
     
       <div class="tags">
         <span>Tags:</span>
         
-  <a href="/tags#OC底层">
-    <span class="tag-code">OC底层</span>
+  <a href="/tags#KVC">
+    <span class="tag-code">KVC</span>
   </a>
 
       </div>
@@ -174,17 +189,17 @@
   <div class="nav-container">
     <!-- reverse left and right to put prev and next in a more logic postition -->
     
-      <a class="nav-left" href="/2018/10/08/top/">
+      <a class="nav-left" href="/2018/11/10/00009-block内部实现/">
         <span class="nav-arrow">← </span>
         
-          Stay hungry stay foolish
+          block的底层实现
         
       </a>
     
     
-      <a class="nav-right" href="/2018/10/12/00001-窥探OC中类的本质/">
+      <a class="nav-right" href="/2018/11/22/00004-runtimeAPI/">
         
-          窥探OC中类的本质
+          runtime常用API
         
         <span class="nav-arrow"> →</span>
       </a>
@@ -234,7 +249,7 @@
     
     <div class="toc-catalog">Catalog</div>
     
-      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#系列文章目录："><span class="toc-nav-text">系列文章目录：</span></a></li></ol>
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#常见API"><span class="toc-nav-text">常见API</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#setVaule-forKey-内部机制"><span class="toc-nav-text">setVaule: forKey:  内部机制</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#valueForKey-内部机制"><span class="toc-nav-text">valueForKey: 内部机制</span></a></li></ol>
     
   </div>
 </aside>
@@ -244,7 +259,7 @@
 
 <script>
   (function () {
-    var url = 'http://ikirk.cn/2018/10/10/00000-Objective-C系列/';
+    var url = 'http://ikirk.cn/2018/11/12/00010-KVC内部实现/';
     var banner = ''
     if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
       $('#article-banner').css({
@@ -294,7 +309,7 @@
     var gitmentConfig = "undefined";
     if (gitmentConfig !== 'undefined') {
       var gitment = new Gitment({
-        id: "Objective-C系列",
+        id: "KVC的内部实现",
         owner: "undefined",
         repo: "blog_comment",
         oauth: {
@@ -322,7 +337,7 @@
 <script>
   var disqus_shortname = '';
   
-  var disqus_url = 'http://ikirk.cn/2018/10/10/00000-Objective-C系列/';
+  var disqus_url = 'http://ikirk.cn/2018/11/12/00010-KVC内部实现/';
   
   (function(){
     var dsq = document.createElement('script');
