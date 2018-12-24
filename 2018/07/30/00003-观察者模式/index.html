@@ -10,7 +10,7 @@
   
   <title>
     
-      KK
+      iOS中的观察者模式 | KK
     
   </title>
   <link href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
@@ -126,8 +126,8 @@
 </header>
 
     <div id="article-banner">
-  <h2></h2>
-  <p class="post-date">2018-12-23</p>
+  <h2>iOS中的观察者模式</h2>
+  <p class="post-date">2018-07-30</p>
   <div class="arrow-down">
     <a href="javascript:;"></a>
   </div>
@@ -135,12 +135,82 @@
 <main class="app-body flex-box">
   <!-- Article START -->
   <article class="post-article">
-    <section class="markdown-content"></section>
+    <section class="markdown-content"><blockquote>
+<p>这篇文件将介绍iOS中的观察者模式，iOS中对于观察者模式的应用有两种，一种是通知，一种是KVO（键值观察）</p>
+</blockquote>
+<ul>
+<li>通知</li>
+<li>KVO</li>
+<li>KVO与代理、block（闭包）的区别</li>
+</ul>
+<p>观察者模式，处理对象间一对多的关系，当对象相应的信息发生改变时，其关联的其他对象（对其监听的对象）皆收到消息并处理相关操作。</p>
+<p>iOS中典型的观察者模式实现方式是：通知（NSNotificationCenter）和KVO。</p>
+<p><br></p>
+<h4 id="通知"><a href="#通知" class="headerlink" title="通知"></a>通知</h4><p>通知，是由通知中心（NSNotificationCenter）进行管理的。通知，有通知的发出者（被观察者），有通知的接收者（观察者）。以下是通知的具体步骤：</p>
+<p>1）观察者先通过<strong>addObserver</strong>API向通知中心（NSNotificationCenter）注册监听某一信息（指定通知的name），通知中心会将其放入观察者列表中（猜测是name: observerList）；</p>
+<p>2）被观察者在指定被观察的位置通过<strong>postNotificationName:object:userInfo</strong>API向通知中心发送指定name的通知</p>
+<p>3）通知中心在收到通知后，通过name找出之前注册的观察者，调用其注册时关联的方法或block（回调）。</p>
+<p>4）注意：在观察者被销毁的时候要向通知中心注销其观察者，如果不注销，在被观察者发送通知给观察者时，会crash。对象已经被销毁，这时候再那指向对象的指针去调用方法，就会出行野指针bug，crash。</p>
+<p><br></p>
+<h4 id="KVO"><a href="#KVO" class="headerlink" title="KVO"></a>KVO</h4><p>KVO的全称是Key-Value Observer，即键值观察，是一种没有中心枢纽的观察者模式的实现方式（这是其有别于通知的地方）。一个主题对象管理所有依赖于它的观察者对象，并且在自身状态发生改变的时候主动通知观察者对象。</p>
+<p>我们在使用时，一是添加观察者调用添加观察者API，另一个是实现观察回调方法以完成监听。但是其具体是如何实现的呢？以下将进行说明。</p>
+<p>在介绍前先带大家看一段代码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">@interface KKPerson : NSObject</span><br><span class="line">@property (assign, nonatomic) int age;</span><br><span class="line">@end</span><br><span class="line">    </span><br><span class="line">@interface ViewController ()</span><br><span class="line">@property (strong, nonatomic) KKPerson *person1;</span><br><span class="line">@property (strong, nonatomic) KKPerson *person2;</span><br><span class="line">@end</span><br><span class="line">    </span><br><span class="line">- (void)viewDidLoad &#123;</span><br><span class="line">    [super viewDidLoad];</span><br><span class="line">    </span><br><span class="line">    self.person1 = [[KKPerson alloc] init];</span><br><span class="line">    self.person1.age = 1;</span><br><span class="line">    </span><br><span class="line">    self.person2 = [[KKPerson alloc] init];</span><br><span class="line">    self.person2.age = 2;</span><br><span class="line"></span><br><span class="line">    // 给person1对象添加KVO监听</span><br><span class="line">    NSKeyValueObservingOptions options = NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld;</span><br><span class="line">    [self.person1 addObserver:self forKeyPath:@&quot;age&quot; options:options context:@&quot;123&quot;];</span><br><span class="line"></span><br><span class="line">    // 打印方法地址</span><br><span class="line">    NSLog(@&quot;person1添加KVO监听之后 - %p %p&quot;,</span><br><span class="line">          [self.person1 methodForSelector:@selector(setAge:)],</span><br><span class="line">          [self.person2 methodForSelector:@selector(setAge:)]);</span><br><span class="line">    // 打印类对象</span><br><span class="line">    NSLog(@&quot;person1添加KVO监听之后 类对象 - %@ %@&quot;,</span><br><span class="line">          object_getClass(self.person1),  // self.person1.isa</span><br><span class="line">          object_getClass(self.person2)); // self.person2.isa</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line">// 输出内容：</span><br><span class="line">:person1添加KVO监听之前 - 0x103542590 0x103542590</span><br><span class="line">:person1添加KVO监听之前 - KKPerson KKPerson</span><br><span class="line">:person1添加KVO监听之后 - 0x10fc16cf2 0x10f8bd5f0</span><br><span class="line">:person1添加KVO监听之后 类对象 - NSKVONotifying_KKPerson KKPerson</span><br></pre></td></tr></table></figure>
+<p>通过可以发现，在给person1对象添加KVO监听后，setAge:的方法地址不再一样，person1的类名也不再一样。如果这里直接打印person1的class，会发现其返还的还是KKPerson。这些基本上能看出一些关于对象被添加KVO监听后的一些细微变化，更复杂或更深层的变化逻辑需要进一步使用反汇编去解读，这里就不再具体展现。</p>
+<p><br></p>
+<p>在这里给总结下对象被KVO添加监听后的底层用runtime做了哪些事：</p>
+<p>1）利用runtime API动态生成一个子类，并让实例对象的isa指针，从原来的类指向这个子类</p>
+<p>2）这个子类会重写监听属性的set方法，在set方法中完成对属性修改的监听，调用监听的方法</p>
+<p>3）这个子类的superclass属性指向其父类，方便调用不需要重写的方法，比如属性的get方法</p>
+<p><br></p>
+<p>当对象被监听的属性发生改变时的流程：</p>
+<p>1）修改实例对象的属性值时，会通过isa指针找到新的子类</p>
+<p>2）在新的子类中找到其对应的属性set方法</p>
+<p>3）在set方法中会调用Foundation的c语言函数（_NSSetXXXValueAndNotify），这个函数会实现属性的赋值、监听器的触发</p>
+<p>4）_NSSetXXXValueAndNotify()函数中会调用：willChangeValueForKey:方法</p>
+<p>5）调用父类的set方法，让其属性完成赋值</p>
+<p>6）再调用didChangeValueForKey：方法，这个方法内部会触发监听器的监听方法</p>
+<p><br></p>
+<p>另外：</p>
+<p>1）会重写class方法：返回原始类，让开发者忽略子类的存在，隐藏kvo的内部实现</p>
+<p>2）会重写delloc方法：需要在销毁时做些额外处理</p>
+<p>3）会重新_isKVOA方法</p>
+<p><br></p>
+<p><strong>KVO的其他补充</strong></p>
+<p>1）手动触发KVO：手动调用willChangeValueForKey:方法，didChangeValueForKey:方法</p>
+<p>2）直接修改成员变量会不会触发KVO：不会触发，因为没有调用其属性的set方法</p>
+</section>
     <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#KVO">
+    <span class="tag-code">KVO</span>
+  </a>
+
+  <a href="/tags#观察者模式">
+    <span class="tag-code">观察者模式</span>
+  </a>
+
+      </div>
     
     <!-- Tags END -->
     <!-- NAV START -->
     
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/2018/07/21/00002-OC方法调用机制/">
+        <span class="nav-arrow">← </span>
+        
+          OC的方法调用逻辑
+        
+      </a>
+    
+    
+  </div>
+
     <!-- NAV END -->
     <!-- 打赏 START -->
     
@@ -184,7 +254,7 @@
     
     <div class="toc-catalog">Catalog</div>
     
-      <ol class="nav">none</ol>
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#通知"><span class="toc-nav-text">通知</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#KVO"><span class="toc-nav-text">KVO</span></a></li></ol>
     
   </div>
 </aside>
@@ -194,7 +264,7 @@
 
 <script>
   (function () {
-    var url = 'http://ikirk.cn/草稿/00200-iOS.html';
+    var url = 'http://ikirk.cn/2018/07/30/00003-观察者模式/';
     var banner = ''
     if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
       $('#article-banner').css({
@@ -244,7 +314,7 @@
     var gitmentConfig = "undefined";
     if (gitmentConfig !== 'undefined') {
       var gitment = new Gitment({
-        id: "",
+        id: "iOS中的观察者模式",
         owner: "undefined",
         repo: "blog_comment",
         oauth: {
@@ -272,7 +342,7 @@
 <script>
   var disqus_shortname = '';
   
-  var disqus_url = 'http://ikirk.cn/草稿/00200-iOS.html';
+  var disqus_url = 'http://ikirk.cn/2018/07/30/00003-观察者模式/';
   
   (function(){
     var dsq = document.createElement('script');

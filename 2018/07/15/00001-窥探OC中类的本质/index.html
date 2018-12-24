@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html>
+  <head><meta name="generator" content="Hexo 3.8.0">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="kirk&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      窥探OC中类的本质 | KK
+    
+  </title>
+  <link href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdn.bootcss.com/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdn.bootcss.com/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/plugins/gitment.css">
+  <script src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdn.bootcss.com/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdn.bootcss.com/nprogress/0.2.0/nprogress.min.js"></script>
+  <script src="/js/qrious.js"></script>
+<script src="/js/gitment.js"></script>
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+</head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png">
+</div>
+
+  <body>
+    <header class="header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>KK</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">首页</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">标签</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">归档</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">关于</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">首页</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">标签</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">归档</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">关于</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>窥探OC中类的本质</h2>
+  <p class="post-date">2018-07-15</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><blockquote>
+<p>本文将阐述OC中类在C/C++底层语言中的具体实现，对象的分类，isa指针和superclass指针，顺便也说明了类的load和initialize方法</p>
+</blockquote>
+<ul>
+<li>NSObject类在C/C++中的呈现方式</li>
+<li>NSObject对象内存分配大小</li>
+<li>class的底层结构</li>
+<li>对象的分类及其isa和superclass指针</li>
+</ul>
+<h4 id="NSObject类在C-C-中的呈现方式"><a href="#NSObject类在C-C-中的呈现方式" class="headerlink" title="NSObject类在C/C++中的呈现方式"></a>NSObject类在C/C++中的呈现方式</h4><p>iOS的应用从编写完成到装入到设备中有这样的一个过程：OC语言经过编译，转成C/C++语言的代码；C/C++再经过编译，转成汇编语言；汇编语言再进行编译，转成设备识别的机器语言（只有01组成的）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">OC—————&gt;C/C++—————&gt;汇编语言—————&gt;机器语言</span><br></pre></td></tr></table></figure>
+<p><strong>窥看NSObject类</strong></p>
+<p>通过xcode我们可以查看到NSObject的申明，是这样的</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">// oc语言</span><br><span class="line">@interface NSObject &#123;</span><br><span class="line">	Class isa;</span><br><span class="line">&#125;</span><br><span class="line">@end</span><br><span class="line">    </span><br><span class="line">// 另外可以查看到Class是什么东东</span><br><span class="line">typedef struct object_class *Class;// 是object_class指针，</span><br></pre></td></tr></table></figure>
+<p>里面有一个isa熟悉，再找到Class，我们会发现，isa是object_class指针，object_class将在后面进行介绍。</p>
+<p>OC语言中是这样的，那在C/C++中是什么样的呢？</p>
+<p>这时候我们可以通过命令行将OC语言的代码编译成C/C++的代码</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">xcrun -sdk iphoneos clang -arch arm64 -rewrite-objc 源文件 -o 输出的cpp文件 </span><br><span class="line">// 如果需要链接到其他框架，使用 **-framework**参数</span><br></pre></td></tr></table></figure>
+<p>经过编译后，我们打开编译后的文件，可以找到NSObject对应的C++实现</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// c/c++</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">NSObject_IMPL</span> &#123;</span></span><br><span class="line">	Class isa;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>以上我们可以发现，NSObject在底层是个结构体，同样含有isa指针。</p>
+<p><br></p>
+<p><strong>NSObject子类实现窥看</strong></p>
+<p>我们可以再自定义一个类，继承自NSObject，然后再编译成C++语言实现。这里我们定义一个Student类，然后添加两个成员变量，如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">// oc</span><br><span class="line">@interface Student: NSObject &#123;</span><br><span class="line">    @public</span><br><span class="line">	int _age;</span><br><span class="line">    int _no;</span><br><span class="line">&#125;</span><br><span class="line">@end</span><br></pre></td></tr></table></figure>
+<p>这时候，我们再执行编译命令，将其编译成C++实现，打开文件我们可以找到对应的实现：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// c/c**</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Student_IMPL</span> &#123;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">NSObject_IMPL</span> <span class="title">NSObject_IVAR</span>;</span></span><br><span class="line">    <span class="keyword">int</span> _age;</span><br><span class="line">    <span class="keyword">int</span> _no;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们可以看出，C++将OC的类用结构体实现，而对于继承自NSObject，这里包含了一个结构体成员关联到NSObject的C++结构体NSObject_IMPL。</p>
+<p>另外，我们也可以反向进行验证：</p>
+<p>依旧定义一个Student类，然后添加两个成员变量。然后再定义一个对应的结构体。如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">// oc</span><br><span class="line">@interface Student: NSObject &#123;</span><br><span class="line">    @public</span><br><span class="line">	int _age;</span><br><span class="line">    int _no;</span><br><span class="line">&#125;</span><br><span class="line">@end</span><br><span class="line">// 由于 struct NSObject_IMPL结构体中只有一个isa指针，因此可以简写成</span><br><span class="line">struct Student_IMPL &#123;</span><br><span class="line">	Class isa;</span><br><span class="line">    int _age;</span><br><span class="line">    int _no;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这时候，我们再创建一个student对象，并给属性赋值；然后通过定义的结构体，创建一个实例桥接到刚刚创建的student对象，再通过这个结构体实例查看其内部的成员变量。如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Student *stu = [[Student alloc] init];</span><br><span class="line">stu-&gt;_age = 4;</span><br><span class="line">stu-&gt;_no = 5;</span><br><span class="line"></span><br><span class="line">// 可以将stu对象转换成结构体</span><br><span class="line"></span><br><span class="line">struct Student_IMPL stu_impl = (__ bridge struct Student_IMPL)stu;</span><br><span class="line">stu_impl-&gt;_age, stu_impl-&gt;_no；//4，5 这里获取的信息和stu获取的信息一样</span><br></pre></td></tr></table></figure>
+<p>通过以上，我们可以真正了解到类在C++底层的具体实现。关于isa指针和object_class结构体会在文章后面进行介绍。</p>
+<p><br></p>
+<p><strong>引申面试题：一个NSObject对象，会给其分配的多大的内存地址</strong></p>
+<p>这里我们可以自己创建测试下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">#import &lt;objc/runtime.h&gt; // 需要在头部导入runtime库</span><br><span class="line"></span><br><span class="line">NSLog(@&quot;%zu&quot;, class_getInstanceSize([NSObject class])); </span><br><span class="line">// 8</span><br></pre></td></tr></table></figure>
+<p>我们通过runtime的API可以得出，NSObject的对象内存大小是8个字节。</p>
+<p>那是不是，NSObject的对象就是8个字节呢？</p>
+<p>我们可以再通过malloc的API查看下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">#import &lt;malloc/malloc.h&gt; // 需要先导入库文件</span><br><span class="line"></span><br><span class="line">NSObject *obj = [[NSObject alloc] init];</span><br><span class="line">NSLog(@&quot;%zu&quot;, malloc_size((__bridge const void *)obj));</span><br><span class="line">// 16</span><br></pre></td></tr></table></figure>
+<p>这时候我们又发现，打印出来的是16。</p>
+<p>那么问题来了，runtime的API得到的是8，malloc的API得到的是16？</p>
+<p>OK，这里做个说明。runtime的API获取实例对象在内存中的内存大小是实际真正使用的大小，而malloc的API获取的是系统给其分配的大小。也就是说，NSObject实例对象在内存中只用到了8个字节（isa指针的大小就是这么大的），但是内存给他分配了16个字节的大小。</p>
+<p>为什么会这样分呢，这里又需要引入一个知识点。内存对齐。内存在给数据类型进行存储空间分配时，也是要对齐的，那么iOS系统中内部规定其必须是16的倍数（iOS系统中，会提前准备好内存块，有16、32、48、64…最大256，在分配时会从这里拿一块去给与）因此，NSObject被分配了16个字节大小的内存。</p>
+<p>如果想更深的了解下，可以下载其开源的源码进行查看。</p>
+<p><br></p>
+<h4 id="Class底层结构"><a href="#Class底层结构" class="headerlink" title="Class底层结构"></a>Class底层结构</h4><p>前面在窥探NSObject底层结构的时候，我们有发现isa指针，它是object_class结构体的指针，那object_class结构体内部是什么样的呢？我们顺着Class-&gt;object_class可以找到其内部的具体信息。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">objc_class</span> &#123;</span></span><br><span class="line">    Class _Nonnull isa  OBJC_ISA_AVAILABILITY;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> !__OBJC2__</span></span><br><span class="line">    Class _Nullable super_class                              OBJC2_UNAVAILABLE;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span> * _Nonnull name                               OBJC2_UNAVAILABLE;</span><br><span class="line">    <span class="keyword">long</span> version                                             OBJC2_UNAVAILABLE;</span><br><span class="line">    <span class="keyword">long</span> info                                                OBJC2_UNAVAILABLE;</span><br><span class="line">    <span class="keyword">long</span> instance_size                                       OBJC2_UNAVAILABLE;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">objc_ivar_list</span> * _<span class="title">Nullable</span> <span class="title">ivars</span>                  <span class="title">OBJC2_UNAVAILABLE</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">objc_method_list</span> * _<span class="title">Nullable</span> * _<span class="title">Nullable</span> <span class="title">methodLists</span>                    <span class="title">OBJC2_UNAVAILABLE</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">objc_cache</span> * _<span class="title">Nonnull</span> <span class="title">cache</span>                       <span class="title">OBJC2_UNAVAILABLE</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">objc_protocol_list</span> * _<span class="title">Nullable</span> <span class="title">protocols</span>          <span class="title">OBJC2_UNAVAILABLE</span>;</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line">&#125; OBJC2_UNAVAILABLE;</span><br></pre></td></tr></table></figure>
+<p>这里我们发现，类结构体中还有一个isa指针。其实这个isa指针指向的是类的类也就是元类。</p>
+<p>Superclass，当然，指向的是其父类。同时也能看到属性列表、方法列表、协议列表以及缓存列表。</p>
+<p>这是runtime库中直接给我们看到的objc_class，这里再给大家看看源码的内部信息（<a href="https://opensource.apple.com/tarballs/objc4/" target="_blank" rel="noopener">源码下载地址</a>），源码中我们可以看到以下信息（这里挑出了部分重要信息）</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">objc_class</span> :</span> objc_object &#123;</span><br><span class="line">    Class superclass; <span class="comment">// 父类</span></span><br><span class="line">    <span class="keyword">cache_t</span> cache; <span class="comment">// 方法缓存</span></span><br><span class="line">    <span class="keyword">class_data_bits_t</span> bits; <span class="comment">// 用于获取具体的类信息</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// objc_object</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">objc_object</span> &#123;</span></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="keyword">isa_t</span> isa;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>由于objc_object中有isa指针，那可以直接将objc_class简单简写成:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">objc_class</span> &#123;</span></span><br><span class="line">    <span class="keyword">isa_t</span> isa;</span><br><span class="line">    Class superclass; <span class="comment">// 父类</span></span><br><span class="line">    <span class="keyword">cache_t</span> cache; <span class="comment">// 方法缓存</span></span><br><span class="line">    <span class="keyword">class_data_bits_t</span> bits; <span class="comment">// class_rw_t * plus custom rr/alloc flags - 用于获取具体的类信息</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接下来我们针对这几个信息一个个进行分析。</p>
+<p><strong>isa：isa_t</strong></p>
+<p>每一个实例对象或者类对象的底层都有isa指针，在arm64之前，isa只是一个普通的指针，指着它的类或者元类；在arm64之后，对isa进行了优化，变成了一个共用体（union）结构，并使用位域来存储更多的信息</p>
+<p>arm64之后，isa是一个共用体了(isa_t)，具体信息如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">union</span> <span class="keyword">isa_t</span> &#123;</span><br><span class="line">    Class cls; <span class="comment">// 存储着类的地址</span></span><br><span class="line">    <span class="keyword">unitptr_t</span> bits; <span class="comment">// 利用位域存储更多的信息</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">        <span class="keyword">unitptr_t</span> nonpointer			: <span class="number">1</span>; <span class="comment">// 0代表普通指针，存储着class或meta-class,1代码优化过的，使用位域存储更多的信息</span></span><br><span class="line">        <span class="keyword">unitptr_t</span> has_assoc				: <span class="number">1</span>; <span class="comment">// 是否有设置关联对象，如果没有，释放时会更快</span></span><br><span class="line">        <span class="keyword">unitptr_t</span> has_cxx_dtor			: <span class="number">1</span>; <span class="comment">// 是否有c++的析构函数</span></span><br><span class="line">        <span class="keyword">unitptr_t</span> shiftcls				: <span class="number">3</span>; <span class="comment">// 存储着Class、Meta-Class对象的内存地址信息</span></span><br><span class="line">        <span class="keyword">unitptr_t</span> magic					: <span class="number">6</span>; <span class="comment">// 用于在调试时分辨对象是否未完成初始化</span></span><br><span class="line">        <span class="keyword">unitptr_t</span> weakly_referenced		: <span class="number">1</span>; <span class="comment">// 是否有被弱引用指向过，如果没有，释放时会更快</span></span><br><span class="line">        <span class="keyword">unitptr_t</span> deallocating			: <span class="number">1</span>; <span class="comment">// 对象是否正在释放</span></span><br><span class="line">        <span class="keyword">unitptr_t</span> has_sidetable_rc		: <span class="number">1</span>; <span class="comment">// 引用计数器是否过大无法存储在isa中,如果为1，那么引用计数会存储在一个叫SideTable的类的属性中</span></span><br><span class="line">        <span class="keyword">unitpyr_t</span> extra_rc				: <span class="number">1</span>; <span class="comment">// 里面存储的值是引用计数器减1</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在上面的源码中，我对参数添加了注释，相信大家看了之后或多或少会有个清晰的认识。</p>
+<p><br></p>
+<p><strong>superclass</strong></p>
+<p>是指向的其父类，具体内部的信息和当前我们分析的objc_class一样，这里不做过多阐述。</p>
+<p><br></p>
+<p><strong>class_data_bits_t bits——class_rw_t</strong></p>
+<p>源码中，class_data_bits 结构体中并没有什么过多的信息介绍，但我们在objc_class结构体中bits后面能看到这样一段解释：class_rw_t * plus custom rr/alloc flags，以及以下源码：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// objc_class结构体中的</span></span><br><span class="line"><span class="keyword">class_rw_t</span> *data() &#123; </span><br><span class="line">    <span class="keyword">return</span> bits.data();</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// class_data_bits_t结构体中</span></span><br><span class="line"><span class="keyword">class_rw_t</span>* data() &#123;</span><br><span class="line">    <span class="keyword">return</span> (<span class="keyword">class_rw_t</span> *)(bits &amp; FAST_DATA_MASK);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// data pointer</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FAST_DATA_MASK          0x00007ffffffffff8UL</span></span><br></pre></td></tr></table></figure>
+<p>可以看到objc_class中的bits经过位运算（&amp;FAST_DATA_MASK）能得到class_rw_t结构体的指针。接着我们再查看class_rw_t结构体，这里面到底有什么。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// class_data_bits_t bits 经过位运算&amp;FAST_DATA_MASK可获得以下数据</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">class_rw_t</span> &#123;</span></span><br><span class="line">    <span class="comment">// Be warned that Symbolication knows the layout of this structure.</span></span><br><span class="line">    <span class="keyword">uint32_t</span> flags;</span><br><span class="line">    <span class="keyword">uint32_t</span> version;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">class_ro_t</span> *ro;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">method_array_t</span> methods; <span class="comment">// 方法列表</span></span><br><span class="line">    <span class="keyword">property_array_t</span> properties; <span class="comment">// 属性列表</span></span><br><span class="line">    <span class="keyword">protocol_array_t</span> protocols;  <span class="comment">// 协议列表</span></span><br><span class="line"></span><br><span class="line">    Class firstSubclass;</span><br><span class="line">    Class nextSiblingClass;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">char</span> *demangledName;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>以上，我们可以看到方法列表、属性列表、协议列表等信息，另外还有一个class_ro_t结构体指针，这时候我们再看看class_ro_t结构体信息：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 类的原始信息</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">class_ro_t</span> &#123;</span></span><br><span class="line">    <span class="keyword">uint32_t</span> flags;</span><br><span class="line">    <span class="keyword">uint32_t</span> instanceStart;</span><br><span class="line">    <span class="keyword">uint32_t</span> instanceSize; <span class="comment">// instance对象占用多少存储空间</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> __LP64__</span></span><br><span class="line">    <span class="keyword">uint32_t</span> reserved;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">uint8_t</span> * ivarLayout;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span> * name; <span class="comment">// 类名</span></span><br><span class="line">    <span class="keyword">method_list_t</span> * baseMethodList; <span class="comment">// 原始方法列表</span></span><br><span class="line">    <span class="keyword">protocol_list_t</span> * baseProtocols;<span class="comment">// 原始协议列表</span></span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">ivar_list_t</span> * ivars;		<span class="comment">// 原始成员列表</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">uint8_t</span> * weakIvarLayout;</span><br><span class="line">    <span class="keyword">property_list_t</span> *baseProperties;<span class="comment">// 原始属性列表</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">method_list_t</span> *baseMethods() <span class="keyword">const</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> baseMethodList;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>这个结构体中我们又看到了方法列表、协议列表、属性列表等。</p>
+<p>下面再展示写方法、协议、属性结构体：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 方法结构体</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">method_t</span> &#123;</span></span><br><span class="line">    SEL name; <span class="comment">// 方法名</span></span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span> *types; <span class="comment">// 编码(返回值、参数类型)</span></span><br><span class="line">    MethodListIMP imp; <span class="comment">// 方法地址</span></span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">SortBySELAddress</span> :</span></span><br><span class="line">        <span class="keyword">public</span> <span class="built_in">std</span>::binary_function&lt;<span class="keyword">const</span> <span class="keyword">method_t</span>&amp;,</span><br><span class="line">                                    <span class="keyword">const</span> <span class="keyword">method_t</span>&amp;, <span class="keyword">bool</span>&gt;</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="function"><span class="keyword">bool</span> <span class="title">operator</span><span class="params">()</span> <span class="params">(<span class="keyword">const</span> <span class="keyword">method_t</span>&amp; lhs,</span></span></span><br><span class="line"><span class="function"><span class="params">                         <span class="keyword">const</span> <span class="keyword">method_t</span>&amp; rhs)</span></span></span><br><span class="line"><span class="function">        </span>&#123; <span class="keyword">return</span> lhs.name &lt; rhs.name; &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">// 属性结构体</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">property_t</span> &#123;</span></span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span> *name; <span class="comment">//属性名</span></span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span> *attributes;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">// 成员结构体</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">ivar_t</span> &#123;</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> __x86_64__</span></span><br><span class="line">    <span class="comment">// *offset was originally 64-bit on some x86_64 platforms.</span></span><br><span class="line">    <span class="comment">// We read and write only 32 bits of it.</span></span><br><span class="line">    <span class="comment">// Some metadata provides all 64 bits. This is harmless for unsigned </span></span><br><span class="line">    <span class="comment">// little-endian values.</span></span><br><span class="line">    <span class="comment">// Some code uses all 64 bits. class_addIvar() over-allocates the </span></span><br><span class="line">    <span class="comment">// offset for their benefit.</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">    <span class="keyword">int32_t</span> *offset;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span> *name;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span> *type;</span><br><span class="line">    <span class="comment">// alignment is sometimes -1; use alignment() instead</span></span><br><span class="line">    <span class="keyword">uint32_t</span> alignment_raw;</span><br><span class="line">    <span class="keyword">uint32_t</span> size;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">uint32_t</span> alignment() <span class="keyword">const</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (alignment_raw == ~(<span class="keyword">uint32_t</span>)<span class="number">0</span>) <span class="keyword">return</span> <span class="number">1U</span> &lt;&lt; WORD_SHIFT;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span> &lt;&lt; alignment_raw;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>看了这些源码后，最后给大家总结下信息（<strong>class_rw_t</strong>）：</p>
+<p><strong>class_rw_t</strong> 这个结构体中存放的是这个类的所有成员列表、方法列表、协议列表，并且每个列表都是一个二维数组</p>
+<p><strong>class_ro_t</strong> 这个结构体中存放的就是这个类原有的成员列表、方法列表、协议列表</p>
+<p>为什么类中会有原有列表和所有列表呢？</p>
+<p>这是因为分类category的缘由，分类的信息也属于这个类的信息。那么我们就好理解了，class_ro_t中存储的是这个类直接关联的方法、成员、属性、协议信息；class_rw_t中的是包含了类原始的信息和分类信息的总和。这里既然提到了分类，那也顺便说下分类的具体实现。</p>
+<p><strong>category实现原理：</strong>首先，在编译阶段，会将category中的信息存放在一个叫category_t的结构体中；然后，在程序运行的时候，runtime会将category中的数据，合并到原始类信息中（类对象-对象方法、属性信息、协议信息，元类对象-类方法中）。这里说合并并不准确，应该说是插入到类的class_rw_t对应的数组中，并且是插入到原始类信息的前面，这样就有了在执行方法的时候，为什么是先执行分类的再执行原始类的情况了。另外，说道categery分类，就要提下他和类拓展的区别：</p>
+<p>1）class extension在编译的时候就已经将数据合并在类信息中了，category先放在了category——t这样的数据结构中，运行时再合并到类信息中；</p>
+<p>2）category添加的属性不会自动生成setter和getter方法的实现和成员变量，只会声明setget方法，需要通过runtime自己实现set和get方法；</p>
+<p>3）class extension 主要是为了不将私有的属性暴露在头文件中，自己内部使用</p>
+<p><br></p>
+<p><strong>cache_t cache：方法缓存</strong></p>
+<p>这里我们介绍objc_class结构体中最后一个重要的信息，cache: cache_t。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">cache_t</span> &#123;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">bucket_t</span> *_<span class="title">buckets</span>;</span> <span class="comment">// 散列表</span></span><br><span class="line">    <span class="keyword">mask_t</span> _mask; <span class="comment">// 散列表长度</span></span><br><span class="line">    <span class="keyword">mask_t</span> _occupied; <span class="comment">// 已经缓存的方法数量</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">bucket_t</span> &#123;</span></span><br><span class="line">    <span class="keyword">cache_key_t</span> _key; <span class="comment">// SEL作为key，在查找时，也就是拿SEL来进行查找</span></span><br><span class="line">    IMP _imp; <span class="comment">// 函数的内存地址</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> __LP64__</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">uint32_t</span> <span class="keyword">mask_t</span>;  <span class="comment">// x86_64 &amp; arm64 asm are less efficient with 16-bits</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">uint16_t</span> <span class="keyword">mask_t</span>;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+<p>这里截取了cache_t的部分信息，可以发现cache_t中有个结构体指针_buckets，在这里这个指针的意思不仅限于指针，它也是一个数组的首地址，更具体的说是一个散列表的首地址。因为可以看下这个指针类型bucket_t，结构体bucket_t里有个key和函数实现地址。</p>
+<p>在这里来进行总结下，class的方法缓存是用散列表（后面会简单介绍下散列表）的形式进行缓存的，在调用方法（函数）的时候，将方法名进行哈希值运算得到一个index，通过这个index从散列表里找方法的缓存，如果找到了，直接拿到函数的地址进行调用；如果没找到就进行后面的操作（具体后面的操作可以看后面的方法调用—isa和superclass的作用），然后再将方法的实现地址_imp连同其key缓存到这个散列表中，下次就可以匹配到了。</p>
+<p><strong>散列表的简单补充：</strong></p>
+<p>散列表其实是一个数组，但是效率由于数组，这个在于哈希函数。数组在查找元素的时候，是重头到位进行遍历，知道找到这个元素或者数组遍历到结尾；而散列表是经过一个哈希函数得到一个index，这里的index其实就是数组的下标，可以通过这个key直接找到对应位置的元素，这就相对于数组遍历来说，效率高德原因。当然，这里只是介绍了散列表的皮毛而已，如果想要更清楚的了解散列表可以去查看<strong>数据结构</strong>中的散列表的介绍。后期如果有机会的话，也会在博客里介绍数据结构与算法。</p>
+<p>散列表其实是拿空间换时间，一开始会申请一块内存地址，能够容纳一定数量的元素，保证可存储的空间是大于要存储的元素的。</p>
+<p>散列表中的每个元素都有一个key和要查询的值value。</p>
+<p>这里再罗列下，class中cache散列表的流程：</p>
+<p>1）先开辟一定大小的存储空间给散列表，如一开始给开辟4个单元的大小，设定需要与之计算的mask（一般是散列表长度-1，因为列表重0开始计算，3）；</p>
+<p>2）存储方法时（这里以test()为例），用类似于**@selector(test)&amp;mask计算方法，获取一个可以，也就是index下标，用这个index下标找到散列表中的位置，如果为空，就将test()方法包装成元素（key，vaule）放置在此位置中，将缓存数量加1；</p>
+<p>3）如果根据index找到的位置不为空，取出对应位置的值，比较两个值的key是否相同，如果相同就不在进行缓存，如果不相同然后将index加1进行下标下移，直到找到空位子为止；</p>
+<p>4）如果缓存的数量即将等于或大于散列表的长度，会将散列表的历史元素清除，然后再将散列值的大小扩大至两倍；</p>
+<p>5）查找方法时，根据元素特定的值与散列表的mask值进行计算，得出index下标值；</p>
+<p>6）根据下标值找到对应位置的元素，比较元素中的key值，如果key值相同，则取出里面的值。</p>
+<p><br></p>
+<h4 id="load和initialize方法"><a href="#load和initialize方法" class="headerlink" title="load和initialize方法"></a>load和initialize方法</h4><p>在讨论了那么多的class底层结构后，在这里顺便说下类的两个初始化方法，load和initialize。</p>
+<p><strong>+load</strong></p>
+<p>调用时机：+load方法会在类、分类被加载到内存的时候调用。</p>
+<p>调用次数：每个类、分类的+load在程序运行过程中只加载一次。</p>
+<p>调用过程：区别于普通方法以消息发送机制（objec_senMessage）调用，它是直接拿到<strong>+load</strong>的内存地址（从load方法数组中获取）直接调用。当然，如果手动调用+load方法，就同普通方法调用一样以消息发送机制进行调用。</p>
+<p>调用顺序：先调用类的+load，再调用分类的+load方法，区别于其他方法的调用顺序</p>
+<p><strong>initialieze</strong></p>
+<p>调用时机：在类第一次接收到消息的时候进行调用</p>
+<p>调用过程：使用的消息发送机制<strong>objc_sendMessage()</strong>进行的</p>
+<p>调用顺序：先调用父类的，再调用子类的。</p>
+<p><strong>load与initialize的区别</strong></p>
+<p><strong>1、调用方式</strong></p>
+<p>1）load的调用方式是，找到load方法的内存地址， 直接进行调用</p>
+<p>2）initialize的调用方式是，消息发送机制进行调用（objc_sendMessage）</p>
+<p><strong>2、调用时间</strong></p>
+<p>1）load是在类被加载到内存的时候进行调用</p>
+<p>2）initialize是在类第一次接受到消息的时候进行调用</p>
+<p><strong>3、调用顺序</strong></p>
+<p>load的调用顺序是：</p>
+<p>1 &gt;先调用类的，在调用分类的load</p>
+<p>1.1&gt; 先编译的类，优先调用load</p>
+<p>1.2&gt; 调用子类的load前会先调用父类的load(底层在调用之前会递归遍历父类进行调用)</p>
+<p>2&gt; 再调用分类的load</p>
+<p>2.1 分类之间，按照编译顺序进行调用，先编译的先调用（底层将load方法按照编译顺序存储在了有序数组中的）</p>
+<p>initialize的调用顺序是：</p>
+<p>1）先初始化父类的，再初始化子类的</p>
+<p>2）如果子类没有实现初始化方法，通过superclass向上寻找调用父类的</p>
+<p><br></p>
+<h4 id="对象的分类"><a href="#对象的分类" class="headerlink" title="对象的分类"></a>对象的分类</h4><p>OC是一门面向对象的语言，那在这文章的最后，我们讨论下OC对象的分类。</p>
+<p>OC的对象分为三类，分别是 <strong>实例对象、类对象、元类对象</strong></p>
+<p><strong>实例对象</strong></p>
+<p>通过类alloc出来的对象，每次调用alloc都会产生新的实例对象。</p>
+<p>实例对象内存储的信息包括：</p>
+<ul>
+<li>isa指针</li>
+<li>其他成员变量</li>
+</ul>
+<p><strong>类对象</strong></p>
+<p>每一个类对象在内存中都且只有一个class对象。</p>
+<p>类对象在内存中的存储信息主要包括：</p>
+<ul>
+<li>isa指针</li>
+<li>superclass指针</li>
+<li>类的属性信息（@property）</li>
+<li>类的对象方法（instance method）</li>
+<li>类的协议信息（protocol）</li>
+<li>类的成员变量信息（ivar）</li>
+<li>·······</li>
+</ul>
+<p><strong>元类对象</strong></p>
+<p>每一个类在内存中有且只有一个元类对象（meta-class）</p>
+<p>元类对象在内存中的存储信息包括：</p>
+<ul>
+<li>isa指针</li>
+<li>superclass指针</li>
+<li>类的类方法信息（class method）</li>
+<li>······</li>
+</ul>
+<p>以下贴出了怎样获取刚刚提到的每个分类对象</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">NSObject *bj = [[NSObject alloc] init]; // bj实例对象</span><br><span class="line">Class obClass1 = [bj class]; // 类对象</span><br><span class="line">Class obClass2 = [NSObject class];// 类对象</span><br><span class="line">Class obClass3 = object_getClass(bj);// 类对象 runtime API</span><br><span class="line">Class metaClass1 = object_getClass(obClass3); // 元类对象，runtime API</span><br><span class="line">Class obClass4 = [[NSObject class] class]; // 获取的还是类对象</span><br><span class="line">// 获取元类对象只有用runtime的api进行获取</span><br><span class="line">Class metaClass2 = object_getClass([NSObject class]);</span><br><span class="line"></span><br><span class="line">// 判断某个类对象是不是元类对象</span><br><span class="line"># import &lt;objc/runtime.h&gt;</span><br><span class="line">BOOL result = class_isMetaClass([NSObject class]);</span><br></pre></td></tr></table></figure>
+<p><br></p>
+<p><strong>对象的关系——isa和superclass的作用</strong></p>
+<p>以上提到的三类对象，他们的内在联系是通过一个叫isa的指针进行连接的。</p>
+<ul>
+<li>实例对象的isa指针指向类（class）</li>
+<li>Class 的isa指针指向meta-class（元类）</li>
+</ul>
+<p>之所以对象会有以上那层关系，那是因为它们在方法调用上，完全依赖于以上的关系逻辑。</p>
+<p>对象方法调用时：</p>
+<p>先通过对象的isa指针，找到其class，查看其class中是否有对应的对象方法，如果有就调用其对象方法，如果没有，通过类的superclass指针找到其父类并查看其是否有对应的对象方法，以此类推，直到找到基类，如果基类也没有，就会进入到方法调用的下一层级（这个逻辑会放在后期的博文中阐述）。</p>
+<p>类方法调用时：</p>
+<p>先通过类对象的isa指针，找到其元类对象meta-class，查看其class中是否有对应的类方法，如果有就实现，如果没有，就通过meta-class的superclass指针找到其父类并查看其是否有对应的类方法，以此类推，直到基类元类，如果基类元类也没有，再通过基类元类的suerclass指针找到基类，查看其对象方法中有没有同名的对象方法，如果有就调用对象方法；如果到这一步还没有，就会进入到方法调用的下一层级（这个逻辑会放在后期的博文中阐述）。</p>
+<p>同样，在属性查找上，也是同样的一套逻辑。</p>
+<p><strong>tips</strong></p>
+<p>1） 类对象、元类对象才有superClass指针</p>
+<p>2）isa指针指向的并不是类的地址，而是需要位运算下才能得到真正需要指向的地址，&amp; ISA_MASK</p>
+<p>2）superclass指向的就是其父类的地址</p>
+<p><br></p>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#isa指针">
+    <span class="tag-code">isa指针</span>
+  </a>
+
+  <a href="/tags#category">
+    <span class="tag-code">category</span>
+  </a>
+
+  <a href="/tags#superclass">
+    <span class="tag-code">superclass</span>
+  </a>
+
+  <a href="/tags#objc_class">
+    <span class="tag-code">objc_class</span>
+  </a>
+
+  <a href="/tags#对象分类">
+    <span class="tag-code">对象分类</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/2018/07/10/00000-Objective-C系列/">
+        <span class="nav-arrow">← </span>
+        
+          Objective-C系列
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/2018/07/21/00002-OC方法调用机制/">
+        
+          OC的方法调用逻辑
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+      <div class="money-like">
+        <div class="reward-btn">
+          赏
+          <span class="money-code">
+            <span class="alipay-code">
+              <div class="code-image"></div>
+              <b>使用支付宝打赏</b>
+            </span>
+            <span class="wechat-code">
+              <div class="code-image"></div>
+              <b>使用微信打赏</b>
+            </span>
+          </span>
+        </div>
+        <p class="notice">若你觉得我的文章对你有帮助，欢迎点击上方按钮对我打赏</p>
+      </div>
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+      <div class="qrcode">
+        <canvas id="share-qrcode"></canvas>
+        <p class="notice">扫描二维码，分享此文章</p>
+      </div>
+    
+    <!-- 二维码 END -->
+    
+      <!-- Gitment START -->
+      <div id="comments"></div>
+      <!-- Gitment END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    
+    <div class="toc-catalog">Catalog</div>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#NSObject类在C-C-中的呈现方式"><span class="toc-nav-text">NSObject类在C/C++中的呈现方式</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#Class底层结构"><span class="toc-nav-text">Class底层结构</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#load和initialize方法"><span class="toc-nav-text">load和initialize方法</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#对象的分类"><span class="toc-nav-text">对象的分类</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://ikirk.cn/2018/07/15/00001-窥探OC中类的本质/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+     // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+        
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+    // qrcode
+    var qr = new QRious({
+      element: document.getElementById('share-qrcode'),
+      value: document.location.href
+    });
+    // gitment
+    var gitmentConfig = "undefined";
+    if (gitmentConfig !== 'undefined') {
+      var gitment = new Gitment({
+        id: "窥探OC中类的本质",
+        owner: "undefined",
+        repo: "blog_comment",
+        oauth: {
+          client_id: "ade6b77d59dd6c6dbb01",
+          client_secret: "6b87b0683301c554e4ea52edfe21c2028d066a62"
+        },
+        theme: {
+          render(state, instance) {
+            const container = document.createElement('div')
+            container.lang = "en-US"
+            container.className = 'gitment-container gitment-root-container'
+            container.appendChild(instance.renderHeader(state, instance))
+            container.appendChild(instance.renderEditor(state, instance))
+            container.appendChild(instance.renderComments(state, instance))
+            container.appendChild(instance.renderFooter(state, instance))
+            return container;
+          }
+        }
+      })
+      gitment.render(document.getElementById('comments'))
+    }
+  })();
+</script>
+
+<script>
+  var disqus_shortname = '';
+  
+  var disqus_url = 'http://ikirk.cn/2018/07/15/00001-窥探OC中类的本质/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//go.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    <!-- &copy; 2018 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a> -->
+    &copy; 2018 | ikirk.cn
+    <br>
+    <!-- Theme by <a href="https://github.com/yanm1ng">yanm1ng</a> -->
+
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+<script src="/js/script.js"></script>
+  </body>
+</html>
