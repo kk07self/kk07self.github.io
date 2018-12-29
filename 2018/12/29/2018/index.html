@@ -10,7 +10,7 @@
   
   <title>
     
-      iOS中的观察者模式 | KK
+      2018 | KK
     
   </title>
   <link href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
@@ -138,8 +138,8 @@
 </header>
 
     <div id="article-banner">
-  <h2>iOS中的观察者模式</h2>
-  <p class="post-date">2018-12-26</p>
+  <h2>2018</h2>
+  <p class="post-date">2018-12-29</p>
   <div class="arrow-down">
     <a href="javascript:;"></a>
   </div>
@@ -148,61 +148,128 @@
   <!-- Article START -->
   <article class="post-article">
     <section class="markdown-content"><blockquote>
-<p>这篇文件将介绍iOS中的观察者模式，iOS中对于观察者模式的应用有两种，一种是通知，一种是KVO（键值观察）</p>
+<p>2018 除了工作，其他都挺好的。</p>
 </blockquote>
-<ul>
-<li>通知</li>
-<li>KVO</li>
-<li>KVO与代理、block（闭包）的区别</li>
-</ul>
-<p>观察者模式，处理对象间一对多的关系，当对象相应的信息发生改变时，其关联的其他对象（对其监听的对象）皆收到消息并处理相关操作。</p>
-<p>iOS中典型的观察者模式实现方式是：通知（NSNotificationCenter）和KVO。</p>
 <p><br></p>
-<h4 id="通知"><a href="#通知" class="headerlink" title="通知"></a>通知</h4><p>通知，是由通知中心（NSNotificationCenter）进行管理的。通知，有通知的发出者（被观察者），有通知的接收者（观察者）。以下是通知的具体步骤：</p>
-<p>1）观察者先通过<strong>addObserver</strong>API向通知中心（NSNotificationCenter）注册监听某一信息（指定通知的name），通知中心会将其放入观察者列表中（猜测是name: observerList）；</p>
-<p>2）被观察者在指定被观察的位置通过<strong>postNotificationName:object:userInfo</strong>API向通知中心发送指定name的通知</p>
-<p>3）通知中心在收到通知后，通过name找出之前注册的观察者，调用其注册时关联的方法或block（回调）。</p>
-<p>4）注意：在观察者被销毁的时候要向通知中心注销其观察者，如果不注销，在被观察者发送通知给观察者时，会crash。对象已经被销毁，这时候再那指向对象的指针去调用方法，就会出行野指针bug，crash。</p>
+<p>今天，2018年的最后一个工作日，无心工作。</p>
+<p>原因并不是即将到来的3天小长假，而是老板承诺的月底发工资又又又延期了。。。</p>
 <p><br></p>
-<h4 id="KVO"><a href="#KVO" class="headerlink" title="KVO"></a>KVO</h4><p>KVO的全称是Key-Value Observer，即键值观察，是一种没有中心枢纽的观察者模式的实现方式（这是其有别于通知的地方）。一个主题对象管理所有依赖于它的观察者对象，并且在自身状态发生改变的时候主动通知观察者对象。</p>
-<p>我们在使用时，一是添加观察者调用添加观察者API，另一个是实现观察回调方法以完成监听。但是其具体是如何实现的呢？以下将进行说明。</p>
-<p>在介绍前先带大家看一段代码</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">@interface KKPerson : NSObject</span><br><span class="line">@property (assign, nonatomic) int age;</span><br><span class="line">@end</span><br><span class="line">    </span><br><span class="line">@interface ViewController ()</span><br><span class="line">@property (strong, nonatomic) KKPerson *person1;</span><br><span class="line">@property (strong, nonatomic) KKPerson *person2;</span><br><span class="line">@end</span><br><span class="line">    </span><br><span class="line">- (void)viewDidLoad &#123;</span><br><span class="line">    [super viewDidLoad];</span><br><span class="line">    </span><br><span class="line">    self.person1 = [[KKPerson alloc] init];</span><br><span class="line">    self.person1.age = 1;</span><br><span class="line">    </span><br><span class="line">    self.person2 = [[KKPerson alloc] init];</span><br><span class="line">    self.person2.age = 2;</span><br><span class="line"></span><br><span class="line">    // 给person1对象添加KVO监听</span><br><span class="line">    NSKeyValueObservingOptions options = NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld;</span><br><span class="line">    [self.person1 addObserver:self forKeyPath:@&quot;age&quot; options:options context:@&quot;123&quot;];</span><br><span class="line"></span><br><span class="line">    // 打印方法地址</span><br><span class="line">    NSLog(@&quot;person1添加KVO监听之后 - %p %p&quot;,</span><br><span class="line">          [self.person1 methodForSelector:@selector(setAge:)],</span><br><span class="line">          [self.person2 methodForSelector:@selector(setAge:)]);</span><br><span class="line">    // 打印类对象</span><br><span class="line">    NSLog(@&quot;person1添加KVO监听之后 类对象 - %@ %@&quot;,</span><br><span class="line">          object_getClass(self.person1),  // self.person1.isa</span><br><span class="line">          object_getClass(self.person2)); // self.person2.isa</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line">// 输出内容：</span><br><span class="line">:person1添加KVO监听之前 - 0x103542590 0x103542590</span><br><span class="line">:person1添加KVO监听之前 - KKPerson KKPerson</span><br><span class="line">:person1添加KVO监听之后 - 0x10fc16cf2 0x10f8bd5f0</span><br><span class="line">:person1添加KVO监听之后 类对象 - NSKVONotifying_KKPerson KKPerson</span><br></pre></td></tr></table></figure>
-<p>通过可以发现，在给person1对象添加KVO监听后，setAge:的方法地址不再一样，person1的类名也不再一样。如果这里直接打印person1的class，会发现其返还的还是KKPerson。这些基本上能看出一些关于对象被添加KVO监听后的一些细微变化，更复杂或更深层的变化逻辑需要进一步使用反汇编去解读，这里就不再具体展现。</p>
+<p>就像副标题说的一样，2018，除了工作，其他都挺好的。</p>
+<p>那就先总结下2018吧不顺心的工作吧。</p>
 <p><br></p>
-<p>在这里给总结下对象被KVO添加监听后的底层用runtime做了哪些事：</p>
-<p>1）利用runtime API动态生成一个子类，并让实例对象的isa指针，从原来的类指向这个子类</p>
-<p>2）这个子类会重写监听属性的set方法，在set方法中完成对属性修改的监听，调用监听的方法</p>
-<p>3）这个子类的superclass属性指向其父类，方便调用不需要重写的方法，比如属性的get方法</p>
+<h5 id="关于工作"><a href="#关于工作" class="headerlink" title="关于工作"></a>关于工作</h5><p>2018年初，上班的第一周提了加薪的事</p>
+<p>还算顺利，申请下来了（毕竟在上一年的工作表现还是可以的）。</p>
+<p>第二个月快发工资了，呵呵</p>
+<p>一个个技术人员被约谈了</p>
+<p>公司快支撑不下去了，裁员</p>
+<p>清一色，技术几乎全裁。</p>
 <p><br></p>
-<p>当对象被监听的属性发生改变时的流程：</p>
-<p>1）修改实例对象的属性值时，会通过isa指针找到新的子类</p>
-<p>2）在新的子类中找到其对应的属性set方法</p>
-<p>3）在set方法中会调用Foundation的c语言函数（_NSSetXXXValueAndNotify），这个函数会实现属性的赋值、监听器的触发</p>
-<p>4）_NSSetXXXValueAndNotify()函数中会调用：willChangeValueForKey:方法</p>
-<p>5）调用父类的set方法，让其属性完成赋值</p>
-<p>6）再调用didChangeValueForKey：方法，这个方法内部会触发监听器的监听方法</p>
+<p>之前的技术学习再次被打断，开始全身心的投入到找工作中。</p>
+<p>前后找了两周，面了几家，不是很理想</p>
+<p>一方面自己的准备不足，另一方面面试的有些公司确实不怎么靠谱。</p>
+<p>后来，经朋友介绍，面了现在的这家公司，并拿到了offer。</p>
+<p>老板的资金储备还可以，项目出发点和未来盈利模式还行吧，</p>
+<p>外加给开的待遇也还可以，以及当时刚买了房，所以很快就决定来了。</p>
 <p><br></p>
-<p>另外：</p>
-<p>1）会重写class方法：返回原始类，让开发者忽略子类的存在，隐藏kvo的内部实现</p>
-<p>2）会重写delloc方法：需要在销毁时做些额外处理</p>
-<p>3）会重新_isKVOA方法</p>
+<p>就这样，做了几个月。</p>
+<p>到国庆节后的第一周，要发工资了，呵呵…..</p>
+<p>公司没有如期发出来</p>
+<p>······（此处省略一万字）</p>
+<p>11月份能发大家的工资</p>
+<p>11月份依旧没发</p>
+<p>然后开了一次例会</p>
+<p>······（此处再省略两万字）</p>
+<p>12月底前能发大家的工作……</p>
+<p>今天依旧没发……</p>
+<p>——失去耐心了，昨天去了劳动局准备走司法程序维权了</p>
 <p><br></p>
-<p><strong>KVO的其他补充</strong></p>
-<p>1）手动触发KVO：手动调用willChangeValueForKey:方法，didChangeValueForKey:方法</p>
-<p>2）直接修改成员变量会不会触发KVO：不会触发，因为没有调用其属性的set方法</p>
+<p>这期间，前后在杭州找了快一个月的工作了</p>
+<p>不理想，机会不多</p>
+<p>当然，也有机会，但自己没把握住</p>
+<p>也有offer，但觉得还是不合适</p>
+<p><br></p>
+<p>这个寒冬，真的挺寒的。</p>
+<p><br></p>
+<h5 id="关于生活"><a href="#关于生活" class="headerlink" title="关于生活"></a>关于生活</h5><p>上面有提到，今年年初买了房</p>
+<p>嗯，上了车，然后周边亲戚朋友欠了一屁股债</p>
+<p>除了每个月的定期房贷，还有不定期的债务</p>
+<p>两个人的名字，但还没领证，一直还在耍流氓</p>
+<p><br></p>
+<p>六月份，端午节期间，去了趟泰国</p>
+<p>刚过完年就订了，特价机票</p>
+<p>在第一次失业和买房之前</p>
+<p>所以后来失业了买房什么的也舍不得退</p>
+<p>虽然是第一次，但有一帮靠谱的队友</p>
+<p>安检、导航、住宿等一切免操心</p>
+<p>只顾着吃喝玩乐，还有买买买</p>
+<p>当然，也差点和某人一起挂在海上</p>
+<p><br></p>
+<p>五月初报了名，考驾照</p>
+<p>由于六月份去了趟泰国，七月份才把科目一搞定</p>
+<p>然后，八月份开始练科目二</p>
+<p>由于周末才有时间，所以前前后后折腾了两三个月</p>
+<p>才在双十一时候将科目二搞定（满分飘过）</p>
+<p>现在科目三也差不多了，已预约考试，下周日1月6日（教练喜欢双号考试）</p>
+<p>教练的座右铭是我只负责教会你开车，考不考得出来看你自己</p>
+<p>嗯，教练很负责，科目三拉到市中心车来车往的道路上来练我们</p>
+<p>未来少了两个马路杀手</p>
+<p><br></p>
+<p>今年年中回了两次老家，一次五一，一次十一</p>
+<p>对于我们这些在外上班的安徽人来说，两次已经很频繁了</p>
+<p>越长大越发现，能回家看看就回家看看吧</p>
+<p>上半年，也去了两次女朋友家</p>
+<p>好山好水好风景，还有一年到头吃不完的水果</p>
+<p>下半年一直忙着练车，就没去过了，后面的水果都是她妈妈寄的</p>
+<p><br></p>
+<p>十一月份帮女朋友家在朋友圈卖桔子</p>
+<p>嗯，卖的还可以，370箱左右，女朋友350多箱</p>
+<p>卖的钱现在还没有给过去，因为三个多月没发工资了</p>
+<p>她妈妈让我们先用着</p>
+<p><br></p>
+<p>还有收到的结婚请帖越来越多了</p>
+<p>元旦后就立马有一份</p>
+<p>当然，也被催了n+1回了</p>
+<p><br></p>
+<p>生活不止眼前的苟且，还有欠薪的狗血。</p>
+<p><br></p>
+<h5 id="关于学习"><a href="#关于学习" class="headerlink" title="关于学习"></a>关于学习</h5><p>今年差不多一直都在学习</p>
+<p>但最大的收获就是发现自己过于急躁走了很多弯路</p>
+<p>人工智能越来越火，也想涉及后台，所以学了段时间的python</p>
+<p>然后，然后，第一次失业，急于准备找工作，搁浅了</p>
+<p>工作定下来后，不知道当时为什么去学小程序了</p>
+<p>折腾了段时间的小程序和产品</p>
+<p>然后赶上一段时间工作很忙，急着上线，全身心的投入到工作中</p>
+<p>忙完后，嗯，这个就又搁浅了</p>
+<p>当时得知大数据比较火比较有前景，脑子抽风去折腾了段时间的数据库</p>
+<p>再然后，就是公司拖欠工资了，没心情折腾其他的</p>
+<p>又把心给收回来准备下一步工作的事</p>
+<p>然后发现，这大半年折腾其他折腾了那么多，自己本行却忽视了</p>
+<p>以前搁浅的博客、搁浅的开源框架……这段时间居然没有弄起来</p>
+<p>自己薄弱的数据结构和算法、底层语言也都被忽视了</p>
+<p>就这样，走了大半年的弯路……</p>
+<p><br></p>
+<p>那么现在，回归于本行，厚积薄发</p>
+<p><br></p>
+<h5 id="2019-新的开始"><a href="#2019-新的开始" class="headerlink" title="2019 新的开始"></a>2019 新的开始</h5><p>关于学习，stay hungry stay foolish</p>
+<p>夯实技术深度，布局知识体系</p>
+<p><br></p>
+<p>关于工作，稳定稳定再稳定</p>
+<p>放开自己，趁年轻，不要堵死在杭州</p>
+<p><br></p>
+<p>关于生活，有饭有菜有人</p>
+<p>不苟且不奢靡，亲人、远方</p>
+<p><br></p>
+<p><br></p>
+<p>爱你所爱，行你所行，听从你心，无问西东。</p>
+<p><br></p>
 </section>
     <!-- Tags START -->
     
       <div class="tags">
         <span>Tags:</span>
         
-  <a href="/tags#KVO">
-    <span class="tag-code">KVO</span>
-  </a>
-
-  <a href="/tags#观察者模式">
-    <span class="tag-code">观察者模式</span>
+  <a href="/tags#生活小结">
+    <span class="tag-code">生活小结</span>
   </a>
 
       </div>
@@ -213,20 +280,13 @@
   <div class="nav-container">
     <!-- reverse left and right to put prev and next in a more logic postition -->
     
-      <a class="nav-left" href="/2018/12/21/00002-OC方法调用机制/">
+      <a class="nav-left" href="/2018/12/26/00003-观察者模式/">
         <span class="nav-arrow">← </span>
         
-          OC的方法调用逻辑
+          iOS中的观察者模式
         
       </a>
     
-    
-      <a class="nav-right" href="/2018/12/29/2018/">
-        
-          2018
-        
-        <span class="nav-arrow"> →</span>
-      </a>
     
   </div>
 
@@ -273,7 +333,7 @@
     
     <div class="toc-catalog">Catalog</div>
     
-      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#通知"><span class="toc-nav-text">通知</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#KVO"><span class="toc-nav-text">KVO</span></a></li></ol>
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-5"><a class="toc-nav-link" href="#关于工作"><span class="toc-nav-text">关于工作</span></a></li><li class="toc-nav-item toc-nav-level-5"><a class="toc-nav-link" href="#关于生活"><span class="toc-nav-text">关于生活</span></a></li><li class="toc-nav-item toc-nav-level-5"><a class="toc-nav-link" href="#关于学习"><span class="toc-nav-text">关于学习</span></a></li><li class="toc-nav-item toc-nav-level-5"><a class="toc-nav-link" href="#2019-新的开始"><span class="toc-nav-text">2019 新的开始</span></a></li></ol>
     
   </div>
 </aside>
@@ -283,7 +343,7 @@
 
 <script>
   (function () {
-    var url = 'http://ikirk.cn/2018/12/26/00003-观察者模式/';
+    var url = 'http://ikirk.cn/2018/12/29/2018/';
     // var banner = ''
     // if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
     //   $('#article-banner').css({
@@ -333,7 +393,7 @@
     var gitmentConfig = "undefined";
     if (gitmentConfig !== 'undefined') {
       var gitment = new Gitment({
-        id: "iOS中的观察者模式",
+        id: "2018",
         owner: "undefined",
         repo: "blog_comment",
         oauth: {
@@ -361,7 +421,7 @@
 <script>
   var disqus_shortname = '';
   
-  var disqus_url = 'http://ikirk.cn/2018/12/26/00003-观察者模式/';
+  var disqus_url = 'http://ikirk.cn/2018/12/29/2018/';
   
   (function(){
     var dsq = document.createElement('script');
