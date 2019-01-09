@@ -10,7 +10,7 @@
   
   <title>
     
-      Catogeries | KK
+      KK
     
   </title>
   <link href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
@@ -138,87 +138,78 @@
 </header>
 
     <div id="article-banner">
-  <h2>Cateogry</h2>
-  <p class="post-date">博客分类</p>
+  <h2>Archives</h2>
+  <p class="post-date">文章归档</p>
 </div>
-<main class="app-body">
-  <div id="tag-cloud">
+<main class="app-body" id="archives">
+  
+  
+  
+    <section class="time-section">
+  <h1 class="section-year">
+    2019
+  </h1>
+  <div class="section-list">
     
-      <a class="tag2" data-name="tag-Objective C底层原理">Objective C底层原理</a>
     
-      <a class="tag1" data-name="tag-所思所想所行">所思所想所行</a>
-    
-      <a class="tag1" data-name="tag-多线程">多线程</a>
+      <div class="section-list-item">
+        <a href="/2019/01/03/00007-多线程/" class="archive-title">多线程</a>
+        <p class="archive-date">01-03</p>
+      </div>
     
   </div>
+</section>
   
-    <div class="tag-list">
-      <h3 class="tag-name" id="tag-Objective C底层原理">Objective C底层原理</h3>
-      
-        <ul class="tag-preview">
-          <li>
-            <a href="/2018/12/26/00003-观察者模式/">iOS中的观察者模式</a>
-          </li>
-        </ul>
-        
-        <ul class="tag-preview">
-          <li>
-            <a href="/2018/12/21/00002-OC方法调用机制/">OC的方法调用逻辑</a>
-          </li>
-        </ul>
-        
-        <ul class="tag-preview">
-          <li>
-            <a href="/2018/12/15/00001-窥探OC中类的本质/">窥探OC中类的本质</a>
-          </li>
-        </ul>
-        
-        <ul class="tag-preview">
-          <li>
-            <a href="/2018/12/14/00000-Objective-C系列/">Objective-C系列</a>
-          </li>
-        </ul>
-        
-    </div>
+    <section class="time-section">
+  <h1 class="section-year">
+    2018
+  </h1>
+  <div class="section-list">
     
-    <div class="tag-list">
-      <h3 class="tag-name" id="tag-所思所想所行">所思所想所行</h3>
-      
-        <ul class="tag-preview">
-          <li>
-            <a href="/2018/12/29/2018/">2018 除了工作，其他还好</a>
-          </li>
-        </ul>
-        
-    </div>
     
-    <div class="tag-list">
-      <h3 class="tag-name" id="tag-多线程">多线程</h3>
-      
-        <ul class="tag-preview">
-          <li>
-            <a href="/2019/01/03/00007-多线程/">多线程</a>
-          </li>
-        </ul>
-        
-    </div>
+      <div class="section-list-item">
+        <a href="/2018/12/29/2018/" class="archive-title">2018 除了工作，其他还好</a>
+        <p class="archive-date">12-29</p>
+      </div>
     
+      <div class="section-list-item">
+        <a href="/2018/12/26/00003-观察者模式/" class="archive-title">iOS中的观察者模式</a>
+        <p class="archive-date">12-26</p>
+      </div>
+    
+      <div class="section-list-item">
+        <a href="/2018/12/21/00002-OC方法调用机制/" class="archive-title">OC的方法调用逻辑</a>
+        <p class="archive-date">12-21</p>
+      </div>
+    
+      <div class="section-list-item">
+        <a href="/2018/12/15/00001-窥探OC中类的本质/" class="archive-title">窥探OC中类的本质</a>
+        <p class="archive-date">12-15</p>
+      </div>
+    
+      <div class="section-list-item">
+        <a href="/2018/12/14/00000-Objective-C系列/" class="archive-title">Objective-C系列</a>
+        <p class="archive-date">12-14</p>
+      </div>
+    
+      <div class="section-list-item">
+        <a href="/2018/12/12/top/" class="archive-title">Stay hungry stay foolish</a>
+        <p class="archive-date">12-12</p>
+      </div>
+    
+  </div>
+</section>
+  
 </main>
 
 <script>
   (function () {
-    var url = 'http://ikirk.cn/categories/index.html'
-    $('.header').removeClass('fixed-header')
-
-    var tag = location.hash.replace('#', '')
-    if (tag) {
-      var tagId = "#tag-" + tag;
-      $("html, body").animate({
-        scrollTop: $(tagId).offset().top 
-      }, 400)
-    }
+    var url = 'http://ikirk.cn/tags/线程锁/index.html';
+    // $('#article-banner').geopattern(url);
+    $('.header').removeClass('fixed-header');
   })();
 </script>
+
     <div class="scroll-top">
   <span class="arrow-icon"></span>
 </div>

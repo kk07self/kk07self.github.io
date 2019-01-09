@@ -334,6 +334,8 @@
 <p>这个函数传入的并发队列必须是自己通过dispatch_queue_cretate创建的</p>
 <p>如果传入的是一个串行或是一个全局的并发队列，那这个函数便等同于dispatch_async函数的效果</p>
 <figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 初始化队列</span></span><br><span class="line"><span class="keyword">self</span>.queue = dispatch_queue_create(<span class="string">"rw_queue"</span>, DISPATCH_QUEUE_CONCURRENT);</span><br><span class="line"><span class="comment">// 使用</span></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) &#123;</span><br><span class="line">    <span class="built_in">dispatch_async</span>(<span class="keyword">self</span>.queue, ^&#123;</span><br><span class="line">        [<span class="keyword">self</span> read];</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">dispatch_async</span>(<span class="keyword">self</span>.queue, ^&#123;</span><br><span class="line">        [<span class="keyword">self</span> read];</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">dispatch_async</span>(<span class="keyword">self</span>.queue, ^&#123;</span><br><span class="line">        [<span class="keyword">self</span> read];</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 前面三个任务同步执行，执行完后再执行这个，这个执行完再到下一步</span></span><br><span class="line">    dispatch_barrier_async(<span class="keyword">self</span>.queue, ^&#123;</span><br><span class="line">        [<span class="keyword">self</span> write];</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)read &#123;</span><br><span class="line">    sleep(<span class="number">1</span>);</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"read"</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)write &#123;</span><br><span class="line">    sleep(<span class="number">1</span>);</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"write"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>以上。</p>
+<p>不足之处，多多指教。</p>
 </section>
     <!-- Tags START -->
     
@@ -342,6 +344,10 @@
         
   <a href="/tags#多线程">
     <span class="tag-code">多线程</span>
+  </a>
+
+  <a href="/tags#线程锁">
+    <span class="tag-code">线程锁</span>
   </a>
 
       </div>
