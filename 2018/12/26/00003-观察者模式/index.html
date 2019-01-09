@@ -191,6 +191,19 @@
 <p><strong>KVO的其他补充</strong></p>
 <p>1）手动触发KVO：手动调用willChangeValueForKey:方法，didChangeValueForKey:方法</p>
 <p>2）直接修改成员变量会不会触发KVO：不会触发，因为没有调用其属性的set方法</p>
+<p><br></p>
+<h4 id="KVO、通知、代理、block的区别"><a href="#KVO、通知、代理、block的区别" class="headerlink" title="KVO、通知、代理、block的区别"></a>KVO、通知、代理、block的区别</h4><p><strong>作用：</strong></p>
+<p>简单来说，就是处理对象间的通信。</p>
+<p><strong>对象关系：</strong></p>
+<p>KVO和通知，即观察者模式，主要处理一对多的关系，当然也包含一对一的关系；</p>
+<p>代理和block主要处理一对一的关系，处理不了一对多的关系。</p>
+<p><strong>对象依赖：</strong></p>
+<p>通知，处理的对象间不需要有直接的关联，和依赖；</p>
+<p>而KVO和代理及block处理的对象间需要有直接的依赖关系。</p>
+<p><br></p>
+<p><strong>使用建议：</strong></p>
+<p>在一对一的情况下，建议使用代理或block，相反在一对多的情况下使用KVO或者通知</p>
+<p>在没有关联的对象间通信，建议使用通知，有关联的时候使用KVO或者代理、block。</p>
 </section>
     <!-- Tags START -->
     
@@ -268,15 +281,15 @@
   <!-- Article END -->
   <!-- Catalog START -->
   
-    <aside class="catalog-container">
+    <!-- <aside class="catalog-container">
   <div class="toc-main">
     
     <div class="toc-catalog">Catalog</div>
     
-      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#通知"><span class="toc-nav-text">通知</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#KVO"><span class="toc-nav-text">KVO</span></a></li></ol>
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#通知"><span class="toc-nav-text">通知</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#KVO"><span class="toc-nav-text">KVO</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#KVO、通知、代理、block的区别"><span class="toc-nav-text">KVO、通知、代理、block的区别</span></a></li></ol>
     
   </div>
-</aside>
+</aside> -->
   
   <!-- Catalog END -->
 </main>
@@ -377,8 +390,8 @@
 </div>
     <footer class="app-footer">
   <p class="copyright">
-    <!-- &copy; 2018 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a> -->
-    &copy; 2018 | ikirk.cn
+    <!-- &copy; 2019 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a> -->
+    &copy; 2019 | ikirk.cn
     <br>
     <!-- Theme by <a href="https://github.com/yanm1ng">yanm1ng</a> -->
 
