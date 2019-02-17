@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html>
+  <head><meta name="generator" content="Hexo 3.8.0">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="kirk&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      数据加密及iOS签名机制 | KK
+    
+  </title>
+  <link href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdn.bootcss.com/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdn.bootcss.com/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/plugins/gitment.css">
+  <script src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdn.bootcss.com/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdn.bootcss.com/nprogress/0.2.0/nprogress.min.js"></script>
+  <script src="/js/qrious.js"></script>
+<script src="/js/gitment.js"></script>
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+</head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png">
+</div>
+
+  <body>
+    <header class="header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>KK</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">首页</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/categories/" class="item-link">分类</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">标签</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">归档</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">项目</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">关于</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">首页</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/categories/" class="menu-link">分类</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">标签</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">归档</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">项目</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">关于</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>数据加密及iOS签名机制</h2>
+  <p class="post-date">2019-01-21</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><blockquote>
+<p>这篇文章将介绍iOS的签名机制，在此之前要先简单介绍下加密相关信息，顺便聊下https对http的加密流程</p>
+</blockquote>
+<p><br></p>
+<ul>
+<li>对称加密</li>
+<li>非对称加密</li>
+<li>Hash函数（单向散列函数）</li>
+<li>iOS签名机制</li>
+<li>https加密流程</li>
+</ul>
+<p><br></p>
+<p><strong>encrypt(加密)、decryt(解密)、 plaintext(明文)、ciphertext(密文)</strong></p>
+<p><br></p>
+<p>信息加密从加密解密的角度划分话，可以分为对称加密、非对称加密以及hash函数。对称加密简单来说就是加密和解密的密钥是同一把；相对应的，非对称加密在加密解密过程使用的密钥是不同的；而hash函数是不可逆加密，即在加密的密文是不可解密的。下面将分别对这三种分类进行阐述。</p>
+<p><br></p>
+<p><br></p>
+<h4 id="对称加密"><a href="#对称加密" class="headerlink" title="对称加密"></a>对称加密</h4><p>如上文所说，对称加密，即加密和解密过程使用的是同一个密钥，也称单密钥加密。</p>
+<p><br></p>
+<p>这种加密的算法主要有以下几种方式：</p>
+<p><br></p>
+<p><strong>DES(Data Encryption Standard)加密</strong></p>
+<p>DES是一种将64bit明文输入块加密成64bit密文输出块的对称密码算法，使用的密钥长度也是64位，但实际使用的是56位（实际用到了56位，第8、16、24、32、40、48、56、64位是校验位， 使得每个密钥都有奇数个1）。<a href="https://baike.baidu.com/item/DES" target="_blank" rel="noopener">具体可见此链接</a></p>
+<p><br></p>
+<p><strong>3DES(Triple Data Encryption Algorithm)</strong></p>
+<p>3DES又称Triple DES，是DES加密算法的一种模式，它使用2条不同的56位的密钥对数据进行三次加密。<a href="https://baike.baidu.com/item/3DES" target="_blank" rel="noopener">具体可参见这里</a></p>
+<p><br></p>
+<p><strong>AES(Advanced Encryption Standard)</strong></p>
+<p>取代DES成为新标准的一种对称密码算法，AES的密钥长度有128、192、256bit三种。<a href="https://baike.baidu.com/item/aes/5903" target="_blank" rel="noopener">具体可参见这里</a></p>
+<p><br></p>
+<p>这里只是对上面几种算法进行简单的描述，若想详细深入的了解，可以参阅其他资料，网上有很多相关资料。</p>
+<p><br></p>
+<p><strong>对称密码的利弊</strong></p>
+<p>1）由于加密解密使用的是同一个密钥，因此在解密的时效率很高。</p>
+<p>2）同样，由于加密解密使用的是同一个密钥，那么密钥被窃取的风险很高，在传输过程中一旦被窃取，那密文的加密就形同虚设。</p>
+<p><br></p>
+<p>为了避免密钥被窃取，可以通过以下几个方法进行避免：</p>
+<p>1）事先共享密钥，避免中途传输；</p>
+<p>2）通过密钥分配中心；</p>
+<p>3）Diffie-Hellman密钥交换</p>
+<p><br></p>
+<p><br></p>
+<h4 id="非对称加密（公钥密码）"><a href="#非对称加密（公钥密码）" class="headerlink" title="非对称加密（公钥密码）"></a>非对称加密（公钥密码）</h4><p>相对于对称加密，非对称加密在加密和解密的过程使用的密钥是不同的，区分开来是加密密钥和解密密钥。</p>
+<p>1）加密密钥，一般是公开的，因此该密钥称为公钥（public key）.</p>
+<p>2）解密密钥，由消息接收者自己保管的，不能公开，因此也称为私钥（private key）.</p>
+<p>3）公钥和私钥是一一对应的，是不能单独生成的，一对公钥和密钥统称为密钥对（key pair）.</p>
+<p>4）由公钥加密的密文，必须使用与该公钥对应的私钥才能解密.</p>
+<p>5）由私钥加密的密文，必须使用与该私钥对应的公钥才能解密</p>
+<p><br></p>
+<p><strong>RSA</strong></p>
+<p>目前使用最广泛的公钥密码算法是RSA。</p>
+<p>RSA的名字，由它的3位开发者，即Ron Rivest、Adi Shamir、Leonard Adleman的姓氏首字母组成。<a href="https://baike.baidu.com/item/RSA%E7%AE%97%E6%B3%95?fromtitle=RSA&amp;fromid=210678" target="_blank" rel="noopener">具体可参考这里</a></p>
+<p><br></p>
+<p><strong>非对称加密密钥配送流程</strong></p>
+<p>1）消息接受者生成一对公钥、私钥</p>
+<p>2）消息接受者将公钥传递给消息发送者</p>
+<p>3）消息发送者用接收者的公钥对消息进行加密，然后传递给消息接收者</p>
+<p>4）消息接收者通过用之前生成的私钥来对消息进行解密</p>
+<p><br></p>
+<p><strong>缺点：</strong></p>
+<p>由于非对称加密解密，所以解密速度相对于对称加密算法来说效率比较慢。</p>
+<p><br></p>
+<p><br></p>
+<h4 id="混合密码"><a href="#混合密码" class="headerlink" title="混合密码"></a>混合密码</h4><p>混合密码是将对称密码和公钥密码的优势相结合的方法</p>
+<p>1）解决了公钥密码速度慢的问题</p>
+<p>2）并通过公钥密码解决了对称密码的密钥配送问题</p>
+<p><br></p>
+<p><strong>混合密码使用流程：</strong></p>
+<p>1）消息接收者随机生成本次通信的临时密钥（加密用的公钥、解密用的私钥）</p>
+<p>2）消息接收者将生成的公钥传递给消息发送者</p>
+<p>3）消息发送者生成对称密钥，给消息进行加密生成密文，然后用消息接收者给的公钥给自己的密钥进行加密，生成密钥的密文</p>
+<p>4）消息发送者将加密后的消息和加密后的密钥一同发给消息接收者</p>
+<p>5）消息接收者用自己的公钥将消息发送者的密钥进行解密得到对称加密的密钥，然后用此密钥对消息密文进行解密获取消息内容</p>
+<p><br></p>
+<p><br></p>
+<h4 id="单向散列函数-One-way-hash-function"><a href="#单向散列函数-One-way-hash-function" class="headerlink" title="单向散列函数(One-way hash function)"></a>单向散列函数(One-way hash function)</h4><p>单向散列函数，可以根据根据消息内容计算出散列值，散列值的长度和消息的长度无关，无论消息是1bit、10M、100G，单向散列函数都会计算出固定长度的散列值</p>
+<p>单向散列函数，又被称为消息摘要函数（message digest function），哈希函数</p>
+<p>输出的散列值，也被称为消息摘要（message digest）、指纹（fingerprint）</p>
+<p><br></p>
+<p><strong>特点：</strong></p>
+<p>1）根据任意长度的消息，计算出固定长度的散列值</p>
+<p>2）计算速度快，能快速计算出散列值</p>
+<p>3）消息不同，散列值也不同</p>
+<p>4）具备单向性，即根据散列值无法算出消息</p>
+<p><br></p>
+<p><strong>当前算法有</strong></p>
+<p><strong>MD4、MD5</strong></p>
+<p>产生128bit的散列值，MD就是Message Digest的缩写，目前已经不安全</p>
+<p>Mac终端上默认可以使用md5命令</p>
+<p>MD5算法因其普遍、稳定、快速的特点，仍广泛应用于普通数据的错误检查领域</p>
+<p><strong>SHA-1</strong></p>
+<p>产生160bit的散列值，目前已经不安全</p>
+<p><strong>SHA-2</strong></p>
+<p>SHA-256、SHA-384、SHA-512，散列值长度分别是256bit、384bit、512bit</p>
+<p><strong>SHA-3</strong>：Secure Hash Algorithm 3</p>
+<p>全新的安全散列算法</p>
+<p><br></p>
+<p><strong>单向散列算法的应用</strong></p>
+<p>1）防止数据被篡改：通过散列值对比数据是否被篡改</p>
+<p>2）口令加密：通过散列值来验证输入的口令是否正确（同之前的对比）</p>
+<p><br></p>
+<hr>
+<p>前面介绍了主要的加密算法，当然都是简单介绍，如果想更深入的了解，可以查看其它资料。</p>
+<p>下面将介绍一些将以上算法进行综合运用的复杂操作。</p>
+<hr>
+<p><br></p>
+<h4 id="数字签名"><a href="#数字签名" class="headerlink" title="数字签名"></a>数字签名</h4><p>接收的消息是否完整</p>
+<p>接收的消息有没有被篡改</p>
+<p>消息发送者否认了此消息是其发送的</p>
+<p>······</p>
+<p>为解决以上的问题，数字签名出现了。</p>
+<p>消息发送者通过数字签名，保证了此消息是其发送的，也保证了消息有没有被篡改。</p>
+<p><br></p>
+<p>数字签名包含两个部分，一个是生成签名，另一个是验证签名。</p>
+<p>生成签名，由消息发送者完成，通过“签名密钥”生成</p>
+<p>验证签名，由消息的接收者完成，通过“验证密钥”验证</p>
+<p><br></p>
+<p>以下是具体的实现步骤：</p>
+<p><strong>使用流程：</strong></p>
+<p><strong>低效使用:</strong></p>
+<p>1）消息发送者使用自己生成的密钥对中的私钥将消息进行加密来签名</p>
+<p>2）消息发送者将签名（加密后的消息）、消息发送给消息接收者</p>
+<p>3）消息接收者在收到消息后，用消息发送者的公钥将签名进行解密</p>
+<p>4）将解密后的消息与之前消息发送者发送过来的消息进行对比，两者一致则验证成功</p>
+<p>这种方式是十分低效的，当消息内容比较大时，对消息进行加密签名，效率会明显下降。</p>
+<p><br></p>
+<p><strong>改进</strong></p>
+<p>1）消息发送者使用单向散列函数对消息生成散列值</p>
+<p>2）消息发送者使用自己的密钥将散列值进行加密签名</p>
+<p>3）消息发送者将消息和签名发送给消息接收者</p>
+<p>4）消息接收者对收到的消息进行散列函数计算生成散列值，用发送者的公钥对签名进行解密得到散列值</p>
+<p>5）拿自己生成的散列值和解密后的散列值，两者一致则验证成功</p>
+<p>这里相比较上面一种方式，虽然多了对消息进行散列值生成操作，但是相比较对信息进行加密，对固定长度的散列值进行加密解密的效率要高很多，尤其是消息内容比较大时。</p>
+<p><br></p>
+<p><strong>缺点</strong></p>
+<p>正确使用签名的前提是，验证签名的公钥必须属于真正的发送者，如果遭中间人攻击，公钥进行伪造，会导致数字签名失效</p>
+<p>因此，在验证签名之前，首先验证公钥的合法性</p>
+<p><br></p>
+<p><br></p>
+<h4 id="证书"><a href="#证书" class="headerlink" title="证书"></a>证书</h4><p>全称叫公钥证书（Public-key Certificate，PKC）</p>
+<p>里面有姓名、邮箱等个人信息，以及此人的公钥，并由认证机构（Certificate Authority，CA）施加数字签名，CA就是能够认定“公钥确实属于此人”并能够生成数字签名的个人或者组织</p>
+<p><strong>操作步骤</strong></p>
+<p>1）消息接受者生成密钥对，将公钥传给认证机构</p>
+<p>2）认证机构用自己的私钥进行数字签名并生成证书（接收者的公钥+认证机构的数字签名）</p>
+<p>3）消息发送者从认证机构获取数字签名后的证书，然后用认证机构的公钥验证数字签名，确认接收者的合法性</p>
+<p>4）验证过合法性后，用合法的公钥对消息进行加密，然后发给接收者</p>
+<p>5）消息接收者接到消息后用自己的私钥进行解密</p>
+<p><br></p>
+<p>以下是一张网上找的图片解说：</p>
+<p><img src="https://github.com/kk07self/Resource/blob/master/%E8%AF%81%E4%B9%A6.png?raw=true" alt="avart"></p>
+<p><br></p>
+<p><br></p>
+<h4 id="iOS签名机制"><a href="#iOS签名机制" class="headerlink" title="iOS签名机制"></a>iOS签名机制</h4><p>保证安装到用户手机上的APP都是经过Apple官方允许的</p>
+<p><strong>操作流程</strong></p>
+<p>1）生成mac设备的密钥对（用钥匙串的证书助理获取到certSigningRequest文件）</p>
+<p>2）从apple.develperment网站申请证书.cer（需要要上传certSigningRequest文件，就是要Apple用其私钥对mac公钥进行数字签名—&gt;.cer证书文件）</p>
+<p>3）申请获得.mobileprovision文件（需要将上面的证书连同app id、devices、entitlements等信息一同用Apple私钥再进行加密签名—&gt;.mobileprovision文件）</p>
+<p>4）开发者用mac私钥对app进行加密数字签名—&gt;ipa安装包（APP、签名）</p>
+<p>5）用户获取安装包，用apple公钥验证.mobileproviesion文件，获取里面的权限、证书、devices等信息，再用Apple公钥验证证书的签名获取mac公钥</p>
+<p>6）用户用验证获取到的mac公钥验证app安装包的数字签名，成功安装应用包</p>
+<p><br></p>
+<p>以下是从网上找了图片资源，进行了形象说明：</p>
+<p><img src="https://github.com/kk07self/Resource/blob/master/ios%E7%AD%BE%E5%90%8D%E6%B5%81%E7%A8%8B.png?raw=true" alt="avart"></p>
+<p><br></p>
+<p>如果是从appstore上下载应用：</p>
+<p>1）Apple后台对app进行签名（用Apple的私钥）</p>
+<p>2）用户用设备上的Apple的公钥进行验证签名，验证通过则进行安装</p>
+<p><br></p>
+<p><br></p>
+<h4 id="HTTPS"><a href="#HTTPS" class="headerlink" title="HTTPS"></a>HTTPS</h4><p>简介</p>
+<p><strong>应用到的加密算法有</strong></p>
+<p>1）对称加密</p>
+<p>2）非对称加密</p>
+<p>3）散列值</p>
+<p>4）数字签名</p>
+<p><br></p>
+<p><strong>加密流程</strong></p>
+<p>1）客户端访问服务端，前题是https网络协议的地址；</p>
+<p>2）连接上服务端后，服务端返回证书给客户端（证书中包含了服务端密钥对中的公钥、颁发机构、证书期限等信息）（这里有数字签名、非对称加密（服务端是一对非对称密钥对））</p>
+<p>3）客户端接收到服务端的证书后，验证证书有效性（证书颁发机构、过期时间等信息）</p>
+<p>4）验证证书有效后，客户端会生成一个随机值（客户端的密钥对—–对称加密，加密解密用的都是这个）</p>
+<p>5）客户端用验证后的公钥（服务端在证书中的公钥）加密刚刚生成的随机值（客户端密钥），发送给服务端</p>
+<p>6）服务端收到客户端的加密后的密钥后，用自己的私钥将其解密，得到客户端的密钥</p>
+<p>7）服务端将要发送给客户端的信息用刚刚得到的密钥进行加密，发送给客户端</p>
+<p>8）客户端用自己的密钥（之前生成的随机值）将服务端返回的的加密信息进行解密</p>
+<p><br></p>
+<p>https相对于http的安全过程大致是以上这些信息，当然对于证书的验证等更细更深的信息还需要深入了解SSL和TLS等。以下再通过图片来解释下这个流程，图片来源于网络。</p>
+<p><img src="https://github.com/kk07self/Resource/blob/master/https%E5%8A%A0%E5%AF%86%E6%B5%81%E7%A8%8B.png?raw=true" alt="avart"></p>
+<p><br></p>
+<p><br></p>
+<p><br></p>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#iOS签名机制">
+    <span class="tag-code">iOS签名机制</span>
+  </a>
+
+  <a href="/tags#对称加密">
+    <span class="tag-code">对称加密</span>
+  </a>
+
+  <a href="/tags#非对称加密">
+    <span class="tag-code">非对称加密</span>
+  </a>
+
+  <a href="/tags#Hash函数">
+    <span class="tag-code">Hash函数</span>
+  </a>
+
+  <a href="/tags#https">
+    <span class="tag-code">https</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/2019/01/14/00009-block内部实现/">
+        <span class="nav-arrow">← </span>
+        
+          block的底层实现
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/2019/01/25/00203-iOS性能优化/">
+        
+          iOS性能优化
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+      <div class="money-like">
+        <div class="reward-btn">
+          赏
+          <span class="money-code">
+            <span class="alipay-code">
+              <div class="code-image"></div>
+              <b>使用支付宝打赏</b>
+            </span>
+            <span class="wechat-code">
+              <div class="code-image"></div>
+              <b>使用微信打赏</b>
+            </span>
+          </span>
+        </div>
+        <p class="notice">欢迎点击上方按钮进行打赏</p>
+      </div>
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+      <div class="qrcode">
+        <canvas id="share-qrcode"></canvas>
+        <p class="notice">扫描二维码，分享此文章</p>
+      </div>
+    
+    <!-- 二维码 END -->
+    
+      <!-- Gitment START -->
+      <div id="comments"></div>
+      <!-- Gitment END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <!-- <aside class="catalog-container">
+  <div class="toc-main">
+    
+    <div class="toc-catalog">Catalog</div>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#对称加密"><span class="toc-nav-text">对称加密</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#非对称加密（公钥密码）"><span class="toc-nav-text">非对称加密（公钥密码）</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#混合密码"><span class="toc-nav-text">混合密码</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#单向散列函数-One-way-hash-function"><span class="toc-nav-text">单向散列函数(One-way hash function)</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#数字签名"><span class="toc-nav-text">数字签名</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#证书"><span class="toc-nav-text">证书</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#iOS签名机制"><span class="toc-nav-text">iOS签名机制</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#HTTPS"><span class="toc-nav-text">HTTPS</span></a></li></ol>
+    
+  </div>
+</aside> -->
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://ikirk.cn/2019/01/21/00201-iOS签名机制/';
+    // var banner = ''
+    // if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+    //   $('#article-banner').css({
+    //     'background-image': 'url(' + banner + ')'
+    //   })
+    // } else {
+    //   // $('#article-banner').geopattern(url)
+    // }
+    $('.header').removeClass('fixed-header')
+     // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+        
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+    // qrcode
+    var qr = new QRious({
+      element: document.getElementById('share-qrcode'),
+      value: document.location.href
+    });
+    // gitment
+    var gitmentConfig = "undefined";
+    if (gitmentConfig !== 'undefined') {
+      var gitment = new Gitment({
+        id: "数据加密及iOS签名机制",
+        owner: "undefined",
+        repo: "blog_comment",
+        oauth: {
+          client_id: "ade6b77d59dd6c6dbb01",
+          client_secret: "6b87b0683301c554e4ea52edfe21c2028d066a62"
+        },
+        theme: {
+          render(state, instance) {
+            const container = document.createElement('div')
+            container.lang = "en-US"
+            container.className = 'gitment-container gitment-root-container'
+            container.appendChild(instance.renderHeader(state, instance))
+            container.appendChild(instance.renderEditor(state, instance))
+            container.appendChild(instance.renderComments(state, instance))
+            container.appendChild(instance.renderFooter(state, instance))
+            return container;
+          }
+        }
+      })
+      gitment.render(document.getElementById('comments'))
+    }
+  })();
+</script>
+
+<script>
+  var disqus_shortname = '';
+  
+  var disqus_url = 'http://ikirk.cn/2019/01/21/00201-iOS签名机制/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//go.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    <!-- &copy; 2019 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a> -->
+    &copy; 2019 | ikirk.cn
+    <br>
+    <!-- Theme by <a href="https://github.com/yanm1ng">yanm1ng</a> -->
+
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+<script src="/js/script.js"></script>
+  </body>
+</html>
