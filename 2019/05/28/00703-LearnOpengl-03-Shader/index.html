@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html>
+  <head><meta name="generator" content="Hexo 3.8.0">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="kirk&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      LearnOpengl示例3-Shader | KK
+    
+  </title>
+  <link href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdn.bootcss.com/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdn.bootcss.com/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/plugins/gitment.css">
+  <script src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdn.bootcss.com/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdn.bootcss.com/nprogress/0.2.0/nprogress.min.js"></script>
+  <script src="/js/qrious.js"></script>
+<script src="/js/gitment.js"></script>
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+</head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png">
+</div>
+
+  <body>
+    <header class="header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>KK</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">首页</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/categories/" class="item-link">分类</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">标签</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">归档</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">项目</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">关于</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">首页</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/categories/" class="menu-link">分类</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">标签</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">归档</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">项目</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">关于</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>LearnOpengl示例3-Shader</h2>
+  <p class="post-date">2019-05-28</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><p><br></p>
+<blockquote>
+<p>此示例学习资源来自于<a href="https://learnopengl-cn.github.io/" target="_blank" rel="noopener">LearnOpenGL</a>，感谢！</p>
+</blockquote>
+<p><br></p>
+<h2 id="第三个示例：着色器封装"><a href="#第三个示例：着色器封装" class="headerlink" title="第三个示例：着色器封装"></a>第三个示例：着色器封装</h2><p><a href="https://github.com/kk07self/LearnOpenGL/tree/master/LearnOpenGL/LearnOpenGL-03-Shader" target="_blank" rel="noopener">示例代码</a></p>
+<ul>
+<li>着色器传值</li>
+<li>修饰词Uniform</li>
+<li>顶点数组对象给片段着色器传值</li>
+<li>自定义着色器类</li>
+</ul>
+<p><br></p>
+<p>本示例和之前的两个示例基本一致，区别的地方主要在着色器（源码）上，如果看过前面两个示例的话，可以着重看下着色器部分</p>
+<h4 id="着色器传值"><a href="#着色器传值" class="headerlink" title="着色器传值"></a>着色器传值</h4><p>顶点着色器的输出值和片段着色器的输入值一样即可满足传递<br>例如以下着色器代码 :<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// GLSL顶点着色器源码</span></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">char</span> *vertexShaderSource =</span><br><span class="line"><span class="string">"#version 330 core\n"</span></span><br><span class="line"><span class="string">"layout (location = 0) in vec3 aPos;\n"</span></span><br><span class="line"><span class="string">"out vec4 vertexColor;\n"</span> <span class="comment">// 顶点着色器的颜色输出</span></span><br><span class="line"><span class="string">"void main() &#123;\n"</span></span><br><span class="line"><span class="string">"   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"</span></span><br><span class="line"><span class="string">"   vertexColor = vec4(1.0, 0.5, 0.0, 1.0);\n"</span> <span class="comment">// 这里给棕色</span></span><br><span class="line"><span class="string">"&#125;\n\0"</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// GLSL片段着色器，计算像素最后的颜色输出</span></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">char</span> *fragmentShaderSource =</span><br><span class="line"><span class="string">"#version 330 core\n"</span></span><br><span class="line"><span class="string">"out vec4 FragColor;\n"</span></span><br><span class="line"><span class="string">"in vec4 vertexColor;\n"</span> <span class="comment">// 接受顶点着色器传递的值</span></span><br><span class="line"><span class="string">"void main() &#123;\n"</span></span><br><span class="line"><span class="comment">//"   FragColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);\n"</span></span><br><span class="line"><span class="string">"   FragColor = vertexColor;\n"</span> <span class="comment">// 将顶点着色器传来的文理颜色进行赋值</span></span><br><span class="line"><span class="string">"&#125;\n\0"</span>;</span><br></pre></td></tr></table></figure></p>
+<p><code>顶点着色器</code>中定义了<code>out</code>属性（输出值）的纹理颜色<code>vertexColor</code>，并给其设置了<code>棕色</code>。<br><code>片段着色器</code>中定义了<code>in</code>属性（输入值）的纹理颜色<code>vertexColor</code>，这里再将这个值传递给颜色输出<code>FragColor</code>，让其渲染信息</p>
+<p>其他的代码保持和<code>LearnOpenGL-02-Triangle</code>中的代码一直(绘制三角形的部分)，运行，即可看到绘制出<code>棕色</code>三角形。</p>
+<p><br></p>
+<h4 id="修饰词Uniform"><a href="#修饰词Uniform" class="headerlink" title="修饰词Uniform"></a>修饰词Uniform</h4><p>uniform修饰的属性是全局的，CPU向GPU发送数据可以使用，定义在<code>片段着色器</code>中可接收<code>顶点着色器</code>以外进行的值传递<br>这里将片段着色器修改成以下：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="keyword">char</span> *fragmentShaderSource =</span><br><span class="line"><span class="string">"#version 330 core\n"</span></span><br><span class="line"><span class="string">"out vec4 FragColor;\n"</span></span><br><span class="line"><span class="string">"uniform vec4 ourColor;\n"</span> <span class="comment">// 接受外部的数据</span></span><br><span class="line"><span class="string">"void main() &#123;\n"</span></span><br><span class="line"><span class="string">"   FragColor = ourColor;\n"</span> <span class="comment">// 将外面传来的文理颜色进行赋值</span></span><br><span class="line"><span class="string">"&#125;\n\0"</span></span><br></pre></td></tr></table></figure></p>
+<p>这里用<code>uniform</code>修饰了一个<code>ourColor</code>属性，在着色器内部的函数中，将这个<code>ourColor</code>属性值传递给<code>FragColor</code>供着色器渲染使用。<br>其他代码和上一步一样，唯一不同的是在渲染中加入以下一段代码<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// update shader uniform</span></span><br><span class="line"><span class="keyword">float</span> timeValue = glfwGetTime();</span><br><span class="line"><span class="keyword">float</span> redValue = <span class="built_in">sin</span>(timeValue)/<span class="number">2.0f</span> + <span class="number">0.5f</span>; <span class="comment">// 设置红色随时间进行变化</span></span><br><span class="line"><span class="comment">// 拿到ourcolor信息</span></span><br><span class="line"><span class="keyword">int</span> vertexColorLocation = glGetUniformLocation(shaderProgram, <span class="string">"ourColor"</span>);</span><br><span class="line"><span class="comment">// 进行赋值</span></span><br><span class="line">glUniform4f(vertexColorLocation, redValue, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">1.0</span>);</span><br></pre></td></tr></table></figure></p>
+<p>这段代码的功能是，拿到<code>Uniform</code>修饰的属性<code>ourColor</code>然后进行赋值，这里给的值时随着时间变化的颜色值。</p>
+<p>代码具体插入的位置是：<br>在代码<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 绘制三角形</span></span><br><span class="line"><span class="comment">// 使用着色器程序进行渲染</span></span><br><span class="line">glBindVertexArray(VAO);</span><br></pre></td></tr></table></figure></p>
+<p>之后，<br>在代码</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 绘制物体</span></span><br><span class="line"><span class="comment">// 第一个参数：图元的类型，这里是三角形</span></span><br><span class="line"><span class="comment">// 第二个参数：顶点数组的起始索引，这里是0</span></span><br><span class="line"><span class="comment">// 第三个参数：要绘制的顶点个数，三角形，绘制三个</span></span><br><span class="line">glDrawArrays(GL_TRIANGLES, <span class="number">0</span>, <span class="number">3</span>);</span><br></pre></td></tr></table></figure>
+<p>之前。<br>整个渲染循环就是：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// render loop</span></span><br><span class="line"><span class="keyword">while</span> (!glfwWindowShouldClose(window)) &#123;</span><br><span class="line"><span class="comment">// input</span></span><br><span class="line">processInput(window);</span><br><span class="line"></span><br><span class="line"><span class="comment">// render</span></span><br><span class="line"><span class="comment">// -----</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 清屏</span></span><br><span class="line">glClearColor(<span class="number">46</span>/<span class="number">255.0f</span>, <span class="number">47</span>/<span class="number">255.0f</span>, <span class="number">67</span>/<span class="number">255.0f</span>, <span class="number">1.0f</span>);</span><br><span class="line">glClear(GL_COLOR_BUFFER_BIT);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 绘制三角形</span></span><br><span class="line"><span class="comment">// 使用着色器程序进行渲染</span></span><br><span class="line">glBindVertexArray(VAO);</span><br><span class="line"></span><br><span class="line"><span class="comment">// update shader uniform</span></span><br><span class="line"><span class="keyword">float</span> timeValue = glfwGetTime();</span><br><span class="line"><span class="keyword">float</span> redValue = <span class="built_in">sin</span>(timeValue)/<span class="number">2.0f</span> + <span class="number">0.5f</span>; <span class="comment">// 设置红色随时间进行变化</span></span><br><span class="line"><span class="comment">// 拿到ourcolor信息</span></span><br><span class="line"><span class="keyword">int</span> vertexColorLocation = glGetUniformLocation(shaderProgram, <span class="string">"ourColor"</span>);</span><br><span class="line"><span class="comment">// 进行赋值</span></span><br><span class="line">glUniform4f(vertexColorLocation, redValue, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">1.0</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 绘制物体</span></span><br><span class="line"><span class="comment">// 第一个参数：图元的类型，这里是三角形</span></span><br><span class="line"><span class="comment">// 第二个参数：顶点数组的起始索引，这里是0</span></span><br><span class="line"><span class="comment">// 第三个参数：要绘制的顶点个数，三角形，绘制三个</span></span><br><span class="line">glDrawArrays(GL_TRIANGLES, <span class="number">0</span>, <span class="number">3</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 会交换颜色缓冲</span></span><br><span class="line">glfwSwapBuffers(window);</span><br><span class="line"><span class="comment">// 捕捉事件</span></span><br><span class="line">glfwPollEvents();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>然后运行项目，即可看到一个颜色渐变的三角形。</p>
+<p><br></p>
+<h4 id="顶点数组对象给片段着色器传值"><a href="#顶点数组对象给片段着色器传值" class="headerlink" title="顶点数组对象给片段着色器传值"></a>顶点数组对象给片段着色器传值</h4><ul>
+<li><strong>1 顶点数组对象调整</strong></li>
+</ul>
+<p>这段示例将体现<code>片段着色器</code>的数据来源自<code>顶点数组对象</code>，即和<code>顶点着色器</code>来自同一个数据源<br>这里我们将顶点数据数组进行扩展<br>之前是：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">float</span> vertices[] = &#123;</span><br><span class="line"><span class="number">-0.5f</span>, <span class="number">-0.5f</span>, <span class="number">0.0f</span>, <span class="comment">// 左</span></span><br><span class="line"><span class="number">0.5f</span>, <span class="number">-0.5f</span>, <span class="number">0.0f</span>, <span class="comment">// 右</span></span><br><span class="line"><span class="number">0.0f</span>,  <span class="number">0.5f</span>, <span class="number">0.0f</span>, <span class="comment">// 上</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>现在是：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">float</span> vertices[] = &#123;</span><br><span class="line"><span class="comment">// 位置                 // 颜色</span></span><br><span class="line"><span class="number">0.5f</span>,  <span class="number">-0.5f</span>, <span class="number">0.0f</span>,    <span class="number">1.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>,<span class="comment">// 右下 红</span></span><br><span class="line"><span class="number">-0.5f</span>, <span class="number">-0.5f</span>, <span class="number">0.0f</span>,    <span class="number">0.0</span>, <span class="number">1.0</span>, <span class="number">0.0</span>,<span class="comment">// 左下 绿</span></span><br><span class="line"><span class="number">0.0f</span>,  <span class="number">0.5f</span>,  <span class="number">0.0f</span>,    <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">1.0</span><span class="comment">// 上上 蓝</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<p>那么整个初始化顶点数据，并绑定、填充到缓冲区的代码就变成：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">三角形：初始化顶点数据，并绑定、填充到缓冲区 ---- 附带颜色数据</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">@param VAO 顶点数据对象</span></span><br><span class="line"><span class="comment">@param VBO 顶点缓冲对象</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">bindTriangle</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">int</span> *VAO, <span class="keyword">unsigned</span> <span class="keyword">int</span> *VBO)</span> </span>&#123;</span><br><span class="line"><span class="keyword">float</span> vertices[] = &#123;</span><br><span class="line"><span class="comment">// 位置                 // 颜色</span></span><br><span class="line"><span class="number">0.5f</span>,  <span class="number">-0.5f</span>, <span class="number">0.0f</span>,    <span class="number">1.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>,<span class="comment">// 右下 红</span></span><br><span class="line"><span class="number">-0.5f</span>, <span class="number">-0.5f</span>, <span class="number">0.0f</span>,    <span class="number">0.0</span>, <span class="number">1.0</span>, <span class="number">0.0</span>,<span class="comment">// 左下 绿</span></span><br><span class="line"><span class="number">0.0f</span>,  <span class="number">0.5f</span>,  <span class="number">0.0f</span>,    <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">1.0</span><span class="comment">// 上上 蓝</span></span><br><span class="line">&#125;;</span><br><span class="line">glGenVertexArrays(<span class="number">1</span>, VAO);</span><br><span class="line">glGenBuffers(<span class="number">1</span>, VBO);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 绑定顶点数组对象、绑定和设置顶点缓冲对象、再设置顶点解析</span></span><br><span class="line"><span class="comment">// 复制顶点数组到缓冲中供OpenGL使用</span></span><br><span class="line">glBindVertexArray(*VAO);</span><br><span class="line">glBindBuffer(GL_ARRAY_BUFFER, *VBO);</span><br><span class="line">glBufferData(GL_ARRAY_BUFFER, <span class="keyword">sizeof</span>(vertices), vertices, GL_STATIC_DRAW);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><strong>2 着色器源码调整</strong></li>
+</ul>
+<p><code>片段着色器</code>中的颜色值要从<code>顶点数组对象</code>中获取，那么相应的<code>顶点着色器</code>和<code>片段着色器</code>的源码也要进行调整。这里的调整，就是和接收<code>位置</code>数据一样，添加接收<code>颜色</code>数据。<br><code>顶点着色器</code>添加了一个<code>in</code>修饰的<code>aColor</code>接收颜色值的属性，和位置属性<code>aPos</code>一样，需要添加<code>layout</code>修饰，另外<code>颜色</code>数据的读取的下标和<code>位置</code>的读取下标是不一样的，<code>位置</code>的读取下标是<code>0</code>，<code>颜色</code>的读取下标后延是<code>1</code>，这个在上面的<code>顶点数组对象</code>中的数据源也可以看出，每一个颜色值都是较位置值偏移了1个下标（3个数据位置，位置信息是3个值表示）。<br>另外，<code>顶点着色器</code>读取了<code>顶点数组对象</code>中的数据后，需要传递给<code>片段着色器</code>，那这里就用到了这篇文章中的第一个知识点，<code>着色器传值</code>，这里就不重复描述，直接给出调整后的代码：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// GLSL顶点着色器源码</span></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">char</span> *vertexShaderSource =</span><br><span class="line"><span class="string">"#version 330 core\n"</span></span><br><span class="line"><span class="string">"layout (location = 0) in vec3 aPos;\n"</span>   <span class="comment">// 从0的位置区</span></span><br><span class="line"><span class="string">"layout (location = 1) in vec3 aColor;\n"</span> <span class="comment">// 从1的位置取</span></span><br><span class="line"><span class="string">"out vec3 vertexColor;\n"</span> <span class="comment">// 顶点着色器的颜色输出</span></span><br><span class="line"><span class="string">"void main() &#123;\n"</span></span><br><span class="line"><span class="string">"   gl_Position = vec4(aPos, 1.0);\n"</span></span><br><span class="line"><span class="string">"   vertexColor = aColor;\n"</span> <span class="comment">// 这里给棕色</span></span><br><span class="line"><span class="string">"&#125;\n\0"</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// GLSL片段着色器，计算像素最后的颜色输出</span></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">char</span> *fragmentShaderSource =</span><br><span class="line"><span class="string">"#version 330 core\n"</span></span><br><span class="line"><span class="string">"out vec4 FragColor;\n"</span></span><br><span class="line"><span class="string">"in  vec3 vertexColor;\n"</span> <span class="comment">// 接受顶点着色器传递的值</span></span><br><span class="line"><span class="string">"void main() &#123;\n"</span></span><br><span class="line"><span class="comment">//"   FragColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);\n"</span></span><br><span class="line"><span class="string">"   FragColor = vec4(vertexColor, 1.0);\n"</span> <span class="comment">// 将顶点着色器传来的文理颜色进行赋值</span></span><br><span class="line"><span class="string">"&#125;\n\0"</span>;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><strong>3 数据解析调整</strong></li>
+</ul>
+<p>由于<code>顶点数据对象</code>较之前有所变化，那么在告诉Opengl如何解析数据就需要进行调整，调整的具体如下：</p>
+<p>​    3.1 调整位置数据解析<br>​    将这段</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">glVertexAttribPointer(<span class="number">0</span>, <span class="number">3</span>, GL_FLOAT, GL_FALSE, <span class="number">3</span>*<span class="keyword">sizeof</span>(<span class="keyword">float</span>), (<span class="keyword">void</span> *)<span class="number">0</span>);</span><br><span class="line">glEnableVertexAttribArray(<span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+<p>​    替换成<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 因为此次点的位置和颜色的位置在一个数组里，颜色紧随位置后面，因此步长为6</span></span><br><span class="line">glVertexAttribPointer(<span class="number">0</span>, <span class="number">3</span>, GL_FLOAT, GL_FALSE, <span class="number">6</span>*<span class="keyword">sizeof</span>(<span class="keyword">float</span>), (<span class="keyword">void</span> *)<span class="number">0</span>);</span><br><span class="line"><span class="comment">// 以顶点位置0作为参数启用顶点属性</span></span><br><span class="line">glEnableVertexAttribArray(<span class="number">0</span>);</span><br></pre></td></tr></table></figure></p>
+<p>​    这段具体调整的是解析的<code>步长</code>，之前只有顶点（位置）是从<code>顶点数组对象</code>中获取的，因此每个点获取三个数据，那么步长就是三个数据，即<code>3*sizeof(float)</code>。那么现在不仅有位置还有颜色也是从里面取的，所以步长是6个数据（3个位置、3个颜色数据）即<code>6*sizeof(float)</code>。</p>
+<p>​    3.2 添加颜色数据解析<br>​    由于<code>片段着色器</code>的颜色数据来源也来自于<code>顶点数组对象</code>，因此需要添加上颜色的数据解析。<br>​    这里只需要在<code>顶点着色器</code>数据解析</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">// 颜色属性 从1开始, 偏移量是3</span><br><span class="line">glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6*sizeof(float), (void *)(3 * sizeof(float)));</span><br><span class="line">// 以顶点位置1作为参数启用顶点属性 --- 颜色</span><br><span class="line">glEnableVertexAttribArray(1);</span><br></pre></td></tr></table></figure>
+<p>​    解析颜色数据和解析位置数据的逻辑是一样的，唯一不一样的是，颜色数据的起始位置是1，位置数据的起始位置是0，这也是这两句代码的唯一区别。这里的起始位置，也就对应上了<code>顶点着色器</code>中的两个接收值的下标位置信息了。</p>
+<p>​    通过以上的调整，运行代码，即可看到效果。</p>
+<p><br></p>
+<h4 id="自定义着色器类"><a href="#自定义着色器类" class="headerlink" title="自定义着色器类"></a>自定义着色器类</h4><p>创建、编译、绑定、管理着色器是一系列重复、麻烦的事，在这里会写一个类来统一管理这些工作，避免繁杂重复的工作。</p>
+<ul>
+<li><p><strong>1 创建着色器类-用于加载着色器</strong></p>
+<p>1.1 创建shader文件</p>
+<p>这一步我们创建一个shader文件<code>shader.hpp</code>，在里面倒入需要的头文件</p>
+</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;glad/glad.h&gt; // 包含glad来获取所有的必须OpenGL头文件</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;fstream&gt; // 读取文件流</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sstream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br></pre></td></tr></table></figure>
+<p>​            <br></p>
+<p>​        1.2 创建Shader类</p>
+<p>​        在头文件<code>shader.hpp</code>中创建<code>Shader</code>类；<br>​        添加一个<code>ID</code>属性，用于绑定着色器的时候使用；<br>​        创建<code>构造函数</code>和<code>使用函数</code>，这里<code>构造函数</code>需要两个参数，一个是<code>vertexPath</code>和<code>fragmentPath</code>，对应<code>顶点着色器</code>和<code>片段着色器</code>源文件路径</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Shader</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line"><span class="comment">// 程序ID</span></span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">int</span> ID;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 构造器读取并构建着色器</span></span><br><span class="line">Shader(<span class="keyword">const</span> GLchar* vertexPath, <span class="keyword">const</span> GLchar* fragmentPath);</span><br><span class="line"><span class="comment">// 使用/激活程序</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">use</span><span class="params">()</span></span>;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>​            <br></p>
+<p>​        1.3 构造函数等函数实现</p>
+<p>​        构造函数除了创建<code>Shader</code>类的对象，还需要完成<code>着色器</code>的创建、编译和绑定</p>
+<p>​        1.3.1 读取文件中<code>着色器</code>的源代码流</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">// 1. 从文件滤镜获取顶点/片段着色器</span><br><span class="line">std::string vertexCode;</span><br><span class="line">std::string fragmentCode;</span><br><span class="line">std::ifstream vShaderFile;</span><br><span class="line">std::ifstream fShaderFile;</span><br><span class="line"></span><br><span class="line">// 保证ifstream对象可抛出异常</span><br><span class="line">vShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);</span><br><span class="line">fShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);</span><br><span class="line"></span><br><span class="line">try &#123;</span><br><span class="line">// 打开文件</span><br><span class="line">vShaderFile.open(vertexPath);</span><br><span class="line">fShaderFile.open(fragmentPath);</span><br><span class="line">// 定义数据流</span><br><span class="line">std::stringstream vShaderStream, fShaderStream;</span><br><span class="line">// 读取文件数据到数据流中</span><br><span class="line">vShaderStream &lt;&lt; vShaderFile.rdbuf();</span><br><span class="line">fShaderStream &lt;&lt; fShaderFile.rdbuf();</span><br><span class="line"></span><br><span class="line">// 关闭文件</span><br><span class="line">vShaderFile.close();</span><br><span class="line">fShaderFile.close();</span><br><span class="line"></span><br><span class="line">// 转换数据流到string</span><br><span class="line">vertexCode = vShaderStream.str();</span><br><span class="line">fragmentCode = fShaderStream.str();</span><br><span class="line">&#125; catch (std::ifstream::failure e) &#123;</span><br><span class="line">std::cout &lt;&lt; &quot;ERROR:: SHADER::FILE_NOT_SUCCESFULLY_READ&quot; &lt;&lt; std::endl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">const char *vShaderCode = vertexCode.c_str();</span><br><span class="line">const char *fShaderCode = fragmentCode.c_str();</span><br></pre></td></tr></table></figure>
+<p>​        1.3.2 创建、编译、绑定着色器</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 2. 编译着色器</span></span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">int</span> vertex, fragment;</span><br><span class="line"><span class="comment">// 顶点着色器创建、编译</span></span><br><span class="line">vertex = glCreateShader(GL_VERTEX_SHADER);</span><br><span class="line">glShaderSource(vertex, <span class="number">1</span>, &amp;vShaderCode, <span class="literal">NULL</span>);</span><br><span class="line">glCompileShader(vertex);</span><br><span class="line">checkCompileErrors(vertex, <span class="string">"VERTEX"</span>);</span><br><span class="line"><span class="comment">// 片段着色器创建、编译</span></span><br><span class="line">fragment = glCreateShader(GL_FRAGMENT_SHADER);</span><br><span class="line">glShaderSource(fragment, <span class="number">1</span>, &amp;fShaderCode, <span class="literal">NULL</span>);</span><br><span class="line">glCompileShader(fragment);</span><br><span class="line">checkCompileErrors(fragment, <span class="string">"FRAGMENT"</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 3. 着色器绑定</span></span><br><span class="line">ID = glCreateProgram();</span><br><span class="line">glAttachShader(ID, vertex);</span><br><span class="line">glAttachShader(ID, fragment);</span><br><span class="line">glLinkProgram(ID);</span><br><span class="line">checkCompileErrors(ID, <span class="string">"PROGRAM"</span>);</span><br><span class="line"></span><br><span class="line">glDeleteShader(vertex);</span><br><span class="line">glDeleteShader(fragment);</span><br></pre></td></tr></table></figure>
+<p>从前几个示例中我们可以看到，每一步的编译、绑定都需要check下是否成功，为了避免代码冗余，这里将check的代码封装到了一个私有方法中。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line"><span class="comment">// 查看编译/ 绑定是否成功</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">checkCompileErrors</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">int</span> shader, <span class="built_in">std</span>::<span class="built_in">string</span> type)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> success;</span><br><span class="line">        <span class="keyword">char</span> infoLog[<span class="number">1024</span>];</span><br><span class="line">        <span class="keyword">if</span> (type != <span class="string">"PROGRAM"</span>) &#123;</span><br><span class="line">            glGetShaderiv(shader, GL_COMPILE_STATUS, &amp;success);</span><br><span class="line">            <span class="keyword">if</span> (!success)</span><br><span class="line">            &#123;</span><br><span class="line">                glGetShaderInfoLog(shader, <span class="number">1024</span>, <span class="literal">NULL</span>, infoLog);</span><br><span class="line">                <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"ERROR::SHADER_COMPILATION_ERROR of type: "</span> &lt;&lt; type &lt;&lt; <span class="string">"\n"</span> &lt;&lt; infoLog &lt;&lt; <span class="string">"\n -- --------------------------------------------------- -- "</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            glGetProgramiv(shader, GL_LINK_STATUS, &amp;success);</span><br><span class="line">            <span class="keyword">if</span> (!success)</span><br><span class="line">            &#123;</span><br><span class="line">                glGetProgramInfoLog(shader, <span class="number">1024</span>, <span class="literal">NULL</span>, infoLog);</span><br><span class="line">                <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"ERROR::PROGRAM_LINKING_ERROR of type: "</span> &lt;&lt; type &lt;&lt; <span class="string">"\n"</span> &lt;&lt; infoLog &lt;&lt; <span class="string">"\n -- --------------------------------------------------- -- "</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<p>​    <br></p>
+<p>​    1.4 Shader的使用<br>​    这里很简单，就是拿到程序的<code>ID</code>（保存在类<code>Shader</code>的属性<code>ID</code>中），进行使用</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 使用/激活程序</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">use</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    glUseProgram(ID);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><strong>2 创建着色器源码文件</strong></li>
+</ul>
+<p>这一步是将<code>顶点着色器</code>和<code>片段着色器</code>的源码放在单独的文件中，这一步即对于上一步中<code>Shader</code>类构造方法中两个文件路径参数（<code>vertexPath</code>和<code>fragmentPath</code>）。<br>这里新建了两个空文件，<code>Shader.vs</code>和<code>Shader.fs</code>分别对于<code>顶点着色器</code>和<code>片段着色器</code>。<br>然后将源码放到对于的文件中。<br><code>Shader.vs</code>文件中的<code>着色器</code>源码是：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">#version 330 core</span><br><span class="line">layout (location = 0) in vec3 aPos;</span><br><span class="line">layout (location = 1) in vec3 aColor;</span><br><span class="line">out vec3 vertexColor;</span><br><span class="line">void main() &#123;</span><br><span class="line">gl_Position = vec4(aPos, 1.0);</span><br><span class="line">vertexColor = aColor;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>Shader.fs</code>文件中的<code>着色器</code>源码是：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">#version 330 core</span><br><span class="line">out vec4 FragColor;</span><br><span class="line">in  vec3 vertexColor;</span><br><span class="line">void main() &#123;</span><br><span class="line">FragColor = vec4(vertexColor, 1.0);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>到这一步为止，我们的轮子造好了，下一步就是使用了。</p>
+<ul>
+<li><strong>3 使用自定义的着色器类</strong></li>
+</ul>
+<p>和之前没有使用<code>着色器</code>类相比，代码上只有两部分出入，一是着色器的创建、编译和绑定，二是着色器程序的使用。</p>
+<p>​    2.1 着色器的创建、编译和绑定<br>​    将之前创建、编译、和绑定的代码全部删除<br>​    即这些代码删除</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">// build and compile our shader program</span><br><span class="line">// ------------------------------------</span><br><span class="line">// vertex shader, 顶点着色器</span><br><span class="line">int vertexShader = glCreateShader(GL_VERTEX_SHADER);</span><br><span class="line">glShaderSource(vertexShader, 1, &amp;vertexShaderSource, NULL);</span><br><span class="line">glCompileShader(vertexShader);</span><br><span class="line">// 查看编译结果</span><br><span class="line">int success;</span><br><span class="line">char infoLog[512];</span><br><span class="line">glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &amp;success);</span><br><span class="line">if (!success) &#123;</span><br><span class="line">    // 编译失败</span><br><span class="line">    glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);</span><br><span class="line">    std::cout &lt;&lt; &quot;Error::Sharder::Vertex::Compilation_failed\n&quot; &lt;&lt; infoLog &lt;&lt; std::endl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// fragment shader, 片段着色器</span><br><span class="line">int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);</span><br><span class="line">// 将着色器源码附加到着色器对象上，并编译</span><br><span class="line">glShaderSource(fragmentShader, 1, &amp;fragmentShaderSource, NULL);</span><br><span class="line">glCompileShader(fragmentShader);</span><br><span class="line">// 查看编译结果</span><br><span class="line">glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &amp;success);</span><br><span class="line">if (!success) &#123;</span><br><span class="line">    glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);</span><br><span class="line">    std::cout &lt;&lt; &quot;Error::Sharder::Fragment::Compilation_failed\n&quot; &lt;&lt; infoLog &lt;&lt; std::endl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// link shader, 链接着色器，通过着色器程序进行多个着色器合并</span><br><span class="line">int shaderProgram = glCreateProgram();</span><br><span class="line">glAttachShader(shaderProgram, vertexShader);</span><br><span class="line">glAttachShader(shaderProgram, fragmentShader);</span><br><span class="line">glLinkProgram(shaderProgram);</span><br><span class="line">// 查看链接是否成功</span><br><span class="line">glGetProgramiv(shaderProgram, GL_LINK_STATUS, &amp;success);</span><br><span class="line">if (!success) &#123;</span><br><span class="line">    // 链接失败</span><br><span class="line">    glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);</span><br><span class="line">    std::cout &lt;&lt; &quot;Error::Sharder::Program::Linking_failed\n&quot; &lt;&lt; infoLog &lt;&lt; std::endl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 删除shader，链接成功后就不需要了，需要清除他们</span><br><span class="line">glDeleteShader(vertexShader);</span><br><span class="line">glDeleteShader(fragmentShader);</span><br></pre></td></tr></table></figure>
+<p>​        替换成以下代码<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// 使用我们自定义的着色器类</span><br><span class="line">Shader ourShader(&quot;Shader.vs&quot;,&quot;Shader.fs&quot;);</span><br></pre></td></tr></table></figure></p>
+<p>​        这一步是用<code>Shader</code>类的构造方法，创建了一个<code>ourShader</code>对象，这里传入了着色器源码的文件路径。<br>​        内部会完成着色器的创建、编译和绑定。</p>
+<p>​        2.2 着色器对象的使用<br>​        将之前使用程序的代码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">glUseProgram(shaderProgram);</span><br></pre></td></tr></table></figure>
+<p>​        替换成<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ourShader.use();</span><br></pre></td></tr></table></figure></p>
+<p>​        即可。</p>
+<p>以上就完成了自定义着色器类的使用，相比于之前那些冗余的代码，这样的方式更加简介清晰。<br>运行程序，即可看到和之前一样的效果。</p>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#opengl">
+    <span class="tag-code">opengl</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/2019/05/27/00702-LearnOpengl-02-Triangle/">
+        <span class="nav-arrow">← </span>
+        
+          LearnOpengl示例2-Triangle
+        
+      </a>
+    
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+      <div class="money-like">
+        <div class="reward-btn">
+          赏
+          <span class="money-code">
+            <span class="alipay-code">
+              <div class="code-image"></div>
+              <b>使用支付宝打赏</b>
+            </span>
+            <span class="wechat-code">
+              <div class="code-image"></div>
+              <b>使用微信打赏</b>
+            </span>
+          </span>
+        </div>
+        <p class="notice">欢迎点击上方按钮进行打赏</p>
+      </div>
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+      <div class="qrcode">
+        <canvas id="share-qrcode"></canvas>
+        <p class="notice">扫描二维码，分享此文章</p>
+      </div>
+    
+    <!-- 二维码 END -->
+    
+      <!-- Gitment START -->
+      <div id="comments"></div>
+      <!-- Gitment END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <!-- <aside class="catalog-container">
+  <div class="toc-main">
+    
+    <div class="toc-catalog">Catalog</div>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#第三个示例：着色器封装"><span class="toc-nav-text">第三个示例：着色器封装</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#着色器传值"><span class="toc-nav-text">着色器传值</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#修饰词Uniform"><span class="toc-nav-text">修饰词Uniform</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#顶点数组对象给片段着色器传值"><span class="toc-nav-text">顶点数组对象给片段着色器传值</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#自定义着色器类"><span class="toc-nav-text">自定义着色器类</span></a></li></ol></li></ol></li></ol>
+    
+  </div>
+</aside> -->
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://ikirk.cn/2019/05/28/00703-LearnOpengl-03-Shader/';
+    // var banner = ''
+    // if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+    //   $('#article-banner').css({
+    //     'background-image': 'url(' + banner + ')'
+    //   })
+    // } else {
+    //   // $('#article-banner').geopattern(url)
+    // }
+    $('.header').removeClass('fixed-header')
+     // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+        
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+    // qrcode
+    var qr = new QRious({
+      element: document.getElementById('share-qrcode'),
+      value: document.location.href
+    });
+    // gitment
+    var gitmentConfig = "undefined";
+    if (gitmentConfig !== 'undefined') {
+      var gitment = new Gitment({
+        id: "LearnOpengl示例3-Shader",
+        owner: "undefined",
+        repo: "blog_comment",
+        oauth: {
+          client_id: "ade6b77d59dd6c6dbb01",
+          client_secret: "6b87b0683301c554e4ea52edfe21c2028d066a62"
+        },
+        theme: {
+          render(state, instance) {
+            const container = document.createElement('div')
+            container.lang = "en-US"
+            container.className = 'gitment-container gitment-root-container'
+            container.appendChild(instance.renderHeader(state, instance))
+            container.appendChild(instance.renderEditor(state, instance))
+            container.appendChild(instance.renderComments(state, instance))
+            container.appendChild(instance.renderFooter(state, instance))
+            return container;
+          }
+        }
+      })
+      gitment.render(document.getElementById('comments'))
+    }
+  })();
+</script>
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    <!-- &copy; 2019 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a> -->
+    &copy; 2019 | ikirk.cn
+    <br>
+    <!-- Theme by <a href="https://github.com/yanm1ng">yanm1ng</a> -->
+
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+<script src="/js/script.js"></script>
+  </body>
+</html>

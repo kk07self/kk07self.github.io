@@ -162,12 +162,14 @@
     <section class="markdown-content"><blockquote>
 <p>本文将阐述OC中类在C/C++底层语言中的具体实现，对象的分类，isa指针和superclass指针，顺便也说明了类的load和initialize方法</p>
 </blockquote>
+<p><br></p>
 <ul>
 <li>NSObject类在C/C++中的呈现方式</li>
 <li>NSObject对象内存分配大小</li>
 <li>class的底层结构</li>
 <li>对象的分类及其isa和superclass指针</li>
 </ul>
+<p><br></p>
 <h4 id="NSObject类在C-C-中的呈现方式"><a href="#NSObject类在C-C-中的呈现方式" class="headerlink" title="NSObject类在C/C++中的呈现方式"></a>NSObject类在C/C++中的呈现方式</h4><p>iOS的应用从编写完成到装入到设备中有这样的一个过程：OC语言经过编译，转成C/C++语言的代码；C/C++再经过编译，转成汇编语言；汇编语言再进行编译，转成设备识别的机器语言（只有01组成的）</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">OC—————&gt;C/C++—————&gt;汇编语言—————&gt;机器语言</span><br></pre></td></tr></table></figure>
 <p><strong>窥看NSObject类</strong></p>

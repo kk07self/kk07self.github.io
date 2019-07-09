@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html>
+  <head><meta name="generator" content="Hexo 3.8.0">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="kirk&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      LearnOpengl示例2-Triangle | KK
+    
+  </title>
+  <link href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdn.bootcss.com/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdn.bootcss.com/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/plugins/gitment.css">
+  <script src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdn.bootcss.com/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdn.bootcss.com/nprogress/0.2.0/nprogress.min.js"></script>
+  <script src="/js/qrious.js"></script>
+<script src="/js/gitment.js"></script>
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+</head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png">
+</div>
+
+  <body>
+    <header class="header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>KK</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">首页</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/categories/" class="item-link">分类</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">标签</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">归档</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">项目</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">关于</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">首页</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/categories/" class="menu-link">分类</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">标签</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">归档</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">项目</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">关于</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>LearnOpengl示例2-Triangle</h2>
+  <p class="post-date">2019-05-27</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><p><br></p>
+<blockquote>
+<p> 此示例学习资源来自于<a href="https://learnopengl-cn.github.io/" target="_blank" rel="noopener">LearnOpenGL</a>，感谢！</p>
+</blockquote>
+<p><br></p>
+<h3 id="第二个示例：三角形"><a href="#第二个示例：三角形" class="headerlink" title="第二个示例：三角形"></a>第二个示例：三角形</h3><p><a href="https://github.com/kk07self/LearnOpenGL/tree/master/LearnOpenGL/LearnOpenGL-02-Triangle" target="_blank" rel="noopener">示例代码</a></p>
+<ul>
+<li>创建顶点着色器</li>
+<li>创建片段着色器</li>
+<li>绑定着色器</li>
+<li>设置、绑定顶点数据</li>
+<li>链接顶点属性</li>
+<li>进行渲染</li>
+</ul>
+<p><br></p>
+<p>本示例和第一个窗口示例，整体的逻辑是一样的，区别在于教之前在屏幕上对渲染了三角形（也拓展了矩形等）</p>
+<h4 id="创建顶点着色器"><a href="#创建顶点着色器" class="headerlink" title="创建顶点着色器"></a>创建顶点着色器</h4><ul>
+<li>创建顶点着色器</li>
+<li>并配置着色器源码</li>
+<li>编译着色器：让openGL能够使用它</li>
+</ul>
+<p>一个顶点（x, y, z）三个坐标的值<br>GLSL中向量是vec4，4个值表示，(x, y, z, w)，这里w先用1，后期会介绍<br>具体见以下代码<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">// GLSL顶点着色器源码</span><br><span class="line">const char *vertexShaderSource =</span><br><span class="line">&quot;#version 330 core\n&quot;</span><br><span class="line">&quot;layout (location = 0) in vec3 aPos;\n&quot;</span><br><span class="line">&quot;void main() &#123;\n&quot;</span><br><span class="line">&quot;   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n&quot;</span><br><span class="line">&quot;&#125;\n\0&quot;;</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">// vertex shader, 顶点着色器</span><br><span class="line">int vertexShader = glCreateShader(GL_VERTEX_SHADER);</span><br><span class="line">glShaderSource(vertexShader, 1, &amp;vertexShaderSource, NULL);</span><br><span class="line">glCompileShader(vertexShader);</span><br><span class="line">// 查看编译结果</span><br><span class="line">int success;</span><br><span class="line">char infoLog[512];</span><br><span class="line">glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &amp;success);</span><br><span class="line">if (!success) &#123;</span><br><span class="line">// 编译失败</span><br><span class="line">glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);</span><br><span class="line">std::cout &lt;&lt; &quot;Error::Sharder::Vertex::Compilation_failed\n&quot; &lt;&lt; infoLog &lt;&lt; std::endl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><br></p>
+<h4 id="创建片段着色器"><a href="#创建片段着色器" class="headerlink" title="创建片段着色器"></a>创建片段着色器</h4><p>这个过程和顶点着色器一样</p>
+<ul>
+<li>创建片段着色器</li>
+<li>设置片段着色器源码</li>
+<li>编译着色器源码</li>
+</ul>
+<p>不同的是着色器是不同的，这里是片段着色器<br>片段着色器做的工作是，计算像素最后的颜色输出，这里设置成了红色（1.0，0，0，0，1）（rgba）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">// GLSL片段着色器，计算像素最后的颜色输出</span><br><span class="line">const char *fragmentShaderSource =</span><br><span class="line">&quot;#version 330 core\n&quot;</span><br><span class="line">&quot;out vec4 FragColor;\n&quot;</span><br><span class="line">&quot;void main() &#123;\n&quot;</span><br><span class="line">&quot;   FragColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);\n&quot;</span><br><span class="line">&quot;&#125;\n\0&quot;;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">// fragment shader, 片段着色器</span><br><span class="line">int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);</span><br><span class="line">// 将着色器源码附加到着色器对象上，并编译</span><br><span class="line">glShaderSource(fragmentShader, 1, &amp;fragmentShaderSource, NULL);</span><br><span class="line">glCompileShader(fragmentShader);</span><br><span class="line">// 查看编译结果</span><br><span class="line">glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &amp;success);</span><br><span class="line">if (!success) &#123;</span><br><span class="line">glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);</span><br><span class="line">std::cout &lt;&lt; &quot;Error::Sharder::Fragment::Compilation_failed\n&quot; &lt;&lt; infoLog &lt;&lt; std::endl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><br></p>
+<h4 id="绑定着色器-通过着色器程序绑定多个着色器"><a href="#绑定着色器-通过着色器程序绑定多个着色器" class="headerlink" title="绑定着色器: 通过着色器程序绑定多个着色器"></a>绑定着色器: 通过着色器程序绑定多个着色器</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">// link shader, 链接着色器，通过着色器程序进行多个着色器合并</span><br><span class="line">int shaderProgram = glCreateProgram();</span><br><span class="line">glAttachShader(shaderProgram, vertexShader);</span><br><span class="line">glAttachShader(shaderProgram, fragmentShader);</span><br><span class="line">glLinkProgram(shaderProgram);</span><br><span class="line">// 查看链接是否成功</span><br><span class="line">glGetProgramiv(shaderProgram, GL_LINK_STATUS, &amp;success);</span><br><span class="line">if (!success) &#123;</span><br><span class="line">// 链接失败</span><br><span class="line">glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);</span><br><span class="line">std::cout &lt;&lt; &quot;Error::Sharder::Program::Linking_failed\n&quot; &lt;&lt; infoLog &lt;&lt; std::endl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 删除shader，链接成功后就不需要了，需要清除他们</span><br><span class="line">glDeleteShader(vertexShader);</span><br><span class="line">glDeleteShader(fragmentShader);</span><br></pre></td></tr></table></figure>
+<p><br></p>
+<h4 id="设置、绑定顶点数据：数组对象，顶点缓冲对象，索引缓冲对象"><a href="#设置、绑定顶点数据：数组对象，顶点缓冲对象，索引缓冲对象" class="headerlink" title="设置、绑定顶点数据：数组对象，顶点缓冲对象，索引缓冲对象"></a>设置、绑定顶点数据：数组对象，顶点缓冲对象，索引缓冲对象</h4><p>这里示例了三组：分别是一个三角形、矩形（2个三角形）、多边形（多个三角形）<br>一个三角形：用的最简单的顶点数组对象进行设置；<br>矩形和多边形：用的是索引缓冲对象进行设置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line">三角形：初始化顶点数据，并绑定、填充到缓冲区</span><br><span class="line"></span><br><span class="line">@param VAO 顶点数据对象</span><br><span class="line">@param VBO 顶点缓冲对象</span><br><span class="line">*/</span><br><span class="line">void bindTriangle(unsigned int *VAO, unsigned int *VBO) &#123;</span><br><span class="line">float vertices[] = &#123;</span><br><span class="line">-0.5f, -0.5f, 0.0f, // 左</span><br><span class="line">0.5f, -0.5f, 0.0f, // 右</span><br><span class="line">0.0f,  0.5f, 0.0f, // 上</span><br><span class="line">&#125;;</span><br><span class="line">// 创建顶点数组对象</span><br><span class="line">glGenVertexArrays(1, VAO);</span><br><span class="line">// 创建顶点缓冲对象</span><br><span class="line">glGenBuffers(1, VBO);</span><br><span class="line"></span><br><span class="line">// 绑定顶点数组对象、绑定和设置顶点缓冲对象、再设置顶点解析</span><br><span class="line">// 复制顶点数组到缓冲中供OpenGL使用</span><br><span class="line">glBindVertexArray(*VAO);</span><br><span class="line"></span><br><span class="line">glBindBuffer(GL_ARRAY_BUFFER, *VBO);</span><br><span class="line">glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line">矩形：初始化顶点数据，并绑定、填充到缓冲区</span><br><span class="line"></span><br><span class="line">@param VAO 顶点数据对象</span><br><span class="line">@param VBO 顶点缓冲对象</span><br><span class="line">@param EBO 索引缓冲对象</span><br><span class="line">*/</span><br><span class="line">void bindRectangle(unsigned int *VAO, unsigned int *VBO, unsigned int *EBO) &#123;</span><br><span class="line">// 顶点数据数组</span><br><span class="line">float vertices[] = &#123;</span><br><span class="line">0.5f,  0.5f, 0.0f,  // top right</span><br><span class="line">0.5f, -0.5f, 0.0f,  // bottom right</span><br><span class="line">-0.5f, -0.5f, 0.0f,  // bottom left</span><br><span class="line">-0.5f,  0.5f, 0.0f   // top left</span><br><span class="line">&#125;;</span><br><span class="line">// 索引数据</span><br><span class="line">unsigned int indices[] = &#123;  // note that we start from 0!</span><br><span class="line">0, 1, 3,  // first Triangle</span><br><span class="line">1, 2, 3   // second Triangle</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">// 创建对象</span><br><span class="line">glGenVertexArrays(1, VAO);</span><br><span class="line">glGenBuffers(1, VBO);</span><br><span class="line">glGenBuffers(1, EBO);</span><br><span class="line"></span><br><span class="line">// 绑定顶点数组对象、绑定和设置顶点缓冲对象、再设置顶点解析</span><br><span class="line">// 复制顶点数组到缓冲中供OpenGL使用</span><br><span class="line">glBindVertexArray(*VAO);</span><br><span class="line"></span><br><span class="line">glBindBuffer(GL_ARRAY_BUFFER, *VBO);</span><br><span class="line">glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);</span><br><span class="line"></span><br><span class="line">glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, *EBO);</span><br><span class="line">glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line">更多图形绘制：初始化顶点数据，并绑定、填充到缓冲区</span><br><span class="line"></span><br><span class="line">@param VAO 顶点数据对象</span><br><span class="line">@param VBO 顶点缓冲对象</span><br><span class="line">@param EBO 索引缓冲对象</span><br><span class="line">*/</span><br><span class="line">void bindMore(unsigned int *VAO, unsigned int *VBO, unsigned int *EBO) &#123;</span><br><span class="line">// 顶点数据数组</span><br><span class="line">float vertices[] = &#123;</span><br><span class="line">0.5f,  0.5f, 0.0f,  // top right</span><br><span class="line">0.5f, -0.5f, 0.0f,  // bottom right</span><br><span class="line">-0.5f, -0.5f, 0.0f,  // bottom left</span><br><span class="line">-0.5f,  0.5f, 0.0f,   // top left</span><br><span class="line">0.0f, 0.5f, 0.0, // 上面中间点</span><br><span class="line">-0.5f, 1.0f, 0.0f, // 最左上角</span><br><span class="line">0.5f, 1.0f, 0.0, // 最右上角</span><br><span class="line">&#125;;</span><br><span class="line">// 索引数据</span><br><span class="line">unsigned int indices[] = &#123;  // note that we start from 0!</span><br><span class="line">0, 1, 3, // first Triangle</span><br><span class="line">1, 2, 3, // second Triangle</span><br><span class="line">5, 4, 3, // 第三个</span><br><span class="line">6, 4, 0  // 第四个</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">// 创建对象</span><br><span class="line">glGenVertexArrays(1, VAO);</span><br><span class="line">glGenBuffers(1, VBO);</span><br><span class="line">glGenBuffers(1, EBO);</span><br><span class="line"></span><br><span class="line">// 绑定顶点数组对象、绑定和设置顶点缓冲对象、再设置顶点解析</span><br><span class="line">// 复制顶点数组到缓冲中供OpenGL使用</span><br><span class="line">glBindVertexArray(*VAO);</span><br><span class="line"></span><br><span class="line">glBindBuffer(GL_ARRAY_BUFFER, *VBO);</span><br><span class="line">glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);</span><br><span class="line"></span><br><span class="line">glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, *EBO);</span><br><span class="line">glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>最后是需要删除这些对象的<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">// 删除顶点数据</span><br><span class="line">glDeleteVertexArrays(1, &amp;VAO);</span><br><span class="line">glDeleteBuffers(1, &amp;VBO);</span><br><span class="line">glDeleteBuffers(1, &amp;EBO);</span><br></pre></td></tr></table></figure></p>
+<p><br></p>
+<h4 id="链接顶点属性：告诉OpenGL如何解析顶点数据"><a href="#链接顶点属性：告诉OpenGL如何解析顶点数据" class="headerlink" title="链接顶点属性：告诉OpenGL如何解析顶点数据"></a>链接顶点属性：告诉OpenGL如何解析顶点数据</h4><p>具体可见以下代码的注释：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">// 设置顶点属性指针，告诉OpenGL如何解析顶点数据</span><br><span class="line">// 第一个参数：顶点属性的位置值，这里从第一个开始，即0</span><br><span class="line">// 第二个参数：指定顶点属性的大小。顶点属性是一个vec3，它由3个值组成，所以大小是3。</span><br><span class="line">// 第三个参数：指定数据的类型，这里是GL_FLOAT(GLSL中vec*都是由浮点数值组成的)。</span><br><span class="line">// 第四个参数：是否希望数据被标准化。</span><br><span class="line">//           如果我们设置为GL_TRUE，所有数据都会被映射到0（对于有符号型signed数据是-1）到1之间。</span><br><span class="line">//           我们把它设置为GL_FALSE。</span><br><span class="line">// 第五个参数：步长(Stride)，它告诉我们在连续的顶点属性组之间的间隔。</span><br><span class="line">// 第六个参数：类型是void*，所以需要我们进行这个奇怪的强制类型转换。它表示位置数据在缓冲中起始位置的偏移量(Offset)。</span><br><span class="line">glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), (void *)0);</span><br><span class="line">// 以顶点位置0作为参数启用顶点属性</span><br><span class="line">glEnableVertexAttribArray(0);</span><br><span class="line"></span><br><span class="line">// 解绑之前的绑定</span><br><span class="line">glBindBuffer(GL_ARRAY_BUFFER, 0);</span><br><span class="line">glBindVertexArray(0);</span><br></pre></td></tr></table></figure>
+<p><br></p>
+<h4 id="进行渲染：使用"><a href="#进行渲染：使用" class="headerlink" title="进行渲染：使用"></a>进行渲染：使用</h4><p>具体见以下的注释</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">// render loop</span><br><span class="line">while (!glfwWindowShouldClose(window)) &#123;</span><br><span class="line">// input</span><br><span class="line">processInput(window);</span><br><span class="line"></span><br><span class="line">// render</span><br><span class="line">// -----</span><br><span class="line"></span><br><span class="line">// 清屏</span><br><span class="line">glClearColor(46/255.0f, 47/255.0f, 67/255.0f, 1.0f);</span><br><span class="line">glClear(GL_COLOR_BUFFER_BIT);</span><br><span class="line"></span><br><span class="line">// 绘制三角形</span><br><span class="line">// 使用着色器程序进行渲染</span><br><span class="line">glUseProgram(shaderProgram);</span><br><span class="line">glBindVertexArray(VAO);</span><br><span class="line"></span><br><span class="line">// 绘制物体</span><br><span class="line">// 第一个参数：图元的类型，这里是三角形</span><br><span class="line">// 第二个参数：顶点数组的起始索引，这里是0</span><br><span class="line">// 第三个参数：要绘制的顶点个数，三角形，绘制三个</span><br><span class="line">//        glDrawArrays(GL_TRIANGLES, 0, 3);</span><br><span class="line"></span><br><span class="line">// 绘制矩形, 1-绘制的模式：三角形    2-顶点个数：6个   3-索引的类型：unsigned int    4-索引起始位置： 0</span><br><span class="line">//        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);</span><br><span class="line"></span><br><span class="line">// 这里绘制了4个三角形，12个点</span><br><span class="line">glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, 0);</span><br><span class="line"></span><br><span class="line">// 会交换颜色缓冲</span><br><span class="line">glfwSwapBuffers(window);</span><br><span class="line">// 捕捉事件</span><br><span class="line">glfwPollEvents();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#opengl">
+    <span class="tag-code">opengl</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/2019/05/25/00701-LearnOpengl-01-Window/">
+        <span class="nav-arrow">← </span>
+        
+          LearnOpengl示例1-Window
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/2019/05/28/00703-LearnOpengl-03-Shader/">
+        
+          LearnOpengl示例3-Shader
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+      <div class="money-like">
+        <div class="reward-btn">
+          赏
+          <span class="money-code">
+            <span class="alipay-code">
+              <div class="code-image"></div>
+              <b>使用支付宝打赏</b>
+            </span>
+            <span class="wechat-code">
+              <div class="code-image"></div>
+              <b>使用微信打赏</b>
+            </span>
+          </span>
+        </div>
+        <p class="notice">欢迎点击上方按钮进行打赏</p>
+      </div>
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+      <div class="qrcode">
+        <canvas id="share-qrcode"></canvas>
+        <p class="notice">扫描二维码，分享此文章</p>
+      </div>
+    
+    <!-- 二维码 END -->
+    
+      <!-- Gitment START -->
+      <div id="comments"></div>
+      <!-- Gitment END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <!-- <aside class="catalog-container">
+  <div class="toc-main">
+    
+    <div class="toc-catalog">Catalog</div>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#第二个示例：三角形"><span class="toc-nav-text">第二个示例：三角形</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#创建顶点着色器"><span class="toc-nav-text">创建顶点着色器</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#创建片段着色器"><span class="toc-nav-text">创建片段着色器</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#绑定着色器-通过着色器程序绑定多个着色器"><span class="toc-nav-text">绑定着色器: 通过着色器程序绑定多个着色器</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#设置、绑定顶点数据：数组对象，顶点缓冲对象，索引缓冲对象"><span class="toc-nav-text">设置、绑定顶点数据：数组对象，顶点缓冲对象，索引缓冲对象</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#链接顶点属性：告诉OpenGL如何解析顶点数据"><span class="toc-nav-text">链接顶点属性：告诉OpenGL如何解析顶点数据</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#进行渲染：使用"><span class="toc-nav-text">进行渲染：使用</span></a></li></ol></li></ol>
+    
+  </div>
+</aside> -->
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://ikirk.cn/2019/05/27/00702-LearnOpengl-02-Triangle/';
+    // var banner = ''
+    // if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+    //   $('#article-banner').css({
+    //     'background-image': 'url(' + banner + ')'
+    //   })
+    // } else {
+    //   // $('#article-banner').geopattern(url)
+    // }
+    $('.header').removeClass('fixed-header')
+     // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+        
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+    // qrcode
+    var qr = new QRious({
+      element: document.getElementById('share-qrcode'),
+      value: document.location.href
+    });
+    // gitment
+    var gitmentConfig = "undefined";
+    if (gitmentConfig !== 'undefined') {
+      var gitment = new Gitment({
+        id: "LearnOpengl示例2-Triangle",
+        owner: "undefined",
+        repo: "blog_comment",
+        oauth: {
+          client_id: "ade6b77d59dd6c6dbb01",
+          client_secret: "6b87b0683301c554e4ea52edfe21c2028d066a62"
+        },
+        theme: {
+          render(state, instance) {
+            const container = document.createElement('div')
+            container.lang = "en-US"
+            container.className = 'gitment-container gitment-root-container'
+            container.appendChild(instance.renderHeader(state, instance))
+            container.appendChild(instance.renderEditor(state, instance))
+            container.appendChild(instance.renderComments(state, instance))
+            container.appendChild(instance.renderFooter(state, instance))
+            return container;
+          }
+        }
+      })
+      gitment.render(document.getElementById('comments'))
+    }
+  })();
+</script>
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    <!-- &copy; 2019 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a> -->
+    &copy; 2019 | ikirk.cn
+    <br>
+    <!-- Theme by <a href="https://github.com/yanm1ng">yanm1ng</a> -->
+
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+<script src="/js/script.js"></script>
+  </body>
+</html>

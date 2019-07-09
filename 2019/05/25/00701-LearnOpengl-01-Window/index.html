@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html>
+  <head><meta name="generator" content="Hexo 3.8.0">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="kirk&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      LearnOpengl示例1-Window | KK
+    
+  </title>
+  <link href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdn.bootcss.com/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdn.bootcss.com/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/plugins/gitment.css">
+  <script src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdn.bootcss.com/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdn.bootcss.com/nprogress/0.2.0/nprogress.min.js"></script>
+  <script src="/js/qrious.js"></script>
+<script src="/js/gitment.js"></script>
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+</head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png">
+</div>
+
+  <body>
+    <header class="header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>KK</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">首页</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/categories/" class="item-link">分类</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">标签</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">归档</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">项目</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">关于</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">首页</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/categories/" class="menu-link">分类</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">标签</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">归档</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">项目</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">关于</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>LearnOpengl示例1-Window</h2>
+  <p class="post-date">2019-05-25</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><p><br></p>
+<blockquote>
+<p> 此示例学习资源来自于<a href="https://learnopengl-cn.github.io/" target="_blank" rel="noopener">LearnOpenGL</a>，感谢！</p>
+</blockquote>
+<p><br></p>
+<h3 id="第一个示例：窗口"><a href="#第一个示例：窗口" class="headerlink" title="第一个示例：窗口"></a>第一个示例：窗口</h3><p><a href="https://github.com/kk07self/LearnOpenGL/tree/master/LearnOpenGL/LearnOpenGL-01-Window" target="_blank" rel="noopener">示例代码</a> </p>
+<ul>
+<li>初始化glfw并用其创建一个window窗口</li>
+<li>配置窗口信息</li>
+<li>循环渲染</li>
+<li>在所有结束后清除缓冲</li>
+</ul>
+<p><br></p>
+<h4 id="初始化glfw并用其创建一个window窗口"><a href="#初始化glfw并用其创建一个window窗口" class="headerlink" title="初始化glfw并用其创建一个window窗口"></a>初始化glfw并用其创建一个window窗口</h4><ul>
+<li>这里一是初始化glfw并设置其信息</li>
+<li>通过glfw创建窗口</li>
+<li>监察是否创建成功</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 初始化glfw，并配置信息</span></span><br><span class="line">glfwInit();</span><br><span class="line"><span class="comment">// 主板版本号</span></span><br><span class="line">glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, <span class="number">3</span>);</span><br><span class="line"><span class="comment">// 次版本号</span></span><br><span class="line">glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, <span class="number">3</span>);</span><br><span class="line"><span class="comment">// 使用的是核心模式(Core-profile)</span></span><br><span class="line">glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> __APPLE__</span></span><br><span class="line"><span class="comment">// Mac OS X系统需要设置</span></span><br><span class="line">glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"><span class="comment">// 创建一个窗口</span></span><br><span class="line">GLFWwindow* window = glfwCreateWindow(<span class="number">800</span>, <span class="number">600</span>, <span class="string">"LearnOpenGL"</span>, <span class="literal">NULL</span>, <span class="literal">NULL</span>);</span><br><span class="line"><span class="keyword">if</span> (window == <span class="literal">NULL</span>)</span><br><span class="line">&#123;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Failed to create GLFW window"</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">glfwTerminate();</span><br><span class="line"><span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><br></p>
+<h4 id="配置窗口信息"><a href="#配置窗口信息" class="headerlink" title="配置窗口信息"></a>配置窗口信息</h4><ul>
+<li>这里主要是将创建的窗口设置成上下文</li>
+<li>配置窗口大小调整的函数</li>
+<li>用glad统一管理OpenGL的函数指针，因此初始化glad</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 将我们窗口的上下文设置为当前线程的主上下文</span></span><br><span class="line">glfwMakeContextCurrent(window);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 注册窗口大小调整函数，每次调整回调都会调用callback的方法</span></span><br><span class="line">glfwSetFramebufferSizeCallback(window, frameBuffer_size_callback);</span><br><span class="line"></span><br><span class="line"><span class="comment">// glad: load all OpenGL function pointers</span></span><br><span class="line"><span class="comment">// glad: 管理OpenGL的函数指针，在OpenGL函数使用之前初始化glad</span></span><br><span class="line"><span class="keyword">if</span> (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) &#123;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Failed to initialize GLAD"</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line"><span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><br></p>
+<h4 id="循环渲染"><a href="#循环渲染" class="headerlink" title="循环渲染"></a>循环渲染</h4><ul>
+<li>循环渲染的条件：如果没有点击点击<strong>esc</strong>键就保持渲染，否则关闭窗口渲染</li>
+<li>渲染分为两个部分：一是状态设置、二是使用设置的状态，这里只是简单设置了颜色</li>
+<li>交换缓冲+监听触发的事件</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)</span></span><br><span class="line"><span class="comment">// 会交换颜色缓冲（它是一个储存着GLFW窗口每一个像素颜色值的大缓冲），它在这一迭代中被用来绘制，并且将会作为输出显示在屏幕上。</span></span><br><span class="line">glfwSwapBuffers(window);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 检查有没有触发什么事件（比如键盘输入、鼠标移动等）、更新窗口状态，并调用对应的回调函数（可以通过回调方法手动设置）</span></span><br><span class="line">glfwPollEvents();</span><br></pre></td></tr></table></figure>
+<p><br></p>
+<h4 id="在所有结束后清除缓冲"><a href="#在所有结束后清除缓冲" class="headerlink" title="在所有结束后清除缓冲"></a>在所有结束后清除缓冲</h4><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 释放资源</span></span><br><span class="line">glfwTerminate();</span><br></pre></td></tr></table></figure>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#opengl">
+    <span class="tag-code">opengl</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/2019/01/25/00203-iOS性能优化/">
+        <span class="nav-arrow">← </span>
+        
+          iOS性能优化
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/2019/05/27/00702-LearnOpengl-02-Triangle/">
+        
+          LearnOpengl示例2-Triangle
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+      <div class="money-like">
+        <div class="reward-btn">
+          赏
+          <span class="money-code">
+            <span class="alipay-code">
+              <div class="code-image"></div>
+              <b>使用支付宝打赏</b>
+            </span>
+            <span class="wechat-code">
+              <div class="code-image"></div>
+              <b>使用微信打赏</b>
+            </span>
+          </span>
+        </div>
+        <p class="notice">欢迎点击上方按钮进行打赏</p>
+      </div>
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+      <div class="qrcode">
+        <canvas id="share-qrcode"></canvas>
+        <p class="notice">扫描二维码，分享此文章</p>
+      </div>
+    
+    <!-- 二维码 END -->
+    
+      <!-- Gitment START -->
+      <div id="comments"></div>
+      <!-- Gitment END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <!-- <aside class="catalog-container">
+  <div class="toc-main">
+    
+    <div class="toc-catalog">Catalog</div>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#第一个示例：窗口"><span class="toc-nav-text">第一个示例：窗口</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#初始化glfw并用其创建一个window窗口"><span class="toc-nav-text">初始化glfw并用其创建一个window窗口</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#配置窗口信息"><span class="toc-nav-text">配置窗口信息</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#循环渲染"><span class="toc-nav-text">循环渲染</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#在所有结束后清除缓冲"><span class="toc-nav-text">在所有结束后清除缓冲</span></a></li></ol></li></ol>
+    
+  </div>
+</aside> -->
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://ikirk.cn/2019/05/25/00701-LearnOpengl-01-Window/';
+    // var banner = ''
+    // if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+    //   $('#article-banner').css({
+    //     'background-image': 'url(' + banner + ')'
+    //   })
+    // } else {
+    //   // $('#article-banner').geopattern(url)
+    // }
+    $('.header').removeClass('fixed-header')
+     // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+        
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+    // qrcode
+    var qr = new QRious({
+      element: document.getElementById('share-qrcode'),
+      value: document.location.href
+    });
+    // gitment
+    var gitmentConfig = "undefined";
+    if (gitmentConfig !== 'undefined') {
+      var gitment = new Gitment({
+        id: "LearnOpengl示例1-Window",
+        owner: "undefined",
+        repo: "blog_comment",
+        oauth: {
+          client_id: "ade6b77d59dd6c6dbb01",
+          client_secret: "6b87b0683301c554e4ea52edfe21c2028d066a62"
+        },
+        theme: {
+          render(state, instance) {
+            const container = document.createElement('div')
+            container.lang = "en-US"
+            container.className = 'gitment-container gitment-root-container'
+            container.appendChild(instance.renderHeader(state, instance))
+            container.appendChild(instance.renderEditor(state, instance))
+            container.appendChild(instance.renderComments(state, instance))
+            container.appendChild(instance.renderFooter(state, instance))
+            return container;
+          }
+        }
+      })
+      gitment.render(document.getElementById('comments'))
+    }
+  })();
+</script>
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    <!-- &copy; 2019 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a> -->
+    &copy; 2019 | ikirk.cn
+    <br>
+    <!-- Theme by <a href="https://github.com/yanm1ng">yanm1ng</a> -->
+
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+<script src="/js/script.js"></script>
+  </body>
+</html>
