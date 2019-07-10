@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html>
+  <head><meta name="generator" content="Hexo 3.8.0">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="kirk&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      LearnOpengl示例4-Texture | KK
+    
+  </title>
+  <link href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdn.bootcss.com/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdn.bootcss.com/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/plugins/gitment.css">
+  <script src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdn.bootcss.com/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdn.bootcss.com/nprogress/0.2.0/nprogress.min.js"></script>
+  <script src="/js/qrious.js"></script>
+<script src="/js/gitment.js"></script>
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+</head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png">
+</div>
+
+  <body>
+    <header class="header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>KK</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">首页</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/categories/" class="item-link">分类</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">标签</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">归档</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">项目</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">关于</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">首页</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/categories/" class="menu-link">分类</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">标签</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">归档</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">项目</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">关于</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>LearnOpengl示例4-Texture</h2>
+  <p class="post-date">2019-05-29</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><p><br></p>
+<blockquote>
+<p>此示例学习资源来自于<a href="https://learnopengl-cn.github.io/01%20Getting%20started/06%20Textures/" target="_blank" rel="noopener">LearnOpenGL</a>，感谢！</p>
+</blockquote>
+<p><br></p>
+<h2 id="第四个示例：纹理"><a href="#第四个示例：纹理" class="headerlink" title="第四个示例：纹理"></a>第四个示例：纹理</h2><p><a href="https://github.com/kk07self/LearnOpenGL/tree/master/LearnOpenGL/LearnOpenGL-04-Texture" target="_blank" rel="noopener">示例代码</a></p>
+<p>本篇示例主要介绍纹理-Texture。对于纹理，主要会介绍两部分，一部分是纹理的创建，一部分是纹理的使用（单纹理使用、多纹理使用）</p>
+<ul>
+<li>纹理的介绍<ul>
+<li>纹理坐标</li>
+<li>着色器</li>
+<li>数据读取</li>
+</ul>
+</li>
+<li>纹理的创建<ul>
+<li>纹理的创建和绑定</li>
+<li>设置纹理采样方式</li>
+<li>加载图片资源填充纹理</li>
+</ul>
+</li>
+<li>纹理的使用<ul>
+<li>单纹理的使用</li>
+<li>多纹理混合</li>
+</ul>
+</li>
+</ul>
+<p><br></p>
+<h4 id="纹理的介绍"><a href="#纹理的介绍" class="headerlink" title="纹理的介绍"></a>纹理的介绍</h4><p><strong>1 纹理坐标</strong></p>
+<p>在开始之前，先简单介绍下纹理的坐标。<br>纹理坐标：用来标明该从纹理图像的哪个部分进行采样（采集片段颜色）<br>纹理坐标：在x和y轴上，范围是0-1之间（目前介绍的是2D纹理图像），即开始于（0，0）纹理图片的左下角，终止于（1，1）纹理图片的右上角。<br>如果我们设置一个三角形，那么他的纹理坐标可以是这样：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">float</span> texCoord[] = &#123;</span><br><span class="line">    <span class="number">0.0f</span>, <span class="number">0.0f</span>, <span class="comment">// 左下角</span></span><br><span class="line">    <span class="number">1.0f</span>, <span class="number">0.0f</span>, <span class="comment">// 右下角</span></span><br><span class="line">    <span class="number">0.5f</span>, <span class="number">1.0f</span>  <span class="comment">// 上中</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>本示例中，将纹理的坐标数据和顶点着色器的数据源放在了一起，都放在了<code>顶点数组对象</code>中了，后面在使用的时候告知下OpenGL怎么取即可。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">// 顶点数据数组，包含纹理数据</span><br><span class="line">// 纹理是2维数据，范围是(0,0)左下-(1,1)右上</span><br><span class="line">float vertices[] = &#123;</span><br><span class="line"></span><br><span class="line">// points           // colors           // texture coords</span><br><span class="line">0.5f,  0.5f, 0.0f,  1.0f, 0.0f, 0.0f,   1.0f, 1.0f,// top right</span><br><span class="line">0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,   1.0f, 0.0f,// bottom right</span><br><span class="line">-0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f,   0.0f, 0.0f, // bottom left</span><br><span class="line">-0.5f,  0.5f, 0.0f, 1.0f, 1.0f, 0.0f,   0.0f, 1.0f   // top left</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<p><br></p>
+<p><strong>2 着色器</strong></p>
+<p><strong>2.1 顶点着色器</strong></p>
+<p>匹配纹理的着色器需要进行调整，首先是<code>顶点着色器</code>。<br><code>顶点着色器</code>上添加纹理坐标的接受值<code>aTexCoord</code>，以及传递给<code>片段着色器</code>的输出值<code>TexCoord</code>。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#version 330 core</span></span><br><span class="line">layout (location = <span class="number">0</span>) in vec3 aPos;</span><br><span class="line">layout (location = <span class="number">1</span>) in vec3 aColor;</span><br><span class="line">layout (location = <span class="number">2</span>) in vec2 aTexCoord;</span><br><span class="line"></span><br><span class="line">out vec3 ourColor;</span><br><span class="line">out vec2 TexCoord;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">gl_Position = vec4(aPos, <span class="number">1.0</span>);</span><br><span class="line">ourColor = aColor;</span><br><span class="line">TexCoord = aTexCoord;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<pre><code>&lt;br/&gt;
+</code></pre><p><strong>2.2 片段着色器</strong></p>
+<p>接下来就是<code>片段着色器</code>，需要一个接收<code>顶点着色器</code>传递过来的<code>纹理坐标</code>，这里是<code>TexCoord</code><br>纹理的处理，除了有<code>纹理坐标</code>(采集那一刻的纹理图像)还需要有<code>纹理采样器</code>(如何采集纹理图像)。<br>GLSL有一个供纹理对象使用的内建数据类型，叫做采样器(Sampler)，它以纹理类型作为后缀，比如<code>sampler1D</code>、<code>sampler3D</code>，或在我们的例子中的<code>sampler2D</code>。我们可以简单声明一个<code>uniform sampler2D</code>把一个纹理添加到片段着色器中，稍后我们会把纹理赋值给这个<code>uniform</code>。<br>完整的<code>片段着色器</code>代码</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#version 330 core</span></span><br><span class="line">out vec4 FragColor;</span><br><span class="line">in  vec3 vertexColor;</span><br><span class="line">in  vec2 TexCoord;</span><br><span class="line"></span><br><span class="line">uniform sampler2D texture1;</span><br><span class="line">uniform sampler2D texture2;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line"><span class="comment">// 只要纹理</span></span><br><span class="line"><span class="comment">//    FragColor = texture(texture1, TexCoord);</span></span><br><span class="line"><span class="comment">// 纹理与颜色结合</span></span><br><span class="line"><span class="comment">//    FragColor = texture(texture1, TexCoord) * vec4(vertexColor, 1.0);</span></span><br><span class="line"><span class="comment">// 多纹理组合, 第一个透明度80，第二个20</span></span><br><span class="line">FragColor = mix(texture(texture1, TexCoord), texture(texture2, TexCoord), <span class="number">0.2</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><br></p>
+<p><strong>3 数据读取</strong></p>
+<p>告知OpenGL怎么读取数据时：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 告诉opengl如何读取数据</span></span><br><span class="line"><span class="comment">// 因为此次点的位置和颜色的位置在一个数组里，颜色紧随位置后面，因此步长为6</span></span><br><span class="line">glVertexAttribPointer(<span class="number">0</span>, <span class="number">3</span>, GL_FLOAT, GL_FALSE, <span class="number">8</span>*<span class="keyword">sizeof</span>(<span class="keyword">float</span>), (<span class="keyword">void</span> *)<span class="number">0</span>);</span><br><span class="line"><span class="comment">// 以顶点位置0作为参数启用顶点属性</span></span><br><span class="line">glEnableVertexAttribArray(<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// 颜色属性 从1开始, 偏移量是3</span></span><br><span class="line">glVertexAttribPointer(<span class="number">1</span>, <span class="number">3</span>, GL_FLOAT, GL_FALSE, <span class="number">8</span>*<span class="keyword">sizeof</span>(<span class="keyword">float</span>), (<span class="keyword">void</span> *)(<span class="number">3</span> * <span class="keyword">sizeof</span>(<span class="keyword">float</span>)));</span><br><span class="line"><span class="comment">// 以顶点位置1作为参数启用顶点属性 --- 颜色</span></span><br><span class="line">glEnableVertexAttribArray(<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 文理设置 从2开始, 偏移量是6</span></span><br><span class="line">glVertexAttribPointer(<span class="number">2</span>, <span class="number">2</span>, GL_FLOAT, GL_FALSE, <span class="number">8</span>*<span class="keyword">sizeof</span>(<span class="keyword">float</span>), (<span class="keyword">void</span> *)(<span class="number">6</span> * <span class="keyword">sizeof</span>(<span class="keyword">float</span>)));</span><br><span class="line"><span class="comment">// 以顶点位置1作为参数启用顶点属性 --- 颜色</span></span><br><span class="line">glEnableVertexAttribArray(<span class="number">2</span>);</span><br></pre></td></tr></table></figure></p>
+<p>也就是在之前的示例中添加了纹理的读取规范，其他的不再详细赘述了。</p>
+<p><br></p>
+<h4 id="纹理的创建"><a href="#纹理的创建" class="headerlink" title="纹理的创建"></a>纹理的创建</h4><p>纹理的创建这里简单分了四部分：纹理的创建、绑定、设置纹理采样方式、加载图片数据到纹理中。</p>
+<p><strong>1 纹理的创建和绑定</strong></p>
+<p><code>纹理</code>的创建和绑定和<code>着色器</code>的创建绑定一样简单明了。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 0、定义纹理</span></span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">int</span> texture;</span><br><span class="line"><span class="comment">// 1、创建1个texture给 texture</span></span><br><span class="line">glGenTextures(<span class="number">1</span>, &amp;texture);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 2、绑定纹理</span></span><br><span class="line">glBindTexture(GL_TEXTURE_2D, texture);</span><br></pre></td></tr></table></figure>
+<p><br></p>
+<p><strong>2 设置纹理采样方式</strong></p>
+<p>纹理坐标是告诉该从哪里进行采样，关于具体怎么样采样，就需要另外告知OpenGL了。</p>
+<p><strong>2.1 纹理环绕方式</strong></p>
+<p>纹理坐标的范围是（0，0）到（1，1），如果超出了纹理坐标范围之外，该如何采集，这就涉及到<code>纹理环绕方式</code>了。<br>OpenGL提供了以下几种选择：</p>
+<ul>
+<li><p><code>GL_REPEAT</code>：对纹理的默认行为。重复纹理图像。</p>
+</li>
+<li><p><code>GL_MIRRORED_REPEAT</code>:  和GL_REPEAT一样，但每次重复图片是镜像放置的。</p>
+</li>
+<li><p><code>GL_CLAMP_TO_EDGE</code>:  纹理坐标会被约束在0到1之间，超出的部分会重复纹理坐标的边缘，产生一种边缘被拉伸的效果。</p>
+</li>
+<li><p><code>GL_CLAMP_TO_BORDER</code>: 超出的坐标为用户指定的边缘颜色。<br> 这几个选择都可以使用<code>glTexParameter*</code>函数对单独的一个纹理坐标轴进行色值（s、t(如果是使用3D纹理还有一个r)他们和x、y、z是等价的）。</p>
+<p> 如这篇示例中使用的是第一个默认的</p>
+</li>
+</ul>
+ <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);</span><br><span class="line">glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);</span><br></pre></td></tr></table></figure>
+<p>​    另外，如果我们选择了<code>GL_CLAMP_TO_BORDER</code>这项，我们还需要指定一个边缘的颜色。这时需要使用<code>glTexParameterfv</code>函数设置，如：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">float</span> borderColor[] = &#123; <span class="number">1.0f</span>, <span class="number">1.0f</span>, <span class="number">0.0f</span>, <span class="number">1.0f</span> &#125;;</span><br><span class="line">glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);</span><br></pre></td></tr></table></figure></p>
+<p>​    不过在这个示例中没有体现。<br><br></p>
+<p><strong>2.2 设置纹理过滤</strong></p>
+<p>​    OpenGL需要知道，怎样将纹理像素映射到纹理坐标上。如果一个很大的物体但纹理的分辨率很低的时候，这时候就需要进行额外操作了，OpenGL提供了<code>纹理过滤</code>的选项来进行这样的操作。OpenGL提供了很多<code>纹理过滤</code>选项，但目前我们介绍两个（本示例中会使用的一个）。</p>
+<ul>
+<li><p><code>GL_NEAREST</code>:（也叫邻近过滤，Nearest Neighbor Filtering）是OpenGL默认的纹理过滤方式。当设置为GL_NEAREST的时候，OpenGL会选择中心点最接近纹理坐标的那个像素。</p>
+</li>
+<li><p><code>GL_LINEAR</code>：也叫线性过滤，(Bi)linear Filtering）它会基于纹理坐标附近的纹理像素，计算出一个插值，近似出这些纹理像素之间的颜色。</p>
+<p><code>GL_NEAREST</code>会产生颗粒状的图案，我们能够清晰看到组成纹理的像素，而<code>GL_LINEAR</code>能够产生更平滑的图案，很难看出单个的纹理像素。<code>GL_LINEAR</code>可以产生更真实的输出，但有些开发者更喜欢8-bit风格，所以他们会用<code>GL_NEAREST</code>选项。</p>
+<p>当进行放大(Magnify)和缩小(Minify)操作的时候可以设置纹理过滤的选项，比如你可以在纹理被缩小的时候使用邻近过滤，被放大时使用线性过滤。我们需要使用glTexParameter*函数为放大和缩小指定过滤方式。本示例中的设置是：</p>
+</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 设置纹理过滤方式：GL_NEAREST和GL_LINEAR</span></span><br><span class="line"><span class="comment">// GL_LINEAR: 线性过滤，(Bi)linear Filtering）它会基于纹理坐标附近的纹理像素，计算出一个插值，近似出这些纹理像素之间的颜色。</span></span><br><span class="line"><span class="comment">// 邻近过滤，Nearest Neighbor Filtering 是OpenGL默认的纹理过滤方式。当设置为GL_NEAREST的时候，OpenGL会选择中心点最接近纹理坐标的那个像素。</span></span><br><span class="line">glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);</span><br><span class="line">glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);</span><br></pre></td></tr></table></figure>
+<p><br></p>
+<p>​    <strong>2.3 多级渐远纹理</strong></p>
+<p>​    关于<code>纹理过滤</code>还有一种<code>多级渐远纹理</code>的过滤方案设置。<br>​    简单来说就是一系列的纹理图像，后一个纹理图像是前一个的二分之一。多级渐远纹理背后的理念很简单：距观察者的距离超过一定的阈值，OpenGL会使用不同的多级渐远纹理，即最适合物体的距离的那个。由于距离远，解析度不高也不会被用户注意到。同时，多级渐远纹理另一加分之处是它的性能非常好。</p>
+<p>​    这一部分的设置，OpenGL提供了一个函数<code>glGenerateMipmaps</code>，在创建完一个纹理后调用它OpenGL就会承担接下来的所有工作了。后面的教程中你会看到该如何使用它。<br>​    为了指定不同多级渐远纹理级别之间的过滤方式，你可以使用下面四个选项中的一个代替原有的过滤方式：</p>
+<ul>
+<li><p><code>GL_NEAREST_MIPMAP_NEAREST</code>: 使用最邻近的多级渐远纹理来匹配像素大小，并使用邻近插值进行纹理采样</p>
+</li>
+<li><p><code>GL_LINEAR_MIPMAP_NEAREST</code>:  使用最邻近的多级渐远纹理级别，并使用线性插值进行采样</p>
+</li>
+<li><p><code>GL_NEAREST_MIPMAP_LINEAR</code>:  在两个最匹配像素大小的多级渐远纹理之间进行线性插值，使用邻近插值进行采样</p>
+</li>
+<li><p><code>GL_LINEAR_MIPMAP_LINEAR</code>:  在两个邻近的多级渐远纹理之间使用线性插值，并使用线性插值进行采样<br>像纹理过滤一样，我们可以使用glTexParameteri将过滤方式设置为前面四种提到的方法之一：</p>
+</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);</span><br><span class="line">glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);</span><br></pre></td></tr></table></figure>
+<p><br></p>
+<p><strong>3 加载图片资源填充纹理</strong></p>
+<p>这里分为两个简单的步骤，一个是加载图片资源，另一个是将资源数据填充到纹理中。</p>
+<p><strong>3.1 读取图片资源到数据中</strong></p>
+<p>​    这里用到了一个加载图片资源数据的库<code>stb_image.h</code><a href="https://github.com/nothings/stb/blob/master/stb_image.h" target="_blank" rel="noopener">下载地址</a>。<br>​    它的引用这里简单说明下，因为它纯头文件库，所以在将他添加到工程中后，还需要另创建一个新的C++文件，并在头文件中引入它：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#define STB_IMAGE_IMPLEMENTATION</span><br><span class="line">#include &quot;stb_image.h&quot;</span><br></pre></td></tr></table></figure>
+<p>​    通过定义<code>STB_IMAGE_IMPLEMENTATION</code>，预处理器会修改头文件，让其只包含相关的函数定义源码，等于是将这个头文件变为一个 .cpp 文件了。现在只需要在你的程序中包含stb_image.h并编译就可以了。</p>
+<p>​    这一步骤，看看文件夹<code>stb_image</code>下面的文件。<br>​    轮子造好后，引入头文件<code>stb_image.h</code>，在使用的地方添加以下代码即可：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> width, height, nrChannels;</span><br><span class="line"><span class="comment">// 这几个参数分别是图片资源路径、宽、高及像素通道获取值，最后一个填0即可</span></span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">char</span> *data = stbi_load(<span class="string">"container.jpg"</span>, &amp;width, &amp;height, &amp;nrChannels, <span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+<p><br></p>
+<p><strong>3.2 填充数据到纹理中</strong></p>
+<p>​    拿到图片数据后，我们即可填充到纹理中<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (data) &#123;</span><br><span class="line"><span class="comment">// 第一个参数：纹理目标类型，这里是2D</span></span><br><span class="line"><span class="comment">// 第二个参数：为纹理指定多级渐远纹理的级别，如果你希望单独手动设置每个多级渐远纹理的级别的话。这里我们填0，也就是基本级别。</span></span><br><span class="line"><span class="comment">// 第三个参数：把纹理储存为何种格式, 这里是RGB或RGBA</span></span><br><span class="line"><span class="comment">// 第四、五个参数：设置最终的纹理的宽度和高度</span></span><br><span class="line"><span class="comment">// 第六个参数：应该总是被设为0（历史遗留的问题）</span></span><br><span class="line"><span class="comment">// 第七个参数：源图片的格式，RGB这里是</span></span><br><span class="line"><span class="comment">// 第八个参数：传入的图片数据类型，这里data是char数组（byte）</span></span><br><span class="line"><span class="comment">// 第九个参数：真正的图像数据</span></span><br><span class="line">glTexImage2D(GL_TEXTURE_2D, <span class="number">0</span>, imageType == ImageType_RGB ? GL_RGB : GL_RGBA, width, height, <span class="number">0</span>, imageType == ImageType_RGB ? GL_RGB : GL_RGBA, GL_UNSIGNED_BYTE, data);</span><br><span class="line"><span class="comment">// 为当前绑定的纹理自动生成所有需要的多级渐远纹理。</span></span><br><span class="line">glGenerateMipmap(GL_TEXTURE_2D);</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Failed to load texture"</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><br></p>
+<p><strong>4 贴上代码</strong></p>
+<p>说了那么多理论性的知识，现在直接上一段创建的完整代码<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">创建纹理</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">@param imagePath 图片资源路径</span></span><br><span class="line"><span class="comment">@param imageType 图片资源格式：RGB或RGBA，目前支持这两个</span></span><br><span class="line"><span class="comment">@return 创建后的纹理</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">unsigned</span> <span class="keyword">int</span> <span class="title">creatTexture</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* imagePath, <span class="keyword">const</span> ImageType imageType)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> texture;</span><br><span class="line">    <span class="comment">// 1、创建1个texture给 texture</span></span><br><span class="line">    glGenTextures(<span class="number">1</span>, &amp;texture);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 2、绑定纹理</span></span><br><span class="line">    glBindTexture(GL_TEXTURE_2D, texture);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 3、设置纹理样式</span></span><br><span class="line">    <span class="comment">// 3.1 设置纹理环绕方式，这里的S和T对应x,y坐标，如果3D则是STR对应xyz。</span></span><br><span class="line">    <span class="comment">// GL_REPEAT: 环绕方式，对纹理的默认行为。重复纹理图像。其他的还有：</span></span><br><span class="line">    <span class="comment">// GL_MIRRORED_REPEAT    和GL_REPEAT一样，但每次重复图片是镜像放置的。</span></span><br><span class="line">    <span class="comment">// GL_CLAMP_TO_EDGE    纹理坐标会被约束在0到1之间，超出的部分会重复纹理坐标的边缘，产生一种边缘被拉伸的效果。</span></span><br><span class="line">    <span class="comment">// GL_CLAMP_TO_BORDER    超出的坐标为用户指定的边缘颜色。这个需要设置边缘颜色，float borderColor[] = &#123; 1.0f, 1.0f, 0.0f, 1.0f &#125;; glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);</span></span><br><span class="line">    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);</span><br><span class="line">    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 设置纹理过滤方式：GL_NEAREST和GL_LINEAR</span></span><br><span class="line">    <span class="comment">// GL_LINEAR: 线性过滤，(Bi)linear Filtering）它会基于纹理坐标附近的纹理像素，计算出一个插值，近似出这些纹理像素之间的颜色。</span></span><br><span class="line">    <span class="comment">// 邻近过滤，Nearest Neighbor Filtering 是OpenGL默认的纹理过滤方式。当设置为GL_NEAREST的时候，OpenGL会选择中心点最接近纹理坐标的那个像素。</span></span><br><span class="line">    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);</span><br><span class="line">    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 加载图片，并附加到纹理上</span></span><br><span class="line">    <span class="keyword">int</span> width, height, nrChannels;</span><br><span class="line">    stbi_set_flip_vertically_on_load(<span class="literal">true</span>);</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">char</span> *data = stbi_load(imagePath, &amp;width, &amp;height, &amp;nrChannels, <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">if</span> (data) &#123;</span><br><span class="line">        <span class="comment">// 第一个参数：纹理目标类型，这里是2D</span></span><br><span class="line">        <span class="comment">// 第二个参数：为纹理指定多级渐远纹理的级别，如果你希望单独手动设置每个多级渐远纹理的级别的话。这里我们填0，也就是基本级别。</span></span><br><span class="line">        <span class="comment">// 第三个参数：把纹理储存为何种格式, 这里是RGB</span></span><br><span class="line">        <span class="comment">// 第四、五个参数：设置最终的纹理的宽度和高度</span></span><br><span class="line">        <span class="comment">// 第六个参数：应该总是被设为0（历史遗留的问题）</span></span><br><span class="line">        <span class="comment">// 第七个参数：源图片的格式，RGB这里是</span></span><br><span class="line">        <span class="comment">// 第八个参数：传入的图片数据类型，这里data是char数组（byte）</span></span><br><span class="line">        <span class="comment">// 第九个参数：真正的图像数据</span></span><br><span class="line">        glTexImage2D(GL_TEXTURE_2D, <span class="number">0</span>, imageType == ImageType_RGB ? GL_RGB : GL_RGBA, width, height, <span class="number">0</span>, imageType == ImageType_RGB ? GL_RGB : GL_RGBA, GL_UNSIGNED_BYTE, data);</span><br><span class="line">        <span class="comment">// 为当前绑定的纹理自动生成所有需要的多级渐远纹理。</span></span><br><span class="line">        glGenerateMipmap(GL_TEXTURE_2D);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Failed to load texture"</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 释放data</span></span><br><span class="line">    stbi_image_free(data);</span><br><span class="line">    <span class="keyword">return</span> texture;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><br></p>
+<h4 id="纹理的使用"><a href="#纹理的使用" class="headerlink" title="纹理的使用"></a>纹理的使用</h4><p><strong>1 单纹理的使用</strong></p>
+<p><strong>1.1 片段着色器调整</strong><br>单纹理使用时，我们在<code>片段着色器</code>源码内部打开</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">FragColor = texture(texture1, TexCoord);</span><br></pre></td></tr></table></figure>
+<p>或者打开<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">FragColor = texture(texture1, TexCoord) * vec4(vertexColor, <span class="number">1.0</span>);</span><br></pre></td></tr></table></figure></p>
+<p><strong>1.2 渲染调整</strong><br>然后在渲染循环里，即绑定顶点数组对象前，添加这句代码</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 绑定纹理</span></span><br><span class="line">glBindTexture(GL_TEXTURE_2D, texture1);</span><br></pre></td></tr></table></figure>
+<p>运行工程，即可看到效果。</p>
+<p><br></p>
+<p><strong>2 多纹理混合</strong></p>
+<p>这里我们创建了两个纹理，<code>texture1</code>和<code>texture2</code>。</p>
+<p><strong>2.1 片段着色器调整</strong><br>在<code>片段着色器</code>中打开纹理组合那行代码</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 多纹理组合, 第一个透明度80，第二个20</span></span><br><span class="line">FragColor = mix(texture(texture1, TexCoord), texture(texture2, TexCoord), <span class="number">0.2</span>);</span><br></pre></td></tr></table></figure>
+<p>​        <br></p>
+<p><strong>2.2 设置纹理采样器的位置值</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 设置采样器</span></span><br><span class="line"><span class="comment">// 在设置采样器之前先激活程序</span></span><br><span class="line">ourShader.use();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 设置片段着色器中两个纹理采样器得位置值, 第一个是0，第二是是1</span></span><br><span class="line">glUniform1i(glGetUniformLocation(ourShader.ID, <span class="string">"texture1"</span>), <span class="number">0</span>);</span><br><span class="line">glUniform1i(glGetUniformLocation(ourShader.ID, <span class="string">"texture2"</span>), <span class="number">1</span>);</span><br><span class="line"><span class="comment">// 或者使用这个设置</span></span><br><span class="line"><span class="comment">//    ourShader.setInt("texture1", 0);</span></span><br><span class="line"><span class="comment">//    ourShader.setInt("texture2", 1);</span></span><br></pre></td></tr></table></figure>
+<p><br></p>
+<p><strong>2.3 激活、绑定纹理</strong><br>在渲染循环中激活并绑定纹理来进行纹理绘制</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 绘制纹理，这里激活的GL_TEXTUREX是和上面给纹理采样器设置位置值相互对应的</span></span><br><span class="line">glActiveTexture(GL_TEXTURE0);</span><br><span class="line">glBindTexture(GL_TEXTURE_2D, texture1);</span><br><span class="line">glActiveTexture(GL_TEXTURE1);</span><br><span class="line">glBindTexture(GL_TEXTURE_2D, texture2);</span><br></pre></td></tr></table></figure>
+<p>运行工程，即可看到效果。</p>
+<p><strong>2.4 补充：纹理单元</strong><br>在上面我们已经见识过了<code>sample2D</code>修饰的<code>uniform</code>变量的时候，不需要用<code>glUniform</code>给它赋值，<br>而是使用<code>glUniform1i</code>给<code>纹理采样器</code>分配一个位置值，这样的话我们能够在一个片段着色器中设置多个纹理。<br>一个纹理的位置值通常称为一个<code>纹理单元(Texture Unit)</code>。一个纹理的默认纹理单元是0，它是默认的激活纹理单元，所以教程前面部分我们没有分配一个位置值。</p>
+<p>纹理单元的主要目的是让我们在着色器中可以使用多于一个的纹理。通过把纹理单元赋值给采样器，我们可以一次绑定多个纹理，只要我们首先激活对应的纹理单元。就像glBindTexture一样，我们可以使用glActiveTexture激活纹理单元，传入我们需要使用的纹理单元：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">glActiveTexture(GL_TEXTURE0);</span><br><span class="line">glBindTexture(GL_TEXTURE_2D, texture1);</span><br><span class="line">glActiveTexture(GL_TEXTURE1);</span><br><span class="line">glBindTexture(GL_TEXTURE_2D, texture2);</span><br></pre></td></tr></table></figure></p>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#opengl">
+    <span class="tag-code">opengl</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/2019/05/28/00703-LearnOpengl-03-Shader/">
+        <span class="nav-arrow">← </span>
+        
+          LearnOpengl示例3-Shader
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/2019/05/30/00705-LearnOpengl-05-Transform/">
+        
+          LearnOpengl示例5-Transform
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+      <div class="money-like">
+        <div class="reward-btn">
+          赏
+          <span class="money-code">
+            <span class="alipay-code">
+              <div class="code-image"></div>
+              <b>使用支付宝打赏</b>
+            </span>
+            <span class="wechat-code">
+              <div class="code-image"></div>
+              <b>使用微信打赏</b>
+            </span>
+          </span>
+        </div>
+        <p class="notice">欢迎点击上方按钮进行打赏</p>
+      </div>
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+      <div class="qrcode">
+        <canvas id="share-qrcode"></canvas>
+        <p class="notice">扫描二维码，分享此文章</p>
+      </div>
+    
+    <!-- 二维码 END -->
+    
+      <!-- Gitment START -->
+      <div id="comments"></div>
+      <!-- Gitment END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <!-- <aside class="catalog-container">
+  <div class="toc-main">
+    
+    <div class="toc-catalog">Catalog</div>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#第四个示例：纹理"><span class="toc-nav-text">第四个示例：纹理</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#纹理的介绍"><span class="toc-nav-text">纹理的介绍</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#纹理的创建"><span class="toc-nav-text">纹理的创建</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#纹理的使用"><span class="toc-nav-text">纹理的使用</span></a></li></ol></li></ol></li></ol>
+    
+  </div>
+</aside> -->
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://ikirk.cn/2019/05/29/00704-LearnOpengl-04-Texture/';
+    // var banner = ''
+    // if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+    //   $('#article-banner').css({
+    //     'background-image': 'url(' + banner + ')'
+    //   })
+    // } else {
+    //   // $('#article-banner').geopattern(url)
+    // }
+    $('.header').removeClass('fixed-header')
+     // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+        
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+    // qrcode
+    var qr = new QRious({
+      element: document.getElementById('share-qrcode'),
+      value: document.location.href
+    });
+    // gitment
+    var gitmentConfig = "undefined";
+    if (gitmentConfig !== 'undefined') {
+      var gitment = new Gitment({
+        id: "LearnOpengl示例4-Texture",
+        owner: "undefined",
+        repo: "blog_comment",
+        oauth: {
+          client_id: "ade6b77d59dd6c6dbb01",
+          client_secret: "6b87b0683301c554e4ea52edfe21c2028d066a62"
+        },
+        theme: {
+          render(state, instance) {
+            const container = document.createElement('div')
+            container.lang = "en-US"
+            container.className = 'gitment-container gitment-root-container'
+            container.appendChild(instance.renderHeader(state, instance))
+            container.appendChild(instance.renderEditor(state, instance))
+            container.appendChild(instance.renderComments(state, instance))
+            container.appendChild(instance.renderFooter(state, instance))
+            return container;
+          }
+        }
+      })
+      gitment.render(document.getElementById('comments'))
+    }
+  })();
+</script>
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    <!-- &copy; 2019 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a> -->
+    &copy; 2019 | ikirk.cn
+    <br>
+    <!-- Theme by <a href="https://github.com/yanm1ng">yanm1ng</a> -->
+
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+<script src="/js/script.js"></script>
+  </body>
+</html>
