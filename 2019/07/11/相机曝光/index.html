@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html>
+  <head><meta name="generator" content="Hexo 3.8.0">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="kirk&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      相机曝光功能解析 | KK
+    
+  </title>
+  <link href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdn.bootcss.com/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdn.bootcss.com/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/plugins/gitment.css">
+  <script src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdn.bootcss.com/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdn.bootcss.com/nprogress/0.2.0/nprogress.min.js"></script>
+  <script src="/js/qrious.js"></script>
+<script src="/js/gitment.js"></script>
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+</head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png">
+</div>
+
+  <body>
+    <header class="header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>KK</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">首页</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/categories/" class="item-link">分类</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">标签</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">归档</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">项目</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">关于</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">首页</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/categories/" class="menu-link">分类</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">标签</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">归档</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">项目</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">关于</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>相机曝光功能解析</h2>
+  <p class="post-date">2019-07-11</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><p><br></p>
+<p>这几个天给应用中的相机添加了曝光的功能，总结下，坑多，细节文章少，导致功能使用没有用到一天，而调整细节花了两天。功能实现，其实就是几种曝光模式的设置，这是很简单的，应用对应的API即可；真正需要消耗时间，增加用户体验度的是友好的在几种曝光模式间进行切换。本文的初衷便缘至于此。</p>
+<blockquote>
+<p>理论知识来源于<strong>ObjC中国</strong><a href="https://objccn.io/issue-21-3/" target="_blank" rel="noopener"><strong>iOS 上的相机捕捉</strong></a></p>
+</blockquote>
+<p><br></p>
+<h4 id="系统相机的基本逻辑"><a href="#系统相机的基本逻辑" class="headerlink" title="系统相机的基本逻辑"></a>系统相机的基本逻辑</h4><p>首先来看下系统相机支持的曝光模式：</p>
+<ul>
+<li><p>默认自动持续曝光</p>
+</li>
+<li><p>点击屏幕-聚焦+曝光：曝光是传入了点的自动持续曝光</p>
+</li>
+<li><p>上下滑动修改曝光的感光度：上下滑动修改相机的ISO感光度</p>
+</li>
+</ul>
+<p>以上三种曝光模式对应设置其实很简单，我们看下面的API就会知道。</p>
+<p><br></p>
+<h4 id="理论知识"><a href="#理论知识" class="headerlink" title="理论知识"></a>理论知识</h4><p><strong>1 相机曝光的几种形式</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">typedef NS_ENUM(NSInteger, AVCaptureExposureMode) &#123;</span><br><span class="line">    AVCaptureExposureModeLocked                            = 0,</span><br><span class="line">    AVCaptureExposureModeAutoExpose                        = 1,</span><br><span class="line">    AVCaptureExposureModeContinuousAutoExposure            = 2,</span><br><span class="line">    AVCaptureExposureModeCustom NS_ENUM_AVAILABLE_IOS(8_0) = 3,</span><br><span class="line">&#125; API_AVAILABLE(macos(10.7), ios(4.0)) __WATCHOS_PROHIBITED __TVOS_PROHIBITED;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>AVCaptureExposureModeLocked 锁定时的状态</p>
+</li>
+<li><p>AVCaptureExposureModeAutoExpose 自动曝光</p>
+</li>
+<li><p>AVCaptureExposureModeContinuousAutoExposure 自动持续曝光</p>
+</li>
+<li><p>AVCaptureExposureModeCustom  自定义曝光模式</p>
+</li>
+</ul>
+<p><strong>2 相机设置曝光的API</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// 获取设置曝光模式</span><br><span class="line">@property(nonatomic) AVCaptureExposureMode exposureMode;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// 获取或设置曝光点</span><br><span class="line">@property(nonatomic) CGPoint exposurePointOfInterest;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// 当前相机摄像头活跃的格式信息</span><br><span class="line">@property(nonatomic, retain) AVCaptureDeviceFormat *activeFormat</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// 自定义曝光时长和感光度ISO</span><br><span class="line">- (void)setExposureModeCustomWithDuration:(CMTime)duration ISO:(float)ISO completionHandler:(nullable void (^)(CMTime syncTime))handler API_AVAILABLE(ios(8.0)) API_UNAVAILABLE(macos);</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// 修改模式前需要进行锁住configuration的API</span><br><span class="line">- (BOOL)lockForConfiguration:(NSError * _Nullable * _Nullable)outError;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// 修改完模式后需要进行解锁的API</span><br><span class="line">- (void)unlockForConfiguration;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// 是否支持曝光模式</span><br><span class="line">- (BOOL)isExposureModeSupported:(AVCaptureExposureMode)exposureMode;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// 是否支持曝光点的设置</span><br><span class="line">@property(nonatomic, readonly, getter=isExposurePointOfInterestSupported) BOOL exposurePointOfInterestSupported;</span><br></pre></td></tr></table></figure>
+<h4 id="实现系统相机的三种曝光模式"><a href="#实现系统相机的三种曝光模式" class="headerlink" title="实现系统相机的三种曝光模式"></a>实现系统相机的三种曝光模式</h4><p>通过以上API的了解，我们很快可以实现系统相机对应三种曝光模式的设置：</p>
+<p><strong>1 自动持续曝光</strong></p>
+<p><strong>1.1 封装设置曝光模式的方法</strong></p>
+<p>这是在自定义相机中添加的方法，恭外层UI调用。inputCamera是摄像头（前摄像头或后摄像头），以下所有代码中皆是此意。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">// 设置曝光模式及对应的点</span><br><span class="line">- (BOOL)exposureWithMode:(AVCaptureExposureMode)exposureMode point:(CGPoint)point &#123;</span><br><span class="line">    </span><br><span class="line">    if (![self.inputCamera isSupportExposureWithMode:exposureMode]) &#123;</span><br><span class="line">        return NO;</span><br><span class="line">    &#125;</span><br><span class="line">    _exposureMode = exposureMode;</span><br><span class="line">    NSError *error;</span><br><span class="line">    if ([self.inputCamera lockForConfiguration:&amp;error]) &#123;</span><br><span class="line">        [self.inputCamera setExposurePointOfInterest:point];</span><br><span class="line">        [self.inputCamera setExposureMode:exposureMode];</span><br><span class="line">        [self.inputCamera unlockForConfiguration];</span><br><span class="line">        return YES;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    return NO;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>1.2 设置自动持续曝光</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// 设置的模式是AVCaptureExposureModeContinuousAutoExposure , 其实曝光点可以不用设置，但是为了和下面定点曝光保持一致，这里传了默认的中点值(可以通过exposurePointOfInterest拿到默认的点，打印出来)</span><br><span class="line">[self exposureWithMode:AVCaptureExposureModeContinuousAutoExposure point:CGPointMake(0.5, 0.5)];</span><br></pre></td></tr></table></figure>
+<p><br></p>
+<p><strong>2 点击聚焦定点曝光</strong></p>
+<p>这里，继续沿用上面封装的方法，但需要注意的是曝光点的计算，曝光点和手势点击获取的视图点是不一样的，具体计算可看下面代码。另外，这里的曝光模式用的是AVCaptureExposureModeContinuousAutoExposure 自动持续曝光，是因为在定点曝光后，手机移动会有不同的光照强度，这时就需要实时持续更新了</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">// 在调用前需要计算曝光点</span><br><span class="line">CGPoint focusPoint;</span><br><span class="line">if (self.camera.cameraPosition == AVCaptureDevicePositionFront) &#123;</span><br><span class="line">      focusPoint = CGPointMake(point.y /self.bounds.size.height , point.x/self.bounds.size.width );</span><br><span class="line">  &#125; else &#123;</span><br><span class="line">      focusPoint = CGPointMake(point.y /self.bounds.size.height , 1 - point.x/self.bounds.size.width );</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">// 进行设置</span><br><span class="line">[self exposureWithMode:AVCaptureExposureModeContinuousAutoExposure point:focusPoint];</span><br></pre></td></tr></table></figure>
+<p><br></p>
+<p><strong>3 感光度调整的曝光</strong></p>
+<p><strong>3.1 封装设置感光度的方法</strong></p>
+<p>同上面设置模式一样，在自定义的相机内部封装了设置感光度的方法，恭外层UI调用。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">// 设置感光度</span><br><span class="line">- (BOOL)exposureModeCustomCustomWithDuration: (CMTime)duration ISO:(float) ISO &#123;</span><br><span class="line">    // 如果不支持AVCaptureExposureModeCustom 设置是吧</span><br><span class="line">    if ([self.inputCamera isExposureModeSupported:AVCaptureExposureModeCustom]) &#123;</span><br><span class="line">        return NO;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    // 过滤无效时间</span><br><span class="line">    if (CMTIME_IS_INVALID(duration)) &#123;</span><br><span class="line">        duration = AVCaptureExposureDurationCurrent;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    // 过滤无效感光度值</span><br><span class="line">    AVCaptureDeviceFormat *activeFormat = [self getInputCameraDeviceFormat];</span><br><span class="line">    if (ISO &lt; activeFormat.minISO || ISO &gt; activeFormat.maxISO) &#123;</span><br><span class="line">        return NO;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    NSError *error;</span><br><span class="line">    if ([self.inputCamera lockForConfiguration:&amp;error]) &#123;</span><br><span class="line">				// 切换至可自定义曝光模式</span><br><span class="line">        if (self.inputCamera.exposureMode != AVCaptureExposureModeCustom) &#123;</span><br><span class="line">            [self.inputCamera setExposureMode:AVCaptureExposureModeCustom];</span><br><span class="line">        &#125;</span><br><span class="line">        [self.inputCamera setExposureModeCustomWithDuration:duration ISO:ISO completionHandler:^(CMTime syncTime) &#123;</span><br><span class="line">        &#125;];</span><br><span class="line">        [self.inputCamera unlockForConfiguration];</span><br><span class="line">        return YES;</span><br><span class="line">    &#125;</span><br><span class="line">    return NO;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 获取当前相机摄像头活跃的格式信息</span><br><span class="line">- (AVCaptureDeviceFormat *)getInputCameraDeviceFormat &#123;</span><br><span class="line">    return self.inputCamera.activeFormat;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>3.2 计算+设置感光度</strong></p>
+<p>在UI层面通过Slider滑块来改变感光度的值的，并且对感光度的值做了限制计算。这里的180，可以先忽略，后面会介绍。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">// 这里是在Slider滑块值改变的时候进行设置的</span><br><span class="line">- (void)sliderChangedValue:(UISlider *)slider &#123;</span><br><span class="line">  	// 计算ISO</span><br><span class="line">    float value = slider.value;</span><br><span class="line">    AVCaptureDeviceFormat *activeFormat = [self.camera getInputCameraDeviceFormat];</span><br><span class="line">    float iso = 180;</span><br><span class="line">    if (value &lt;= 0.5) &#123;</span><br><span class="line">        iso = 180 * (2*value);</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        // y = k*x + a; k = 2*(activeFormat.maxISO * 0.6 - 180), a = (360 - activeFormat.maxISO*0.6);</span><br><span class="line">        // 这里上限为maxISO*0.6</span><br><span class="line">        iso = 2*(activeFormat.maxISO * 0.6 - 180) * value + (360 - activeFormat.maxISO * 0.6);</span><br><span class="line">    &#125;</span><br><span class="line">    iso = MAX(MIN(activeFormat.maxISO, iso), activeFormat.minISO);</span><br><span class="line">  </span><br><span class="line">  	// 设置ISO</span><br><span class="line">    [self.camera exposureModeCustomCustomWithDuration:AVCaptureExposureDurationCurrent ISO:iso];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通过以上的操作，基本实现了系统相机的曝光的三种状态。如果到此为止，那我们实现的相机基本和用户无缘了。无论是系统相机，还是实用度很高的美图的相机还是抖音的相机，他们在曝光模式切换上做了很多人性化的交互功能，下面就将介绍如果人性化的实现曝光模式切换。</p>
+<p><br></p>
+<h4 id="曝光模式切换"><a href="#曝光模式切换" class="headerlink" title="曝光模式切换"></a>曝光模式切换</h4><p><strong>1 系统相机切换曝光模式的交互逻辑</strong></p>
+<p>先来看下系统的曝光模式切换交互：</p>
+<ul>
+<li>点击屏幕，切换到<code>定点曝光</code>后，如果移动手机（相机捕捉的帧数据的环境光发生改变），会自动切换成<code>自动持续曝光模式</code></li>
+<li>切换到<code>可调整感光强度曝光模式</code>后，并改变<code>感光强度</code>，如果移动手机（相机捕捉的帧数据的环境光发生改变）后，也会自动切换成<code>自动持续曝光模式</code></li>
+<li>在录制条件下，上一步即<code>可调整感光强度曝光模式</code>自动切换成<code>自动持续曝光模式</code>功能是暂时失效的，一旦暂停录制，又会放开</li>
+<li>针对上一交互，在录制条件下，点击屏幕，是可以切换到<code>定点曝光模式</code>的，但不能自动切换成<code>自动持续曝光模式</code></li>
+</ul>
+<p>这里有必要先解释下上面四种交互逻辑设计的原因（个人见解）。</p>
+<p>首先，自动曝光的强度会依赖于相机捕捉到的环境光的强度而去自适应。那么，我们切换曝光模式也可以依赖于这一条件，即相机的上一种曝光模式（定点曝光或可调感光度曝光模式）的出现是源于之前环境光强度的值而进行切换来的，那么在移动相机或者当前位置下光的强度改变了，那么之前调整过来的曝光模式就不适应了，那么此时就需要切换回（代码中是重置回）<code>自动持续曝光模式</code>。那么这点解释了前面两种的交互逻辑。</p>
+<p>然后，在录制条件下，录制时你已经（好不容易或者就非要这样）调整了某一点进行曝光或者调整了感光度，这时如果系统自动将曝光改成<code>自动曝光模式</code>销毁掉了你之前那不容易的调整，这回让你奔溃的。所以在录制的情况下，由用户自己去控制曝光模式和感光强度，而不是系统代为之。在非录制情况下，尽量给用户最真实合适的曝光强度，自动给用户切换合适的强度（而且这个自动切换也是满足一定条件的，后面会描述到）。这是后两条交互的逻辑原因（个人见解）。</p>
+<p>以上四种交互，描述起来相对简单，但是实现起来，会有很多的细节和坑需要注意，以下会一步步排坑。</p>
+<p><br></p>
+<p><strong>2 实现系统相机切换曝光模式的交互逻辑</strong></p>
+<p>实现这一功能的步骤是：</p>
+<ul>
+<li>定义切换模式的条件属性</li>
+<li>实现切换模式的方法</li>
+<li>设置控制条件，以触发切换模式的功能实现</li>
+</ul>
+<p>以下是具体步骤。</p>
+<p><strong>2.1定义切换模式的条件属性</strong></p>
+<p><strong>2.1.1 第一个是：上一帧数据的感光强度</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">float _lastBrightnessValue;</span><br></pre></td></tr></table></figure>
+<p><strong>2.1.2 第二个是：切换曝光模式所需满足的环境光最小差值</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">float _maxBrightnessValueForResetExposure;</span><br></pre></td></tr></table></figure>
+<p>以上两个控制属性，在这里统一说明下：</p>
+<p>是否能自动切换<code>曝光模式</code>需要满足一个前提条件是，之前调整好的曝光模式或感光强度时图像的环境光强度于我现在实时捕捉到的图像的环境光强度需要满足一定的差值，当满足这个差值时，再进行切换，如果不满足不进行切换。如果不设置这个差值，之前手动切换到的曝光模式会立马被切换回来，会让用户感觉很霸道，如果值设置太大，很难自动切换回去，会让用户觉得不够智能，强度都这样改变了，还没切换回去。</p>
+<p><br></p>
+<p><strong>2.1.3 第三个是：是否可重置曝光模式</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// 是否可重置曝光模式</span><br><span class="line">BOOL _canResetExposures;</span><br></pre></td></tr></table></figure>
+<p>这个限制条件优先于上面的<code>差值</code>条件的，只有可以进行切换（重置）时才能进行下一步的环境光强度的差值判断。</p>
+<p>这一条件会在录制时，滑动slider控件设置感光强度时，点击屏幕进行定点曝光时会设置起来。具体细节，下面会逐一说明。</p>
+<p><br></p>
+<p><strong>2.2 实现切换模式的方法</strong></p>
+<p>前面有说明，自动切换到<code>自动持续曝光模式</code>是根据相机捕捉到的图像的<code>环境光强度</code>来决定要不要切换，那么获取到图像的<code>环境光强度</code>前得先拿到相机捕捉的每一帧图像。</p>
+<p>这是系统相机捕捉数据后的回调API：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">- (void)captureOutput:(AVCaptureOutput *)captureOutput didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer fromConnection:(AVCaptureConnection *)connection;</span><br></pre></td></tr></table></figure>
+<p>我们把相机封装了起来，抛给外面UI使用的是：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">- (void)willOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer;</span><br></pre></td></tr></table></figure>
+<p>如果熟悉<code>GPUImage</code> 的朋友一定熟悉这个方法，<code>GPUImage</code>抛给外面的API也是这个方法。</p>
+<p>现在我们拿到了每一帧的数据，接下来是，获取图像的<code>环境光强度</code>：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">// 获取当前帧数据的环境光强度</span><br><span class="line">    CFDictionaryRef metadataDict = CMCopyDictionaryOfAttachments(NULL,sampleBuffer, kCMAttachmentMode_ShouldPropagate);</span><br><span class="line">    NSDictionary *metadata = [[NSMutableDictionary alloc] initWithDictionary:(__bridge NSDictionary*)metadataDict];</span><br><span class="line">    CFRelease(metadataDict);</span><br><span class="line">    NSDictionary *exifMetadata = [[metadata objectForKey:(NSString *)kCGImagePropertyExifDictionary] mutableCopy];</span><br><span class="line">    float brightnessValue = [[exifMetadata objectForKey:(NSString *)kCGImagePropertyExifBrightnessValue] floatValue];</span><br></pre></td></tr></table></figure>
+<p>那么再加上之前提到的切换条件，整个方法逻辑是：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">// 相机捕捉到的每一帧图像的回调方法</span><br><span class="line">- (void)willOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer &#123;</span><br><span class="line">    // 不允许切换或重置时，返回</span><br><span class="line">    if (_canResetExposures == NO) &#123;</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    // 获取当前帧数据的环境光强度</span><br><span class="line">    CFDictionaryRef metadataDict = CMCopyDictionaryOfAttachments(NULL,sampleBuffer, kCMAttachmentMode_ShouldPropagate);</span><br><span class="line">    NSDictionary *metadata = [[NSMutableDictionary alloc] initWithDictionary:(__bridge NSDictionary*)metadataDict];</span><br><span class="line">    CFRelease(metadataDict);</span><br><span class="line">    NSDictionary *exifMetadata = [[metadata objectForKey:(NSString *)kCGImagePropertyExifDictionary] mutableCopy];</span><br><span class="line">    float brightnessValue = [[exifMetadata objectForKey:(NSString *)kCGImagePropertyExifBrightnessValue] floatValue];</span><br><span class="line"></span><br><span class="line">  	// 设置之前的环境光强度</span><br><span class="line">    if (_lastBrightnessValue == 0) &#123;</span><br><span class="line">        _lastBrightnessValue = brightnessValue;</span><br><span class="line">    &#125;</span><br><span class="line">  	// 是否满足当前捕捉的环境光强度与之前捕捉的环境光强度的最小差值</span><br><span class="line">    if (fabs(_lastBrightnessValue - brightnessValue) &gt; __maxBrightnessValueForResetExposure) &#123;</span><br><span class="line">        _lastBrightnessValue = brightnessValue;</span><br><span class="line">        dispatch_async(dispatch_get_main_queue(), ^&#123;</span><br><span class="line">            self-&gt;_exposureSlider.value = 0.5;</span><br><span class="line">        &#125;);</span><br><span class="line"></span><br><span class="line">        // 重置至自动持续曝光模式</span><br><span class="line">        [self.camera exposureWithMode:AVCaptureExposureModeContinuousAutoExposure point:CGPointMake(0.5, 0.5)];</span><br><span class="line">      	// 切换后，已经是自动持续曝光了，切换条件就设置为不满足，这样会减少环境光强度的不断获取，多少减少点性能消耗</span><br><span class="line">        _canResetExposures = NO;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><br></p>
+<p><strong>2.3 设置控制条件，以触发切换模式的功能实现</strong></p>
+<p><strong>2.3.1 <code>定点曝光</code>到<code>自动持续曝光</code>的切换</strong></p>
+<p>我们的项目中是将屏幕点击聚焦的逻辑封装在了一个<code>TouchView</code>上，然后这个<code>TouchView</code>有和点击屏蔽的代理回调方法，我们在这个方法里设置这一交互的条件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">// 点击聚焦曝光点后的回调 ----- 内部已经添加了聚焦和曝光，这里不需要再设置</span><br><span class="line">- (void)focusTouchView:(id&lt;TuSDKVideoCameraExtendViewInterface&gt;)focusTouchView didTapPoint:(CGPoint)point &#123;</span><br><span class="line">  	// 将slider的值(曝光感光度)设置为中值-即起始值</span><br><span class="line">    _exposureSlider.value = 0.5; </span><br><span class="line">   </span><br><span class="line">  	// 控制曝光的条件</span><br><span class="line">  	// 点击聚焦曝光瞬间，不允许自动切换模式开启</span><br><span class="line">    _canResetExposures = NO;</span><br><span class="line">  	// 在点击聚焦曝光模式切换后1s再允许可以切换到自动曝光模式</span><br><span class="line">    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^&#123;</span><br><span class="line">        // 录制过程中不能自动切换到运行重置曝光模式</span><br><span class="line">        if (self.camera.isRecording) &#123;</span><br><span class="line">          	self-&gt;_canResetExposures = NO;</span><br><span class="line">            return;</span><br><span class="line">        &#125;</span><br><span class="line">      	// 将之前捕捉的环境光强度重置，瞬间就会被赋值到最新捕捉到的环境光强度</span><br><span class="line">        self-&gt;_lastBrightnessValue = 0.0;</span><br><span class="line">      	// 这个最小差值设为了1.0</span><br><span class="line">      	self-&gt;_maxBrightnessValueForResetExposure = 1.0;</span><br><span class="line">      	// 允许切换重置</span><br><span class="line">        self-&gt;_canResetExposures = YES;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>以上代码的注释中有说明其逻辑，这里再挑重点复述下。</p>
+<p>点击的瞬间不允许可自动切换，而是延时?</p>
+<p>这是因为，点击聚焦曝光后，相机捕捉的图像环境光强度和前后捕捉的差值很大，如果此时允许，会瞬间切换到自动曝光模式下，也就会导致手动定点持续曝光只是瞬间作用，这个的意义就不复存在，所以需要延迟。延迟后可以进行自动切换，这时候即使可以自动切换，但如果相机不移动或者当前位置光强度不变，是不会立马切换到自动曝光模式的，因为没有满足最小差值。</p>
+<p>感光强度最小差值为1.0，会不会太大？</p>
+<p>因为<code>定点曝光模式</code>对环境光强度的影响较大，如果值设置小了，上一步的延时一到，就会立马切换到<code>自动持续曝光模式</code>，即便是我轻微一动或者光强度稍微变换以下，就会触发。这些是经过多次试验调试来的，你也可以自己尝试调试下，也可以按照自己的需要进行设置。</p>
+<p><br></p>
+<p><strong>2.3.2 <code>可调整感光度</code>到<code>自动持续曝光</code>的切换</strong></p>
+<p><code>可调整感光度模式</code>是在滑动滑块的过程进行的，调整介绍我们需要监听滑块滑动结束，这里添加了对应的方法，在结束后进行条件设置：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">- (void)sliderEnd:(UISlider *)slider &#123;</span><br><span class="line">    // 录制过程中不能自动切换到运行重置曝光模式</span><br><span class="line">    if (self.camera.isRecording) &#123;</span><br><span class="line">     		_canResetExposures = NO;</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line">  	// 将之前捕捉的环境光强度重置，瞬间就会被赋值到最新捕捉到的环境光强度</span><br><span class="line">    _lastBrightnessValue = 0.0;</span><br><span class="line">    // 这个最小差值设为了0.3</span><br><span class="line">    self-&gt;_maxBrightnessValueForResetExposure = 0.3;</span><br><span class="line">    _canResetExposures = YES;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里不需要延时及最小差值设为了0.3的原因是，在设置曝光的感光强度即ISO值时，并未对相机捕捉的图像的环境光照强度有所影响，所以这里就没必要延迟，最小值满足正常的差值即可，这里选择0.3也是多次试验得出的值，大家也可以试试，根据自己的测试和需要进行调整。</p>
+<p><br></p>
+<p><strong>2.3.3 <code>录制时禁止</code>定点曝光<code>到</code>自动持续曝光`的切换</strong></p>
+<p>上面两种切换模式中，我们其实已经看到了相机正在录制的条件控制：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">// 录制过程中不能自动切换到运行重置曝光模式</span><br><span class="line">if (self.camera.isRecording) &#123;</span><br><span class="line">  	_canResetExposures = NO;</span><br><span class="line">    return;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>即，在录制的过程中，不允许可自动切换到<code>自动持续曝光模式</code>的条件成立。</p>
+<p>另外，需要在开始录制、暂停、结束录制时，修改条件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">// 开始录制/正在录制</span><br><span class="line">_canResetExposures = NO;</span><br><span class="line">// 暂停、结束录制</span><br><span class="line">_canResetExposures = YES;</span><br></pre></td></tr></table></figure>
+<p><br></p>
+<p>以上，基本就可以实现系统相机的曝光交互逻辑了，希望能给你减少很多坑。当然如果追求更精致的话，这些调整还需要更多时间调试和调整，精致是时间调试出来的。</p>
+<p><br></p>
+<p>欢迎探讨。</p>
+<p><br></p>
+<p>PS：由于直接在项目中实现，所以不便放出完整代码。</p>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#相机">
+    <span class="tag-code">相机</span>
+  </a>
+
+  <a href="/tags#曝光">
+    <span class="tag-code">曝光</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/2019/05/30/00705-LearnOpengl-05-Transform/">
+        <span class="nav-arrow">← </span>
+        
+          LearnOpengl示例5-Transform
+        
+      </a>
+    
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+      <div class="money-like">
+        <div class="reward-btn">
+          赏
+          <span class="money-code">
+            <span class="alipay-code">
+              <div class="code-image"></div>
+              <b>使用支付宝打赏</b>
+            </span>
+            <span class="wechat-code">
+              <div class="code-image"></div>
+              <b>使用微信打赏</b>
+            </span>
+          </span>
+        </div>
+        <p class="notice">欢迎点击上方按钮进行打赏</p>
+      </div>
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+      <div class="qrcode">
+        <canvas id="share-qrcode"></canvas>
+        <p class="notice">扫描二维码，分享此文章</p>
+      </div>
+    
+    <!-- 二维码 END -->
+    
+      <!-- Gitment START -->
+      <div id="comments"></div>
+      <!-- Gitment END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <!-- <aside class="catalog-container">
+  <div class="toc-main">
+    
+    <div class="toc-catalog">Catalog</div>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#系统相机的基本逻辑"><span class="toc-nav-text">系统相机的基本逻辑</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#理论知识"><span class="toc-nav-text">理论知识</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#实现系统相机的三种曝光模式"><span class="toc-nav-text">实现系统相机的三种曝光模式</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#曝光模式切换"><span class="toc-nav-text">曝光模式切换</span></a></li></ol>
+    
+  </div>
+</aside> -->
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://ikirk.cn/2019/07/11/相机曝光/';
+    // var banner = ''
+    // if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+    //   $('#article-banner').css({
+    //     'background-image': 'url(' + banner + ')'
+    //   })
+    // } else {
+    //   // $('#article-banner').geopattern(url)
+    // }
+    $('.header').removeClass('fixed-header')
+     // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+        
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+    // qrcode
+    var qr = new QRious({
+      element: document.getElementById('share-qrcode'),
+      value: document.location.href
+    });
+    // gitment
+    var gitmentConfig = "undefined";
+    if (gitmentConfig !== 'undefined') {
+      var gitment = new Gitment({
+        id: "相机曝光功能解析",
+        owner: "undefined",
+        repo: "blog_comment",
+        oauth: {
+          client_id: "ade6b77d59dd6c6dbb01",
+          client_secret: "6b87b0683301c554e4ea52edfe21c2028d066a62"
+        },
+        theme: {
+          render(state, instance) {
+            const container = document.createElement('div')
+            container.lang = "en-US"
+            container.className = 'gitment-container gitment-root-container'
+            container.appendChild(instance.renderHeader(state, instance))
+            container.appendChild(instance.renderEditor(state, instance))
+            container.appendChild(instance.renderComments(state, instance))
+            container.appendChild(instance.renderFooter(state, instance))
+            return container;
+          }
+        }
+      })
+      gitment.render(document.getElementById('comments'))
+    }
+  })();
+</script>
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    <!-- &copy; 2019 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a> -->
+    &copy; 2019 | ikirk.cn
+    <br>
+    <!-- Theme by <a href="https://github.com/yanm1ng">yanm1ng</a> -->
+
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+<script src="/js/script.js"></script>
+  </body>
+</html>

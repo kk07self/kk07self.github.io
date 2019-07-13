@@ -173,9 +173,12 @@
 </ul>
 <p><br></p>
 <h4 id="初始化glfw并用其创建一个window窗口"><a href="#初始化glfw并用其创建一个window窗口" class="headerlink" title="初始化glfw并用其创建一个window窗口"></a>初始化glfw并用其创建一个window窗口</h4><ul>
-<li>这里一是初始化glfw并设置其信息</li>
-<li>通过glfw创建窗口</li>
-<li>监察是否创建成功</li>
+<li><p>这里一是初始化glfw并设置其信息</p>
+</li>
+<li><p>通过glfw创建窗口</p>
+</li>
+<li><p>监察是否创建成功</p>
+</li>
 </ul>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 初始化glfw，并配置信息</span></span><br><span class="line">glfwInit();</span><br><span class="line"><span class="comment">// 主板版本号</span></span><br><span class="line">glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, <span class="number">3</span>);</span><br><span class="line"><span class="comment">// 次版本号</span></span><br><span class="line">glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, <span class="number">3</span>);</span><br><span class="line"><span class="comment">// 使用的是核心模式(Core-profile)</span></span><br><span class="line">glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> __APPLE__</span></span><br><span class="line"><span class="comment">// Mac OS X系统需要设置</span></span><br><span class="line">glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"><span class="comment">// 创建一个窗口</span></span><br><span class="line">GLFWwindow* window = glfwCreateWindow(<span class="number">800</span>, <span class="number">600</span>, <span class="string">"LearnOpenGL"</span>, <span class="literal">NULL</span>, <span class="literal">NULL</span>);</span><br><span class="line"><span class="keyword">if</span> (window == <span class="literal">NULL</span>)</span><br><span class="line">&#123;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Failed to create GLFW window"</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">glfwTerminate();</span><br><span class="line"><span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p><br></p>
